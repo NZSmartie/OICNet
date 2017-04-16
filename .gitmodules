@@ -1,0 +1,4 @@
+[submodule "OICNet/IoTDataModels"]
+	path = OICNet/IoTDataModels
+	url = https://github.com/OpenInterConnect/IoTDataModels
+	branch = OIC-v1.1.0

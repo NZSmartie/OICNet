@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <AssemblyName>OICNet</AssemblyName>
+    <RootNamespace>OICNet</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="IoTDataModels\.git" />
+    <None Remove="IoTDataModels\README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ResourceTypes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="2.0.11" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
