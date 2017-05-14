@@ -92,19 +92,39 @@ namespace OICNet.Tests
         }
 
         [TestMethod]
-        public void NumberResourceToJson()
+        public void IntegerResourceToJson()
         {
-            var foo = new OicBaseResouece<int>
+            var foo = new OicIntResouece
             {
                 Id = "foo",
                 Name = "Foo",
                 ResourceTypes = new List<string> { "oic.r.foo" },
                 Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
                 Value = 50,
-                Range = new List<decimal> { 0, 100 }
+                Range = new List<int> { 0, 100 }
             };
 
             var expected = "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":50,\"range\":[0,100]}";
+
+            var actual = JsonConvert.SerializeObject(foo);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void NumberResourceToJson()
+        {
+            var foo = new OicNumberResouece
+            {
+                Id = "foo",
+                Name = "Foo",
+                ResourceTypes = new List<string> { "oic.r.foo" },
+                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
+                Value = 0.5f,
+                Range = new List<float> { 0.0f, 1.0f }
+            };
+
+            var expected = "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":0.5,\"range\":[0.0,1.0]}";
 
             var actual = JsonConvert.SerializeObject(foo);
 

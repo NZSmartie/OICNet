@@ -46,8 +46,17 @@ namespace OICNet
     {
         [JsonProperty("value", Order = 5)]
         public VType Value { get; set; }
+    }
 
+    public class OicIntResouece : OicBaseResouece<int>
+    {
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
-        public List<Decimal> Range { get; set; }
+        public List<int> Range { get; set; }
+    }
+
+    public class OicNumberResouece : OicBaseResouece<float>
+    {
+        [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
+        public List<float> Range { get; set; }
     }
 }
