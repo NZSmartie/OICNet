@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -24,6 +26,30 @@ namespace OICNet
         Actuator,
         [EnumMember(Value = "oic.if.s")]
         Sensor,
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class OicResourceTypeAttribute : Attribute
+    {
+        public readonly string Id;
+        
+        public OicResourceTypeAttribute(string id)
+        {
+            Id = id;
+        }
+    }
+
+    public static class OicResourceExtensions
+    {
+        public static string GetResourceTypeId(this OicCoreResource resource)
+        {
+            var info = resource.GetType()
+                .GetTypeInfo()
+                .GetCustomAttributes()
+                .FirstOrDefault(i => i is OicResourceTypeAttribute)
+                as OicResourceTypeAttribute;
+            return info.Id;
+        }
     }
 
     public class OicCoreResource
