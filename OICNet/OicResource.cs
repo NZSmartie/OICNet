@@ -28,8 +28,8 @@ namespace OICNet
         Sensor,
     }
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class OicResourceTypeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public sealed class OicResourceTypeAttribute : Attribute
     {
         public readonly string Id;
         
@@ -70,7 +70,7 @@ namespace OICNet
 
     public class OicBaseResouece<VType> : OicCoreResource
     {
-        [JsonProperty("value", Order = 5)]
+        [JsonProperty("value", Required = Required.Always, Order = 5)]
         public VType Value { get; set; }
     }
 

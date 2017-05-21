@@ -22,7 +22,23 @@ namespace OICNet
             // List of built in resource-types will go here (OIC v1.1.0)
             _resourceTypes = new Dictionary<string, Type>
             {
-                { "oic.r.core", typeof(OicCoreResource) }
+                // Todo: In .Net Standard 2.0, replace hardcoded references with reflection, looking for classes with OicResourceTypeAttribute
+                { "oic.r.core", typeof(OicCoreResource) },
+                { "oic.r.audio", typeof(ResourceTypes.Audio) },
+                { "oic.r.automaticdocumentfeeder", typeof(ResourceTypes.AutomaticDocumentFeeder) },
+                { "oic.r.door", typeof(ResourceTypes.Door) },
+                { "oic.r.lock.status", typeof(ResourceTypes.LockStatus) },
+                { "oic.r.media", typeof(ResourceTypes.Media) },
+                { "oic.r.mediasource", typeof(ResourceTypes.MediaSource) },
+                { "oic.r.mediasourcelist", typeof(ResourceTypes.MediaSourceList) },
+                { "oic.r.media.input", typeof(ResourceTypes.MediaSourceList) },
+                { "oic.r.media.output", typeof(ResourceTypes.MediaSourceList) },
+                { "oic.r.mode", typeof(ResourceTypes.Mode) },
+                { "oic.r.openlevel", typeof(ResourceTypes.OpenLevel) },
+                { "oic.r.operational.state", typeof(ResourceTypes.OperationalState) },
+                { "oic.r.switch.binary", typeof(ResourceTypes.SwitchBinary) },
+                { "oic.r.temperature", typeof(ResourceTypes.Temperature) },
+
             };
         }
 
