@@ -12,31 +12,27 @@ namespace OICNet.Tests
     [TestClass]
     public class OicTransportTests
     {
-        private Mock<IOicBroadcaster> _broadcaster;
-        private Mock<IOicTransportProvider> _transportProvider;
+        private Mock<IOicInterface> _broadcaster;
 
         [TestInitialize]
         public void Setup()
         {
-            _broadcaster = new Mock<IOicBroadcaster>();
+            _broadcaster = new Mock<IOicInterface>();
             _broadcaster
-                .Setup(b => b.SendBroadcastAsync(It.IsAny<OicMessage>()))
+                .Setup(b => b.BroadcastMessageAsync(It.IsAny<OicMessage>()))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
-
-            _transportProvider = new Mock<IOicTransportProvider>();
-            _transportProvider.Setup(t => t.GetBroadcasters()).Returns(new List<IOicBroadcaster> { _broadcaster.Object });
         }
 
         [TestMethod]
         public void BroadcastAllInterfaces()
         {
-            var service = new OicService();
+            var service = new OicClient();
 
-            service.AddTransportProvider(_transportProvider.Object);
+            service.AddBroadcastInterface(_broadcaster.Object);
             service.Discover();
 
-            Mock.VerifyAll(_transportProvider, _broadcaster);
+            Mock.VerifyAll(_broadcaster);
         }
     }
 }

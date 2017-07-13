@@ -52,8 +52,11 @@ namespace OICNet
         }
     }
 
-    public class OicCoreResource
+    public class OicCoreResource : IOicResource
     {
+        [JsonIgnore]
+        public string RelativeUri { get; set; }
+
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
         public List<string> ResourceTypes { get; set; }

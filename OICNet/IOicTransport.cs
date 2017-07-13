@@ -1,51 +1,61 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OICNet
 {
-    public interface IOicTransportProvider
+    public class OicReceivedMessageEventArgs : EventArgs
     {
-        List<IOicBroadcaster> GetBroadcasters();
+        public IOicEndpoint Endpoint;
+        public OicMessage Message;
     }
 
-    public interface IOicBroadcaster
+    public interface IOicInterface
     {
-        Task SendBroadcastAsync(OicMessage message);
+        Task BroadcastMessageAsync(OicMessage message);
+
+        Task SendMessageAsync(IOicEndpoint endpoint, OicMessage message);
+
+        event EventHandler<OicReceivedMessageEventArgs> ReceivedMessage;
     }
 
     public interface IOicEndpoint
     {
-        Task SendMessageAsync(OicMessage message);
+        bool IsSecure { get; }
 
-        Task<OicMessage> ReceiveMessageAsync();
+        string Authority { get; }
+
+        // ummm...?
     }
 
+    // TODO: create Request/Response sub-classes?
     public class OicMessage
     {
-        public Method Method { get; set; } = Method.Get;
+        public OicMessageMethod Method { get; set; } = OicMessageMethod.Get;
 
         public List<string> Filters { get; set; }
 
         public string Uri { get; set; }
 
-        public MimeType MimeType { get; set; } = MimeType.TextPlain;
+        public List<OicMessageContentType> Accepts { get; set; } = new List<OicMessageContentType>();
+
+        public OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
 
         public byte[] Payload { get; set; }
     }
 
-    public enum MimeType
+    public enum OicMessageContentType
     {
-        TextPlain,
         ApplicationJson,
-        AppplicationCbor,
+        ApplicationCbor,
+        ApplicationXml,
     }
 
-    public enum Method
+    public enum OicMessageMethod
     {
         Get,
         Post,
         Put,
         Delete,
-        Update
     }
 }
