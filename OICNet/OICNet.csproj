@@ -7,7 +7,7 @@
     <RootNamespace>OICNet</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>NZSmartie.OICNet</PackageId>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.1.1-alpha</Version>
     <Authors>Roman Vaughan</Authors>
     <Company>NZSmartie</Company>
     <Description>Open Connectivity Foundation's (OCF) Open Inter-Conneect (OIC) for .Net providing device discovery, arbitrary transport, client/server communication.
@@ -16,8 +16,9 @@ More details about OIC here: https://openconnectivity.org/</Description>
     <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>oic iot ocf</PackageTags>
+    <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation</PackageTags>
     <NeutralLanguage></NeutralLanguage>
+    <FileVersion>0.1.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
