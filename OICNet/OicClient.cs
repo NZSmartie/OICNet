@@ -13,40 +13,66 @@ namespace OICNet
 
     public class OicClient : IDisposable
     {
-        private IOicInterface _interface;
-        public IOicInterface Interface
-        {
-            get { return _interface; }
-            set
-            {
-                _interface = value ?? throw new ArgumentNullException();
-                //_interface
-            }
-        }
+        private readonly List<OicDevice> _devices = new List<OicDevice>();
 
         private readonly List<IOicInterface> _broadcastInterfaces;
 
-        EventHandler<OicNewDeviceEventArgs> NewDevice;
+        private readonly OicMessageSerialiser _serialiser;
+
+        public event EventHandler<OicNewDeviceEventArgs> NewDevice;
+
+        public event EventHandler<OicDeviceReceivedMessageEventArgs> ReceivedMessage;
+
 
         public OicClient()
         {
             _broadcastInterfaces = new List<IOicInterface>();
+
+            _serialiser = new OicMessageSerialiser(new OicResolver());
         }
 
         public void AddBroadcastInterface(IOicInterface provider)
         {
+            if (provider is null)
+                throw new ArgumentNullException();
+            provider.ReceivedMessage += OnReceivedMessage;
             _broadcastInterfaces.Add(provider);
         }
 
-        public async Task SendAsync(IOicEndpoint endpoint, OicMessage message)
+        public async Task SendAsync(OicDevice device, OicRequest message)
         {
-            await _interface.SendMessageAsync(endpoint, message);
+            await device.LocalInterface.SendMessageAsync(device.RemoteEndpoint, message);
+        }
+
+        private void OnReceivedMessage(object sender, OicReceivedMessageEventArgs e)
+        {
+            //TODO: match up sender with an interface
+            System.Diagnostics.Debug.WriteLine($"Got a message from {e.Endpoint.Authority}");
+
+            var device = _devices.FirstOrDefault(d => d.RemoteEndpoint.Authority == e.Endpoint.Authority);
+            if (device == null)
+            {
+                device = new OicDevice((sender as IOicInterface), e.Endpoint);
+                NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device });
+            }
+
+            System.Diagnostics.Debugger.Break();
+            if(e.Message.ContentType == OicMessageContentType.ApplicationJson)
+            {
+                var result = _serialiser.Deserialise(e.Message.Payload, OicMessageContentType.ApplicationJson);
+            }
+
+            ReceivedMessage?.Invoke(this, new OicDeviceReceivedMessageEventArgs
+            {
+                Device = device,
+                Message = e.Message
+            });
         }
 
         public void Discover()
         {
             // Create a discover request message
-            var payload = new OicMessage
+            var payload = new OicRequest
             {
                 Method = OicMessageMethod.Get,
                 Uri = "/oic/res",
