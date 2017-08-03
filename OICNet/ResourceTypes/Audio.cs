@@ -23,5 +23,19 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("mute", Required = Required.Always, Order = 11)]
         public bool Mute { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Audio;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (Volume != other.Volume)
+                return false;
+            if (Mute != other.Mute)
+                return false;
+            return true;
+        }
     }
 }

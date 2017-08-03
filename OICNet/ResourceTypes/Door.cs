@@ -35,5 +35,21 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("openAlarm", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 12)]
         public bool OpenAlarm { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Door;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (OpenState!= other.OpenState)
+                return false;
+            if (OpenDuration!= other.OpenDuration)
+                return false;
+            if (OpenAlarm!= other.OpenAlarm)
+                return false;
+            return true;
+        }
     }
 }

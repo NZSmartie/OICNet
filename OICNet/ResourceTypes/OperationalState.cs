@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -51,5 +52,30 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("progressPercentage", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 16)]
         public int ProgressPercentage { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OperationalState;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!MachineStates.SequenceEqual(other.MachineStates))
+                return false;
+            if (CurrentJobState != other.CurrentMachineState)
+                return false;
+            if (!JobStates.SequenceEqual(other.JobStates))
+                return false;
+            if (CurrentJobState != other.CurrentJobState)
+                return false;
+            if (RunningTime != other.RunningTime)
+                return false;
+            if (RemainingTime != other.RemainingTime)
+                return false;
+            if (ProgressPercentage != other.ProgressPercentage)
+                return false;
+            return true;
+        }
     }
 }

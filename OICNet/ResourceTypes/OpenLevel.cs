@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 using Newtonsoft.Json;
-using System.Runtime.Serialization;
 
 namespace OICNet.ResourceTypes
 {
@@ -27,5 +28,22 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 12)]
         public List<int> Range { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OpenLevel;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (OpenLevelAmount != other.OpenLevelAmount)
+                return false;
+            if (Increment != other. Increment)
+                return false;
+            if (!Range.SequenceEqual(other.Range))
+                return false;
+            return true;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -15,5 +16,17 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("sources", Required = Required.Always, Order = 10)]
         public List<MediaSource> SourceItems { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as MediaSourceList;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!SourceItems.SequenceEqual(other.SourceItems))
+                return false;
+            return true;
+        }
     }
 }

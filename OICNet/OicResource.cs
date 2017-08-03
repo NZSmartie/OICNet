@@ -69,23 +69,87 @@ namespace OICNet
 
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicCoreResource;
+
+            if (other == null)
+                return false;
+
+            if (!string.Equals(RelativeUri, other.RelativeUri))
+                return false;
+            if (!ResourceTypes?.SequenceEqual(other.ResourceTypes) ?? false)
+                return false;
+            if (!Interfaces?.SequenceEqual(other.Interfaces) ?? false)
+                return false;
+            if (!string.Equals(Name, other.Name))
+                return false;
+            if (!string.Equals(Id, other.Id))
+                return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
+        }
     }
 
     public class OicBaseResouece<VType> : OicCoreResource
     {
         [JsonProperty("value", Required = Required.Always, Order = 5)]
         public VType Value { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicBaseResouece<VType>;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!Value.Equals(other.Value))
+                return false;
+            return true;
+        }
     }
 
     public class OicIntResouece : OicBaseResouece<int>
     {
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<int> Range { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicIntResouece;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!Range.SequenceEqual(other.Range))
+                return false;
+            return true;
+        }
     }
 
     public class OicNumberResouece : OicBaseResouece<float>
     {
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<float> Range { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicNumberResouece;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!Range.SequenceEqual(other.Range))
+                return false;
+            return true;
+        }
     }
 }

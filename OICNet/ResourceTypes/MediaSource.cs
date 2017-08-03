@@ -44,5 +44,24 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("status", Order = 13, Required = Required.Always)]
         public bool Status { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as MediaSource;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (OpenDuration != other.OpenDuration)
+                return false;
+            if (SourceNumber != other.SourceNumber)
+                return false;
+            if (SourceType != other.SourceType)
+                return false;
+            if (Status != other.Status)
+                return false;
+            return true;
+        }
     }
 }

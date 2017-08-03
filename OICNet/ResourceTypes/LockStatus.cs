@@ -23,5 +23,17 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("lockState", Required = Required.Always, Order = 10, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public LockState LockState { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as LockStatus;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (LockState != other.LockState)
+                return false;
+            return true;
+        }
     }
 }

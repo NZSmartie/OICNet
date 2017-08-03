@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -21,5 +22,20 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("modes", Required = Required.Always, Order = 11)]
         public List<string> Modes { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as Mode;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            if (!SupportedModes.SequenceEqual(other.SupportedModes))
+                return false;
+            if (!Modes.SequenceEqual(other.Modes))
+                return false;
+            return true;
+        }
     }
 }

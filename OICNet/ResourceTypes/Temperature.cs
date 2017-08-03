@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -37,5 +38,23 @@ namespace OICNet.ResourceTypes
         /// </summary>
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 12)]
         public List<float> Range { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as Temperature;
+            if (other == null)
+                return false;
+            if (!base.Equals(obj))
+                return false;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (Value != other.Value)
+                return false;
+            if (Units != other.Units)
+                return false;
+            if (!Range.SequenceEqual(other.Range))
+                return false;
+            return true;
+        }
     }
 }
