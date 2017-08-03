@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using Moq;
 using Moq.Language;
+using NUnit.Framework;
+
 
 namespace OICNet.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class OicTransportTests
     {
         private Mock<IOicInterface> _broadcaster;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _broadcaster = new Mock<IOicInterface>();
             _broadcaster
-                .Setup(b => b.BroadcastMessageAsync(It.IsAny<OicMessage>()))
+                .Setup(b => b.BroadcastMessageAsync(It.IsAny<OicRequest>()))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
         }
 
-        [TestMethod]
+        [Test]
         public void BroadcastAllInterfaces()
         {
             var service = new OicClient();
