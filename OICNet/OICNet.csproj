@@ -1,9 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net45;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <AssemblyName>OICNet</AssemblyName>
     <RootNamespace>OICNet</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>NZSmartie.OICNet</PackageId>
+    <Version>0.1.0-alpha</Version>
+    <Authors>Roman Vaughan</Authors>
+    <Company>NZSmartie</Company>
+    <Description>Open Connectivity Foundation's (OCF) Open Inter-Conneect (OIC) for .Net providing device discovery, arbitrary transport, client/server communication.
+More details about OIC here: https://openconnectivity.org/</Description>
+    <PackageProjectUrl>https://github.com/NZSmartie/OICNet</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>oic iot ocf</PackageTags>
+    <NeutralLanguage></NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
