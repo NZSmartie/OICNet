@@ -34,7 +34,7 @@ namespace OICNet
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public Object Deserialise(byte[] message, OicMessageContentType contentType)
+        public IOicResource Deserialise(byte[] message, OicMessageContentType contentType)
         {
             var serialiser = new JsonSerializer();
             var stream = new MemoryStream(message);
@@ -49,7 +49,7 @@ namespace OICNet
                     type = _resolver.GetResourseType(coreResource.ResourceTypes.FirstOrDefault());
 
                     stream.Seek(0, SeekOrigin.Begin);
-                    return serialiser.Deserialize(new JsonTextReader(new StreamReader(stream)), type);
+                    return (IOicResource)serialiser.Deserialize(new JsonTextReader(new StreamReader(stream)), type);
                 }
                 case OicMessageContentType.ApplicationCbor:
                 {
@@ -57,14 +57,14 @@ namespace OICNet
                     type = _resolver.GetResourseType(coreResource.ResourceTypes.FirstOrDefault());
 
                     stream.Seek(0, SeekOrigin.Begin);
-                    return serialiser.Deserialize(new CborDataReader(stream), type);
+                    return (IOicResource)serialiser.Deserialize(new CborDataReader(stream), type);
                 }
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        public byte[] Serialise(OicCoreResource resource, OicMessageContentType contentType)
+        public byte[] Serialise(IOicResource resource, OicMessageContentType contentType)
         {
             var writer = new MemoryStream();
             switch (contentType)
