@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,247 +12,333 @@ using OICNet;
 namespace OICNet.Tests
 {
     [TestFixture]
-    public class OicCoreResourceTests
+    public class OicCoreResourceTests : TestFixtureBase
     {
         [Test]
-        public void CoreFromJson()
-        {
-            // Arrange 
-            var input = "{\"rt\":[\"oic.r.test\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test Asset\",\"id\":\"test\"}";
-
-            var expected = new OicCoreResource
-            {
-                Id = "test",
-                Name = "Test Asset",
-                ResourceTypes = new List<string> { "oic.r.test" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline }
-            };
-
-            // Act
-            var actual = JsonConvert.DeserializeObject<OicCoreResource>(input);
-
-            // Assert
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.Name, actual.Name);
-            Assert.IsTrue(expected.Interfaces.SequenceEqual(actual.Interfaces));
-            Assert.IsTrue(expected.ResourceTypes.SequenceEqual(actual.ResourceTypes));
-        }
-
-        [Test]
-        public void CoreToJson()
-        {
-            var input = new OicCoreResource
-            {
-                Id = "test",
-                Name = "Test Asset",
-                ResourceTypes = new List<string>
-                {
-                    "oic.r.test"
-                },
-                Interfaces = new List<OicResourceInterface>
-                {
-                    OicResourceInterface.Baseline
-                }
-            };
-
-            var expected = "{\"rt\":[\"oic.r.test\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test Asset\",\"id\":\"test\"}";
-
-            var actual = JsonConvert.SerializeObject(input);
-
-            //System.Diagnostics.Debug.WriteLine($"Result => {actual}");
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void CoreFromCbor()
-        {
-            // Arrange 
-            var input = ToBytes("A4-62-72-74-81-6A-6F-69-63-2E-72-2E-74-65-73-74-62-69-66-81-6F-6F-69-63-2E-69-66-2E-62-61-73-65-6C-69-6E-65-61-6E-6A-54-65-73-74-20-41-73-73-65-74-62-69-64-64-74-65-73-74");
-
-            var expected = new OicCoreResource
-            {
-                Id = "test",
-                Name = "Test Asset",
-                ResourceTypes = new List<string> { "oic.r.test" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline }
-            };
-
-            // Act
-            var actual = CborDeserialiseObject<OicCoreResource>(input);
-
-            // Assert
-            Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.Name, actual.Name);
-            Assert.IsTrue(expected.Interfaces.SequenceEqual(actual.Interfaces));
-            Assert.IsTrue(expected.ResourceTypes.SequenceEqual(actual.ResourceTypes));
-        }
-
-        [Test]
-        public void CoreToCbor()
-        {
-            var input = new OicCoreResource
-            {
-                Id = "test",
-                Name = "Test Asset",
-                ResourceTypes = new List<string>
-                {
-                    "oic.r.test"
-                },
-                Interfaces = new List<OicResourceInterface>
-                {
-                    OicResourceInterface.Baseline
-                }
-            };
-
-            var expected = "A4-62-72-74-81-6A-6F-69-63-2E-72-2E-74-65-73-74-62-69-66-81-6F-6F-69-63-2E-69-66-2E-62-61-73-65-6C-69-6E-65-61-6E-6A-54-65-73-74-20-41-73-73-65-74-62-69-64-64-74-65-73-74";
-
-            var actual = CborSerialiseObject(input);
-
-            //System.Diagnostics.Debug.WriteLine($"Result => {actual}");
-            Assert.AreEqual(expected, BitConverter.ToString(actual));
-        }
-
-        [Test]
-        public void StringResourceToJson()
-        {
-            var foo = new OicBaseResouece<string>
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string>{ "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface>{ OicResourceInterface.Baseline },
-                Value = "Test String"
-            };
-
-            var expected = "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":\"Test String\"}";
-
-            var actual = JsonConvert.SerializeObject(foo);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void StringResourceToCbor()
-        {
-            var foo = new OicBaseResouece<string>
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string> { "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
-                Value = "Test String"
-            };
-
-            var expected = "A5-62-72-74-81-69-6F-69-63-2E-72-2E-66-6F-6F-62-69-66-81-6F-6F-69-63-2E-69-66-2E-62-61-73-65-6C-69-6E-65-61-6E-63-46-6F-6F-62-69-64-63-66-6F-6F-65-76-61-6C-75-65-6B-54-65-73-74-20-53-74-72-69-6E-67";
-
-            var actual = BitConverter.ToString(CborSerialiseObject(foo));
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void IntegerResourceToJson()
-        {
-            var foo = new OicIntResouece
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string> { "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
-                Value = 50,
-                Range = new List<int> { 0, 100 }
-            };
-
-            var expected = "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":50,\"range\":[0,100]}";
-
-            var actual = JsonConvert.SerializeObject(foo);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void IntegerResourceToCbor()
-        {
-            var foo = new OicIntResouece
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string> { "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
-                Value = 50,
-                Range = new List<int> { 0, 100 }
-            };
-
-            var expected = "A6-62-72-74-81-69-6F-69-63-2E-72-2E-66-6F-6F-62-69-66-81-6F-6F-69-63-2E-69-66-2E-62-61-73-65-6C-69-6E-65-61-6E-63-46-6F-6F-62-69-64-63-66-6F-6F-65-76-61-6C-75-65-18-32-65-72-61-6E-67-65-82-00-18-64";
-
-            var actual = BitConverter.ToString(CborSerialiseObject(foo));
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void NumberResourceToJson()
-        {
-            var foo = new OicNumberResouece
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string> { "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
-                Value = 0.5f,
-                Range = new List<float> { 0.0f, 1.0f }
-            };
-
-            var expected = "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":0.5,\"range\":[0.0,1.0]}";
-
-            var actual = JsonConvert.SerializeObject(foo);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void NumberResourceToCbor()
-        {
-            var foo = new OicNumberResouece
-            {
-                Id = "foo",
-                Name = "Foo",
-                ResourceTypes = new List<string> { "oic.r.foo" },
-                Interfaces = new List<OicResourceInterface> { OicResourceInterface.Baseline },
-                Value = 0.5f,
-                Range = new List<float> { 0.0f, 1.0f }
-            };
-
-            var expected = "A6-62-72-74-81-69-6F-69-63-2E-72-2E-66-6F-6F-62-69-66-81-6F-6F-69-63-2E-69-66-2E-62-61-73-65-6C-69-6E-65-61-6E-63-46-6F-6F-62-69-64-63-66-6F-6F-65-76-61-6C-75-65-FA-3F-00-00-00-65-72-61-6E-67-65-82-FA-00-00-00-00-FA-3F-80-00-00";
-
-            var actual = BitConverter.ToString(CborSerialiseObject(foo));
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        private static byte[] CborSerialiseObject(object value)
+        [TestCaseSource(typeof(TestCases), nameof(TestCases.CborSerialiseTestCases))]
+        public byte[] CborSerialiseObject(IOicResource input)
         {
             using (var stream = new MemoryStream())
             {
                 var writer = new CborDataWriter(stream);
-                JsonSerializer.CreateDefault().Serialize(writer, value);
+                JsonSerializer.CreateDefault().Serialize(writer, input);
                 writer.Flush();
                 return stream.ToArray();
             }
         }
 
-        private static TValue CborDeserialiseObject<TValue>(byte[] data)
+        [Test]
+        [TestCaseSource(typeof(TestCases), nameof(TestCases.CborDeserialiseTestCases))]
+        public IOicResource CborDeserialiseObject(byte[] data, Type type)
         {
             using (var stream = new MemoryStream(data))
             {
                 var reader = new CborDataReader(stream);
-                return JsonSerializer.CreateDefault().Deserialize<TValue>(reader);
+                return (IOicResource) JsonSerializer.CreateDefault().Deserialize(reader, type);
             }
         }
 
-        private static byte[] ToBytes(string value)
+        [Test]
+        [TestCaseSource(typeof(TestCases), nameof(TestCases.JsonSerialiseTestCases))]
+        public string JsonSerialiseObject(IOicResource input)
         {
-            return value.Split('-').Select(b => Convert.ToByte(b, 16)).ToArray();
+            using (var stringWriter = new StringWriter())
+            {
+                var writer = new JsonTextWriter(stringWriter);
+                JsonSerializer.CreateDefault().Serialize(writer, input);
+                writer.Flush();
+                return stringWriter.ToString();
+            }
+        }
+
+        [Test]
+        [TestCaseSource(typeof(TestCases), nameof(TestCases.JsonDeserialiseTestCases))]
+        public IOicResource JsonDeserialiseObject(string input, Type type)
+        {
+            using (var stream = new StringReader(input))
+            {
+                var reader = new JsonTextReader(stream);
+                return (IOicResource) JsonSerializer.CreateDefault().Deserialize(reader, type);
+            }
+        }
+    }
+
+    public class TestCases : TestFixtureBase
+    {
+        public static IEnumerable CborDeserialiseTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new byte[]
+                    {
+                        0xA6, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                        0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C,
+                        0x69, 0x6E, 0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F,
+                        0x65, 0x76, 0x61, 0x6C, 0x75, 0x65, 0xFA, 0x3F, 0x00, 0x00, 0x00, 0x65, 0x72, 0x61, 0x6E, 0x67,
+                        0x65, 0x82, 0xFA, 0x00, 0x00, 0x00, 0x00, 0xFA, 0x3F, 0x80, 0x00, 0x00
+                    }, typeof(OicNumberResouece))
+                    .Returns(new OicNumberResouece
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        Value = 0.5f,
+                        Range = new List<float> {0.0f, 1.0f}
+                    });
+
+                yield return new TestCaseData(new byte[]
+                    {
+                        0xA6, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                        0x69,
+                        0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C, 0x69,
+                        0x6E,
+                        0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F, 0x65, 0x76,
+                        0x61,
+                        0x6C, 0x75, 0x65, 0x18, 0x32, 0x65, 0x72, 0x61, 0x6E, 0x67, 0x65, 0x82, 0x00, 0x18, 0x64
+                    }, typeof(OicIntResouece))
+                    .Returns(new OicIntResouece
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        Value = 50,
+                        Range = new List<int> {0, 100}
+                    });
+
+                yield return new TestCaseData(new byte[]
+                    {
+                        0xA5, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                        0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C,
+                        0x69, 0x6E, 0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F,
+                        0x65, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x6B, 0x54, 0x65, 0x73, 0x74, 0x20, 0x53, 0x74, 0x72, 0x69,
+                        0x6E, 0x67
+                    }, typeof(OicBaseResouece<string>))
+                    .Returns(new OicBaseResouece<string>
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        Value = "Test String"
+                    });
+
+                yield return new TestCaseData(new byte[]
+                {
+                    0xA4, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x74, 0x65, 0x73, 0x74,
+                    0x62, 0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65,
+                    0x6C, 0x69, 0x6E, 0x65, 0x61, 0x6E, 0x6A, 0x54, 0x65, 0x73, 0x74, 0x20, 0x41, 0x73, 0x73, 0x65,
+                    0x74, 0x62, 0x69, 0x64, 0x64, 0x74, 0x65, 0x73, 0x74
+                }, typeof(OicCoreResource)).Returns(new OicCoreResource
+                {
+                    Id = "test",
+                    Name = "Test Asset",
+                    ResourceTypes = new List<string>
+                    {
+                        "oic.r.test"
+                    },
+                    Interfaces = new List<OicResourceInterface>
+                    {
+                        OicResourceInterface.Baseline
+                    }
+                });
+            }
+        }
+
+        public static IEnumerable CborSerialiseTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new OicNumberResouece
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    Value = 0.5f,
+                    Range = new List<float> {0.0f, 1.0f}
+                }).Returns(new byte[]
+                {
+                    0xA6, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                    0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C,
+                    0x69, 0x6E, 0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F,
+                    0x65, 0x76, 0x61, 0x6C, 0x75, 0x65, 0xFA, 0x3F, 0x00, 0x00, 0x00, 0x65, 0x72, 0x61, 0x6E, 0x67,
+                    0x65, 0x82, 0xFA, 0x00, 0x00, 0x00, 0x00, 0xFA, 0x3F, 0x80, 0x00, 0x00
+                });
+                yield return new TestCaseData(new OicIntResouece
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    Value = 50,
+                    Range = new List<int> {0, 100}
+                }).Returns(new byte[]
+                {
+                    0xA6, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                    0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C,
+                    0x69, 0x6E, 0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F,
+                    0x65, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x18, 0x32, 0x65, 0x72, 0x61, 0x6E, 0x67, 0x65, 0x82, 0x00,
+                    0x18, 0x64
+                });
+
+                yield return new TestCaseData(new OicBaseResouece<string>
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    Value = "Test String"
+                }).Returns(new byte[]
+                {
+                    0xA5, 0x62, 0x72, 0x74, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x66, 0x6F, 0x6F, 0x62,
+                    0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C,
+                    0x69, 0x6E, 0x65, 0x61, 0x6E, 0x63, 0x46, 0x6F, 0x6F, 0x62, 0x69, 0x64, 0x63, 0x66, 0x6F, 0x6F,
+                    0x65, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x6B, 0x54, 0x65, 0x73, 0x74, 0x20, 0x53, 0x74, 0x72, 0x69,
+                    0x6E, 0x67
+                });
+
+                yield return new TestCaseData(new OicCoreResource
+                {
+                    Id = "test",
+                    Name = "Test Asset",
+                    ResourceTypes = new List<string>
+                    {
+                        "oic.r.test"
+                    },
+                    Interfaces = new List<OicResourceInterface>
+                    {
+                        OicResourceInterface.Baseline
+                    }
+                }).Returns(new byte[]
+                {
+                    0xA4, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x74, 0x65, 0x73, 0x74,
+                    0x62, 0x69, 0x66, 0x81, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65,
+                    0x6C, 0x69, 0x6E, 0x65, 0x61, 0x6E, 0x6A, 0x54, 0x65, 0x73, 0x74, 0x20, 0x41, 0x73, 0x73, 0x65,
+                    0x74, 0x62, 0x69, 0x64, 0x64, 0x74, 0x65, 0x73, 0x74
+                });
+            }
+        }
+
+        public static IEnumerable JsonSerialiseTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new OicNumberResouece
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface>
+                    {
+                        OicResourceInterface.Baseline
+                    },
+                    Value = 0.5f,
+                    Range = new List<float> {0.0f, 1.0f}
+                }).Returns(
+                    "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":0.5,\"range\":[0.0,1.0]}");
+
+                yield return new TestCaseData(new OicIntResouece
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    Value = 50,
+                    Range = new List<int> {0, 100}
+                }).Returns(
+                    "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":50,\"range\":[0,100]}");
+
+                yield return new TestCaseData(new OicBaseResouece<string>
+                {
+                    Id = "foo",
+                    Name = "Foo",
+                    ResourceTypes = new List<string> {"oic.r.foo"},
+                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    Value = "Test String"
+                }).Returns(
+                    "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":\"Test String\"}");
+
+                yield return new TestCaseData(new OicCoreResource
+                {
+                    Id = "test",
+                    Name = "Test Asset",
+                    ResourceTypes = new List<string>
+                    {
+                        "oic.r.test"
+                    },
+                    Interfaces = new List<OicResourceInterface>
+                    {
+                        OicResourceInterface.Baseline
+                    }
+                }).Returns(
+                    "{\"rt\":[\"oic.r.test\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test Asset\",\"id\":\"test\"}");
+            }
+        }
+
+        public static IEnumerable JsonDeserialiseTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(
+                        "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":0.5,\"range\":[0.0,1.0]}",
+                        typeof(OicNumberResouece))
+                    .Returns(new OicNumberResouece
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface>
+                        {
+                            OicResourceInterface.Baseline
+                        },
+                        Value = 0.5f,
+                        Range = new List<float> {0.0f, 1.0f}
+                    });
+
+                yield return new TestCaseData(
+                        "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":50,\"range\":[0,100]}",
+                        typeof(OicIntResouece))
+                    .Returns(new OicIntResouece
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        Value = 50,
+                        Range = new List<int> {0, 100}
+                    });
+
+                yield return new TestCaseData(
+                        "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":\"Test String\"}",
+                        typeof(OicBaseResouece<string>))
+                    .Returns(new OicBaseResouece<string>
+                    {
+                        Id = "foo",
+                        Name = "Foo",
+                        ResourceTypes = new List<string> {"oic.r.foo"},
+                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        Value = "Test String"
+                    });
+
+                yield return new TestCaseData(
+                        "{\"rt\":[\"oic.r.test\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test Asset\",\"id\":\"test\"}",
+                        typeof(OicCoreResource))
+                    .Returns(new OicCoreResource
+                    {
+                        Id = "test",
+                        Name = "Test Asset",
+                        ResourceTypes = new List<string>
+                        {
+                            "oic.r.test"
+                        },
+                        Interfaces = new List<OicResourceInterface>
+                        {
+                            OicResourceInterface.Baseline
+                        }
+                    });
+            }
         }
     }
 }
