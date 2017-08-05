@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace OICNet
@@ -54,8 +54,41 @@ namespace OICNet
 
     public class OicCoreResource : IOicResource
     {
+        #region CRUDN Operations
+
+
+        public Task CreateAsync(IOicResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(IOicResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RetrieveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+
+
+        [JsonIgnore]
+        public OicDevice Device { get; }
+
         [JsonIgnore]
         public string RelativeUri { get; set; }
+
+        
+        #region Serialised Properties
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
@@ -69,6 +102,18 @@ namespace OICNet
 
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
+
+        #endregion
+
+        internal OicCoreResource(OicDevice device)
+        {
+            Device = device;
+        }
+
+        public OicCoreResource()
+        {
+            
+        }
 
         public override bool Equals(object obj)
         {
