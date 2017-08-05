@@ -8,8 +8,9 @@ using System.Runtime.Serialization;
 
 namespace OICNet.ResourceTypes
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.r.operational.state")]
-    public class OperationalState : OicCoreResource 
+    public class OperationalState : OicCoreResource
     {
         /// <summary>
         /// Array of the possible operational states.
@@ -78,4 +79,5 @@ namespace OICNet.ResourceTypes
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

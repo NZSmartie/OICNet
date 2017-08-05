@@ -8,8 +8,9 @@ using System.Runtime.Serialization;
 
 namespace OICNet.ResourceTypes
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.r.mediasourcelist"), OicResourceType("oic.r.media.input"), OicResourceType("oic.r.media.output")]
-    public class MediaSourceList : OicCoreResource 
+    public class MediaSourceList : OicCoreResource
     {
         /// <summary>
         /// Specifies a pre-defined media input or output.
@@ -29,4 +30,5 @@ namespace OICNet.ResourceTypes
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 
 namespace OICNet.ResourceTypes
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.r.media")]
     public class Media : OicCoreResource
     {
@@ -58,4 +59,5 @@ namespace OICNet.ResourceTypes
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

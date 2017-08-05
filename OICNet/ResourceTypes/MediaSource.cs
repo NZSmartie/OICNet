@@ -17,8 +17,9 @@ namespace OICNet.ResourceTypes
         AudioPlusVideo
     }
 
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.r.mediasource")]
-    public class MediaSource : OicCoreResource 
+    public class MediaSource : OicCoreResource
     {
         /// <summary>
         /// Specifies a pre-defined media input or output.
@@ -64,4 +65,5 @@ namespace OICNet.ResourceTypes
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

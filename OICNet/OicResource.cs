@@ -135,12 +135,26 @@ namespace OICNet
             return true;
         }
 
+        /// <summary>
+        /// Gets a hashcode unique to the <see cref="OicCoreResource"/> sub-class. 
+        /// </summary>
+        /// <remarks>
+        /// This will generate and store the hashcode based on the subclass's full name. 
+        /// </remarks>
+        private static readonly Dictionary<Type, int> _hashCode = new Dictionary<System.Type, int>();
         public override int GetHashCode()
         {
-            return 0;
+            if (_hashCode.TryGetValue(GetType(), out int hashcode) == false)
+            {
+                hashcode = GetType().FullName.GetHashCode();
+                _hashCode.Add(GetType(), hashcode);
+            }
+
+            return hashcode;
         }
     }
 
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class OicBaseResouece<VType> : OicCoreResource
     {
         [JsonProperty("value", Required = Required.Always, Order = 5)]
@@ -197,4 +211,5 @@ namespace OICNet
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }

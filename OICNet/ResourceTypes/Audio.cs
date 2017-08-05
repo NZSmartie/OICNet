@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace OICNet.ResourceTypes
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.r.audio")]
     public class Audio : OicCoreResource
     {
@@ -38,4 +39,5 @@ namespace OICNet.ResourceTypes
             return true;
         }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }
