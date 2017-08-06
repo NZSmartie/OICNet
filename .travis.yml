@@ -1,0 +1,30 @@
+language: csharp
+
+matrix:
+  include:
+    - os: linux # Ubuntu 14.04
+      dist: trusty
+      sudo: required
+      mono: latest
+      dotnet: 1.0.4
+#    - os: osx # OSX 10.11
+#      osx_image: xcode7.2
+#      dotnet: 1.0.0-preview2-003121
+#    - os: osx # OSX 10.12
+#      osx_image: xcode7.3
+#      dotnet: 1.0.0-rc4-0044771
+
+install:
+    - nuget restore OICNet.sln
+    - dotnet restore OICNet.sln
+
+script:
+  - dotnet --info
+  # Run a new console app
+  - pushd OICNet.Tests
+  - dotnet restore
+  - dotnet test -f netcoreapp1.1
+  # todo test on net45
+  - popd
+
+  - msbuild /t:Rebuild /p:Configuration=Release OICNet.sln
