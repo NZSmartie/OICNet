@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using OICNet.OicResource;
 
 namespace OICNet
 {
@@ -15,13 +16,14 @@ namespace OICNet
     /// <remarks>(Will) Support all OIC v1.1.0 defined resource-types</remarks>
     public class OicResolver : IResourceTypeResolver
     {
-        private Dictionary<string, Type> _resourceTypes;
+        private readonly Dictionary<string, Type> _resourceTypes;
 
         public OicResolver()
         {
             // List of built in resource-types will go here (OIC v1.1.0)
             _resourceTypes = new Dictionary<string, Type>
             {
+                { "oic.wk.res" ,typeof(DiscoverableResources) },
                 // Todo: In .Net Standard 2.0, replace hardcoded references with reflection, looking for classes with OicResourceTypeAttribute
                 { "oic.r.core", typeof(OicCoreResource) },
                 { "oic.r.audio", typeof(ResourceTypes.Audio) },

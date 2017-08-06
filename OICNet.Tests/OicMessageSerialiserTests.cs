@@ -20,6 +20,7 @@ namespace OICNet.Tests
 
             mockResolver.Setup(c => c.GetResourseType("oic.r.core")).Returns(typeof(OicCoreResource));
             mockResolver.Setup(c => c.GetResourseType("oic.r.audio")).Returns(typeof(ResourceTypes.Audio));
+            mockResolver.Setup(c => c.GetResourseType("oic.wk.res")).Returns(typeof(OicResource.DiscoverableResources));
 
             _resolver = mockResolver.Object;
         }
@@ -37,7 +38,17 @@ namespace OICNet.Tests
         {
             // Arrange
             var serialiser = new OicMessageSerialiser(_resolver);
-            return serialiser.Deserialise(input, type);
+
+            //Only worried about the first result
+            return serialiser.Deserialise(input, type).First();
+        }
+
+        [Test, TestCaseSource(typeof(SerialiserTestCaseData), nameof(SerialiserTestCaseData.DeserialiseArrayTestCases))]
+        public IList<IOicResource> DeserialiseOicResourceCoreArray(byte[] input, OicMessageContentType type)
+        {
+            // Arrange
+            var serialiser = new OicMessageSerialiser(_resolver);
+            return serialiser.Deserialise(input, type).ToList();
         }
     }
 
@@ -163,6 +174,114 @@ namespace OICNet.Tests
                         ResourceTypes = new List<string> {"oic.r.audio"},
                         Mute = false,
                         Volume = 75
+                    });
+            }
+        }
+
+        public static IEnumerable DeserialiseArrayTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(
+                        Encoding.UTF8.GetBytes(
+                            @"[{""rt"": [""oic.wk.res""],""di"": ""0685B960-736F-46F7-BEC0-9E6CBD61ADC1"",""links"":[{""href"": ""/res"",""rel"": ""self"",""rt"": [""oic.r.collection""],""if"": [""oic.if.ll""]},{""href"": ""/smartDevice"",""rel"": ""contained"",""rt"": [""oic.d.smartDevice""],""if"": [""oic.if.a""]}]},{""rt"": [""oic.wk.res""],""di"": ""0685B960-736F-46F7-BEC0-9E6CBD61ADC1"",""links"":[{""href"": ""/res"",""rel"": ""self"",""rt"": [""oic.r.collection""],""if"": [""oic.if.ll""]},{""href"": ""/smartDevice"",""rel"": ""contained"",""rt"": [""oic.d.smartDevice""],""if"": [""oic.if.a""]}]}]"),
+                        OicMessageContentType.ApplicationJson)
+                    .Returns(new List<IOicResource>
+                    {
+                        new OicResource.DiscoverableResources
+                        {
+                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                            Links = new List<OicResource.Link>
+                            {
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/res", UriKind.Relative),
+                                    Rel = "self",
+                                    ResourceTypes = new List<string> {"oic.r.collection"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                },
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/smartDevice", UriKind.Relative),
+                                    Rel = "contained",
+                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                }
+                            }
+                        },
+                        new OicResource.DiscoverableResources
+                        {
+                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                            Links = new List<OicResource.Link>
+                            {
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/res", UriKind.Relative),
+                                    Rel = "self",
+                                    ResourceTypes = new List<string> {"oic.r.collection"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                },
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/smartDevice", UriKind.Relative),
+                                    Rel = "contained",
+                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                }
+                            }
+                        }
+                    });
+                yield return new TestCaseData(
+                        new byte[]{ 0x82, 0xA3, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x77, 0x6B, 0x2E, 0x72, 0x65, 0x73, 0x62, 0x64, 0x69, 0x78, 0x24, 0x30, 0x36, 0x38, 0x35, 0x42, 0x39, 0x36, 0x30, 0x2D, 0x37, 0x33, 0x36, 0x46, 0x2D, 0x34, 0x36, 0x46, 0x37, 0x2D, 0x42, 0x45, 0x43, 0x30, 0x2D, 0x39, 0x45, 0x36, 0x43, 0x42, 0x44, 0x36, 0x31, 0x41, 0x44, 0x43, 0x31, 0x65, 0x6C, 0x69, 0x6E, 0x6B, 0x73, 0x82, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x64, 0x2F, 0x72, 0x65, 0x73, 0x63, 0x72, 0x65, 0x6C, 0x64, 0x73, 0x65, 0x6C, 0x66, 0x62, 0x72, 0x74, 0x81, 0x70, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x63, 0x6F, 0x6C, 0x6C, 0x65, 0x63, 0x74, 0x69, 0x6F, 0x6E, 0x62, 0x69, 0x66, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x6C, 0x6C, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x6C, 0x2F, 0x73, 0x6D, 0x61, 0x72, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x63, 0x72, 0x65, 0x6C, 0x69, 0x63, 0x6F, 0x6E, 0x74, 0x61, 0x69, 0x6E, 0x65, 0x64, 0x62, 0x72, 0x74, 0x81, 0x71, 0x6F, 0x69, 0x63, 0x2E, 0x64, 0x2E, 0x73, 0x6D, 0x61, 0x72, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x62, 0x69, 0x66, 0x81, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x61, 0xA3, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x77, 0x6B, 0x2E, 0x72, 0x65, 0x73, 0x62, 0x64, 0x69, 0x78, 0x24, 0x30, 0x36, 0x38, 0x35, 0x42, 0x39, 0x36, 0x30, 0x2D, 0x37, 0x33, 0x36, 0x46, 0x2D, 0x34, 0x36, 0x46, 0x37, 0x2D, 0x42, 0x45, 0x43, 0x30, 0x2D, 0x39, 0x45, 0x36, 0x43, 0x42, 0x44, 0x36, 0x31, 0x41, 0x44, 0x43, 0x31, 0x65, 0x6C, 0x69, 0x6E, 0x6B, 0x73, 0x82, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x64, 0x2F, 0x72, 0x65, 0x73, 0x63, 0x72, 0x65, 0x6C, 0x64, 0x73, 0x65, 0x6C, 0x66, 0x62, 0x72, 0x74, 0x81, 0x70, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x63, 0x6F, 0x6C, 0x6C, 0x65, 0x63, 0x74, 0x69, 0x6F, 0x6E, 0x62, 0x69, 0x66, 0x81, 0x69, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x6C, 0x6C, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x6C, 0x2F, 0x73, 0x6D, 0x61, 0x72, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x63, 0x72, 0x65, 0x6C, 0x69, 0x63, 0x6F, 0x6E, 0x74, 0x61, 0x69, 0x6E, 0x65, 0x64, 0x62, 0x72, 0x74, 0x81, 0x71, 0x6F, 0x69, 0x63, 0x2E, 0x64, 0x2E, 0x73, 0x6D, 0x61, 0x72, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x62, 0x69, 0x66, 0x81, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x61 },
+                        OicMessageContentType.ApplicationCbor)
+                    .Returns(new List<IOicResource>
+                    {
+                        new OicResource.DiscoverableResources
+                        {
+                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                            Links = new List<OicResource.Link>
+                            {
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/res", UriKind.Relative),
+                                    Rel = "self",
+                                    ResourceTypes = new List<string> {"oic.r.collection"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                },
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/smartDevice", UriKind.Relative),
+                                    Rel = "contained",
+                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                }
+                            }
+                        },
+                        new OicResource.DiscoverableResources
+                        {
+                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                            Links = new List<OicResource.Link>
+                            {
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/res", UriKind.Relative),
+                                    Rel = "self",
+                                    ResourceTypes = new List<string> {"oic.r.collection"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                },
+                                new OicResource.Link
+                                {
+                                    Href = new Uri("/smartDevice", UriKind.Relative),
+                                    Rel = "contained",
+                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
+                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                }
+                            }
+                        }
                     });
             }
         }

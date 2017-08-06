@@ -6,6 +6,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Cbor;
+using Newtonsoft.Json.Cbor.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace OICNet
@@ -29,41 +30,40 @@ namespace OICNet
 
         /// <summary>
         /// Deserialses a OIC message into a object based on the message's resource-type ("rt") property
-        /// 
         /// Todo: Support multiple resource types some how... Currently only supports the first resource type, any subsequent types are ignored.
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="contentType"></param>
         /// <returns></returns>
-        public IOicResource Deserialise(byte[] message, OicMessageContentType contentType)
+        public IEnumerable<IOicResource> Deserialise(byte[] message, OicMessageContentType contentType)
         {
-            var serialiser = new JsonSerializer();
             var stream = new MemoryStream(message);
-            OicCoreResource coreResource;
-            Type type;
+            JToken token;
+
             switch (contentType)
             {
                 case OicMessageContentType.ApplicationJson:
-                {
-                    coreResource =
-                        serialiser.Deserialize<OicCoreResource>(new JsonTextReader(new StreamReader(stream)));
-                    type = _resolver.GetResourseType(coreResource.ResourceTypes.FirstOrDefault());
-
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return (IOicResource)serialiser.Deserialize(new JsonTextReader(new StreamReader(stream)), type);
-                }
+                    token = JToken.ReadFrom(new JsonTextReader(new StreamReader(stream)));
+                    break;
                 case OicMessageContentType.ApplicationCbor:
-                {
-                    coreResource = serialiser.Deserialize<OicCoreResource>(new CborDataReader(stream));
-                    type = _resolver.GetResourseType(coreResource.ResourceTypes.FirstOrDefault());
-
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return (IOicResource)serialiser.Deserialize(new CborDataReader(stream), type);
-                }
+                    token = JToken.ReadFrom(new CborDataReader(stream));
+                    break;
                 default:
                     throw new NotImplementedException();
             }
+            if (token.Type == JTokenType.Array)
+                token = token.First;
+            while (token != null)
+            {
+                var rt = (string) token["rt"].FirstOrDefault();
+                var type = _resolver.GetResourseType(rt);
+                yield return (IOicResource) token.ToObject(type);
+
+                token = token.Next;
+            }
         }
 
+        //Todo: support serialising multiple IOicResouces in an array/list
         public byte[] Serialise(IOicResource resource, OicMessageContentType contentType)
         {
             var writer = new MemoryStream();

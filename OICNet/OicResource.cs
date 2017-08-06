@@ -94,7 +94,7 @@ namespace OICNet
         [MinLength(1), StringLength(64)]
         public List<string> ResourceTypes { get; set; }
 
-        [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter)), JsonRequired()]
+        [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public List<OicResourceInterface> Interfaces { get; set; }
 
         [JsonProperty("n", NullValueHandling=NullValueHandling.Ignore)]
@@ -105,6 +105,7 @@ namespace OICNet
 
         #endregion
 
+
         internal OicCoreResource(OicDevice device)
         {
             Device = device;
@@ -114,6 +115,8 @@ namespace OICNet
         {
             
         }
+
+        public virtual bool ShouldSerializeInterfaces() { return true; }
 
         public override bool Equals(object obj)
         {
