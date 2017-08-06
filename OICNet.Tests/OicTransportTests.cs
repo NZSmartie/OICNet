@@ -26,9 +26,9 @@ namespace OICNet.Tests
         [Test]
         public void BroadcastAllInterfaces()
         {
-            var service = new OicClient();
+            var service = new OicDiscoverService();
 
-            service.AddBroadcastInterface(_broadcaster.Object);
+            service.AddInterface(_broadcaster.Object);
             service.Discover();
 
             Mock.VerifyAll(_broadcaster);
