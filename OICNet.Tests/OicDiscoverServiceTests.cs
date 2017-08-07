@@ -43,9 +43,14 @@ namespace OICNet.Tests
 
             bool newDeviceCallbackInvoked = false;
             var service = new OicResourceDiscoverClient();
+            OicDevice actualDevice = null;
 
             service.AddInterface(mockInterface.Object);
-            service.NewDevice += (s, e) => newDeviceCallbackInvoked = true;
+            service.NewDevice += (s, e) =>
+            {
+                newDeviceCallbackInvoked = true;
+                actualDevice = e.Device;
+            };
 
             // Act
             mockInterface.Raise(i => i.ReceivedMessage += null, new OicReceivedMessageEventArgs
@@ -61,6 +66,40 @@ namespace OICNet.Tests
 
             // Assert
             Assert.IsTrue(newDeviceCallbackInvoked, $"{typeof(OicResourceDiscoverClient)}.{nameof(service.NewDevice)} was not invoked");
+
+            var expectedDevice = new OicDevice(null, null)
+            {
+                DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                Resources = new List<IOicResource>
+                {
+                    new CoreResources.OicDevice
+                    {
+                        RelativeUri = "/oid/d",
+                        ResourceTypes = new List<string>{"oic.d.light", "oic.wk.d"},
+                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                    },
+                    new CoreResources.OicPlatform
+                    {
+                        RelativeUri = "/oid/p",
+                        ResourceTypes = new List<string>{"oic.wk.p"},
+                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                    },
+                    new ResourceTypes.SwitchBinary
+                    {
+                        RelativeUri = "/switch",
+                        ResourceTypes = new List<string>{"oic.r.switch.binary"},
+                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                    },
+                    new ResourceTypes.LightBrightness
+                    {
+                        RelativeUri = "/brightness",
+                        ResourceTypes = new List<string>{"oic.r.light.brightness"},
+                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                    }
+                }
+            };
+            Assert.AreEqual(expectedDevice.DeviceId, actualDevice.DeviceId);
+            Assert.AreEqual(expectedDevice.Resources, actualDevice.Resources);
         }
     }
 }

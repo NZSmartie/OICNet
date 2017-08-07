@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using Newtonsoft.Json;
+using OICNet.Utilities;
 
 namespace OICNet.CoreResources
 {
     [OicResourceType("oic.wk.d")]
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class OicDevice : OicCoreResource
     {
         public override bool ShouldSerializeInterfaces() { return false; }
@@ -63,6 +66,30 @@ namespace OICNet.CoreResources
         public Guid PlatformId { get; set; }
         //}
 
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicDevice;
+            if (other == null)
+                return false;
+            if (DeviceId != other.DeviceId)
+                return false;
+            if (ServerVersion != other.ServerVersion)
+                return false;
+            if (SpecVersions != other.SpecVersions)
+                return false;
+            if (!LocalisedDescriptions.NullRespectingSequenceEqual(other.LocalisedDescriptions))
+                return false;
+            if (SoftwareVersion != other.SoftwareVersion)
+                return false;
+            if (!ManufacturerName.NullRespectingSequenceEqual(other.ManufacturerName))
+                return false;
+            if (Model != other.Model)
+                return false;
+            if (PlatformId != other.PlatformId)
+                return false;
+            return true;
+        }
 
         #region Todo: Create sub-classes of the enclosed JSON schema
         //[
@@ -349,6 +376,7 @@ namespace OICNet.CoreResources
 
         #endregion
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
     public class LocalisedDescription
     {
@@ -364,5 +392,24 @@ namespace OICNet.CoreResources
         /// </summary>
         [JsonProperty("value"), MaxLength(64)]
         public string Description { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as LocalisedDescription;
+            if (other == null)
+                return false;
+            if (Culture != other.Culture)
+                return false;
+            if (Description!= other.Description)
+                return false;
+            return true;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return typeof(LocalisedDescription).GetHashCode();
+        }
     }
 }

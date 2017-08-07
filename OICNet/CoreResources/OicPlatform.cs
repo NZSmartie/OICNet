@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 namespace OICNet.CoreResources
 {
     [OicResourceType("oic.wk.p")]
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class OicPlatform : OicCoreResource
     {
         public override bool ShouldSerializeInterfaces() { return false; }
@@ -58,13 +59,13 @@ namespace OICNet.CoreResources
         /// Platform Resident OS Version
         /// </summary>
         [JsonProperty("mnos", NullValueHandling = NullValueHandling.Ignore, Required = Required.DisallowNull), MaxLength(64)]
-        public string PlatformOperatingSystemVersion { get; set; }
+        public string OperatingSystemVersion { get; set; }
 
         /// <summary>
         /// Platform Hardware Version
         /// </summary>
         [JsonProperty("mnhw", NullValueHandling = NullValueHandling.Ignore, Required = Required.DisallowNull), MaxLength(64)]
-        public string PlatformHardwareVersion { get; set; }
+        public string HardwareVersion { get; set; }
 
         /// <summary>
         /// Manufacturer's firmware version
@@ -89,5 +90,39 @@ namespace OICNet.CoreResources
         /// </summary>
         [JsonProperty("vid", NullValueHandling = NullValueHandling.Ignore, Required = Required.DisallowNull), MaxLength(64)]
         public string VendorId { get; set; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            var other = obj as OicPlatform;
+            if (other == null)
+                return false;
+            if(PlatformId != other.PlatformId)
+                return false;
+            if (ManufacturerName != other.ManufacturerName)
+                return false;
+            if (ManufacturerUrl != other.ManufacturerUrl)
+                return false;
+            if (ModelNumber != other.ModelNumber)
+                return false;
+            if (ManufacturingDate != other.ManufacturingDate)
+                return false;
+            if (PlatformVersion != other.PlatformVersion)
+                return false;
+            if (OperatingSystemVersion != other.OperatingSystemVersion)
+                return false;
+            if (HardwareVersion != other.HardwareVersion)
+                return false;
+            if (FirmwareVersion != other.FirmwareVersion)
+                return false;
+            if (SupportURL != other.SupportURL)
+                return false;
+            if (CurrentTime != other.CurrentTime)
+                return false;
+            if (VendorId != other.VendorId)
+                return false;
+            return true;
+        }
     }
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 }
