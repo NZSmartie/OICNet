@@ -1,4 +1,4 @@
-# OICNet [![Build Status](https://nzsmartie.visualstudio.com/_apis/public/build/definitions/47411984-aff3-4bd4-b530-cd3d59876ef2/1/badge)]() [![NuGet version](https://badge.fury.io/nu/NZSmartie.OICNet.svg)](https://www.nuget.org/packages/NZSmartie.OICNet/)
+# OICNet [![Travis CI Build Status](https://travis-ci.org/NZSmartie/OICNet.svg?branch=master)](https://travis-ci.org/NZSmartie/OICNet) [![Visual Studio Online Build Status](https://nzsmartie.visualstudio.com/_apis/public/build/definitions/47411984-aff3-4bd4-b530-cd3d59876ef2/1/badge)]() [![NuGet version](https://badge.fury.io/nu/NZSmartie.OICNet.svg)](https://www.nuget.org/packages/NZSmartie.OICNet/)
 
 A clean and portable library to allow C# developers to discover and access recourses on devices supporting OpenConenctivity's (OCF) OpenInterConnect (OIC) Specification.
 
