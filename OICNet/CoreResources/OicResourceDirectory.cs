@@ -7,15 +7,18 @@ using System.Text;
 using Newtonsoft.Json;
 using OICNet.ResourceTypes;
 
-namespace OICNet.OicResource
+namespace OICNet.CoreResources
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     [OicResourceType("oic.wk.res")]
-    public class DiscoverableResources : OicCoreResource
+    public class OicResourceDirectory : OicCoreResource
     {
-        // Hack to get around required "if" property in base-class
+        // "Hack" to get around required "if" property in base-class
         public override bool ShouldSerializeInterfaces() { return false; }
 
+        /// <summary>
+        /// Unique identifier for device (UUID) as indicated by the /oic/d resource of the device
+        /// </summary>
         [JsonProperty("di", Required = Required.Always, Order = 10)]
         public Guid DeviceId { get; set; }
 
@@ -26,11 +29,11 @@ namespace OICNet.OicResource
         public string MessagingProtocols { get; set; }
 
         [JsonProperty("links", Required = Required.Always, Order = 11)]
-        public List<Link> Links { get; set; }
+        public List<OicResourceLink> Links { get; set; }
 
         public override bool Equals(object obj)
         {
-            var other = obj as DiscoverableResources;
+            var other = obj as OicResourceDirectory;
             if (other == null)
                 return false;
             if (!base.Equals(obj))

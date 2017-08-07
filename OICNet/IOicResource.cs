@@ -5,17 +5,17 @@ namespace OICNet
 {
     public interface IOicResource
     {
-        OicDevice Device { get; }
+        OicDevice Device { get; set; }
 
-        string RelativeUri { get; }
+        string RelativeUri { get; set; }
 
-        string Id { get; }
+        string Id { get; set; }
 
-        List<OicResourceInterface> Interfaces { get; }
+        List<OicResourceInterface> Interfaces { get; set; }
 
-        string Name { get; }
+        string Name { get; set; }
 
-        List<string> ResourceTypes { get; }
+        List<string> ResourceTypes { get; set; }
 
         Task CreateAsync(IOicResource resource);
 

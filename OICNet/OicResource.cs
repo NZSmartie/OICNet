@@ -82,23 +82,29 @@ namespace OICNet
 
 
         [JsonIgnore]
-        public OicDevice Device { get; }
+        public OicDevice Device { get; set; }
 
         [JsonIgnore]
         public string RelativeUri { get; set; }
 
-        
+
         #region Serialised Properties
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
         public List<string> ResourceTypes { get; set; }
 
+        public virtual bool ShouldSerializeInterfaces() { return true; }
+
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public List<OicResourceInterface> Interfaces { get; set; }
 
+        public virtual bool ShouldSerializeName() { return true; }
+
         [JsonProperty("n", NullValueHandling=NullValueHandling.Ignore)]
         public string Name { get; set; }
+
+        public virtual bool ShouldSerializeId() { return true; }
 
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
@@ -115,8 +121,6 @@ namespace OICNet
         {
             
         }
-
-        public virtual bool ShouldSerializeInterfaces() { return true; }
 
         public override bool Equals(object obj)
         {

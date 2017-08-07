@@ -21,16 +21,15 @@ namespace OICNet
 
     public class OicMessageSerialiser
     {
-        IResourceTypeResolver _resolver;
+        private readonly ResourceTypeResolver _resolver;
 
-        public OicMessageSerialiser(IResourceTypeResolver resolver)
+        public OicMessageSerialiser(ResourceTypeResolver resolver)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         }
 
         /// <summary>
         /// Deserialses a OIC message into a object based on the message's resource-type ("rt") property
-        /// Todo: Support multiple resource types some how... Currently only supports the first resource type, any subsequent types are ignored.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="contentType"></param>
@@ -49,14 +48,15 @@ namespace OICNet
                     token = JToken.ReadFrom(new CborDataReader(stream));
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"Unsupported deserialisation of {contentType}");
             }
             if (token.Type == JTokenType.Array)
                 token = token.First;
             while (token != null)
             {
-                var rt = (string) token["rt"].FirstOrDefault();
-                var type = _resolver.GetResourseType(rt);
+                var rt = token["rt"].Select(t => (string)t);
+                if(!_resolver.TryGetResourseType(rt, out var type))
+                    throw new NotImplementedException($"Unknow resource types {token["rt"].ToString()} are not supported."); //Todo: fail gracefully instead of hard faulting while deserialising.
                 yield return (IOicResource) token.ToObject(type);
 
                 token = token.Next;
@@ -64,6 +64,7 @@ namespace OICNet
         }
 
         //Todo: support serialising multiple IOicResouces in an array/list
+        //Todo: Enumerate all base calsses, extracting out their ResourceType to generate a "fall-back" array for the "rt" property
         public byte[] Serialise(IOicResource resource, OicMessageContentType contentType)
         {
             var writer = new MemoryStream();

@@ -11,16 +11,19 @@ namespace OICNet.Tests
     [TestFixture]
     public class OicMessageSerialiserTests
     {
-        private static IResourceTypeResolver _resolver;
+        private static ResourceTypeResolver _resolver;
 
         [SetUp]
         public static void Setup()
         {
-            var mockResolver = new Mock<IResourceTypeResolver>();
+            var mockResolver = new Mock<ResourceTypeResolver> {CallBase = true};
 
-            mockResolver.Setup(c => c.GetResourseType("oic.r.core")).Returns(typeof(OicCoreResource));
-            mockResolver.Setup(c => c.GetResourseType("oic.r.audio")).Returns(typeof(ResourceTypes.Audio));
-            mockResolver.Setup(c => c.GetResourseType("oic.wk.res")).Returns(typeof(OicResource.DiscoverableResources));
+            var type = typeof(OicCoreResource);
+            mockResolver.Setup(c => c.TryGetResourseType("oic.r.core", out type)).Returns(true);
+            type = typeof(ResourceTypes.Audio);
+            mockResolver.Setup(c => c.TryGetResourseType("oic.r.audio", out type)).Returns(true);
+            type = typeof(CoreResources.OicResourceDirectory);
+            mockResolver.Setup(c => c.TryGetResourseType("oic.wk.res", out type)).Returns(true);
 
             _resolver = mockResolver.Object;
         }
@@ -188,20 +191,20 @@ namespace OICNet.Tests
                         OicMessageContentType.ApplicationJson)
                     .Returns(new List<IOicResource>
                     {
-                        new OicResource.DiscoverableResources
+                        new CoreResources.OicResourceDirectory
                         {
                             ResourceTypes = new List<string> {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
-                            Links = new List<OicResource.Link>
+                            Links = new List<CoreResources.OicResourceLink>
                             {
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
                                     ResourceTypes = new List<string> {"oic.r.collection"},
                                     Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
                                 },
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
@@ -210,20 +213,20 @@ namespace OICNet.Tests
                                 }
                             }
                         },
-                        new OicResource.DiscoverableResources
+                        new CoreResources.OicResourceDirectory
                         {
                             ResourceTypes = new List<string> {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
-                            Links = new List<OicResource.Link>
+                            Links = new List<CoreResources.OicResourceLink>
                             {
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
                                     ResourceTypes = new List<string> {"oic.r.collection"},
                                     Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
                                 },
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
@@ -238,20 +241,20 @@ namespace OICNet.Tests
                         OicMessageContentType.ApplicationCbor)
                     .Returns(new List<IOicResource>
                     {
-                        new OicResource.DiscoverableResources
+                        new CoreResources.OicResourceDirectory
                         {
                             ResourceTypes = new List<string> {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
-                            Links = new List<OicResource.Link>
+                            Links = new List<CoreResources.OicResourceLink>
                             {
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
                                     ResourceTypes = new List<string> {"oic.r.collection"},
                                     Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
                                 },
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
@@ -260,20 +263,20 @@ namespace OICNet.Tests
                                 }
                             }
                         },
-                        new OicResource.DiscoverableResources
+                        new CoreResources.OicResourceDirectory
                         {
                             ResourceTypes = new List<string> {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
-                            Links = new List<OicResource.Link>
+                            Links = new List<CoreResources.OicResourceLink>
                             {
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
                                     ResourceTypes = new List<string> {"oic.r.collection"},
                                     Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
                                 },
-                                new OicResource.Link
+                                new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",

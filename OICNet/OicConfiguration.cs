@@ -3,12 +3,25 @@
     public class OicConfiguration
     {
         public OicMessageSerialiser Serialiser { get; set; }
+        public OicResolver Resolver { get; set; }
 
         private static OicConfiguration _default;
 
-        public static OicConfiguration Default => _default ?? (_default = new OicConfiguration
+        public static OicConfiguration Default
         {
-            Serialiser = new OicMessageSerialiser(new OicResolver())
-        });
+            get
+            {
+                if(_default!= null)
+                    return _default;
+
+                _default = new OicConfiguration
+                {
+                    Resolver = new OicResolver()
+                };
+                _default.Serialiser = new OicMessageSerialiser(_default.Resolver);
+
+                return _default;
+            }
+        }
     }
 }

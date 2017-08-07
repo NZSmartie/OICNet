@@ -8,19 +8,32 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OICNet;
 
-namespace OICNet.OicResource
+namespace OICNet.CoreResources
 {
+    [Flags]
+    public enum LinkPolicyFlags : byte
+    {
+        /// <summary>
+        /// The discoverable rule defines whether the <see cref="OicResourceLink"/> is to be included in the Resource discovery message via /oic/res.
+        /// </summary>
+        Discoverable = 0x01,
+        /// <summary>
+        /// The observable rule defines whether the Resource referenced by the target URI supports the NOTIFY operation.
+        /// </summary>
+        Observable = 0x02
+    }
+
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class Link
+    public class OicResourceLink
     {
         public class LinkPolicies
         {
             /// <summary>
-            /// Specifies the framework policies on the Resource referenced by the target URI for e.g. observable and discoverable
+            /// Specifies the framework policies on the Resource referenced by the target URI
             /// </summary>
             // Todo: Create a flag enum
             [JsonProperty("bm", Required = Required.Always)]
-            public int Policies { get; set; }
+            public LinkPolicyFlags Policies { get; set; }
 
             /// <summary>
             /// Specifies if security needs to be turned on when looking to interact with the Resource
@@ -83,7 +96,7 @@ namespace OICNet.OicResource
         public LinkPolicies Policies { get; set; }
         
         /// <summary>
-        /// Batch Parameters: URI parameters to use with an <see cref="OicResourceInterface.Batch"/> batch request using this link
+        /// URI parameters to use with an <see cref="OicResourceInterface.Batch"/> batch request using this <see cref="OicResourceLink"/>
         /// </summary>
         [JsonProperty("bp", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string BatchParameters { get; set; }
@@ -118,7 +131,7 @@ namespace OICNet.OicResource
 
         public override bool Equals(object obj)
         {
-            var other = obj as Link;
+            var other = obj as OicResourceLink;
             if (other == null)
                 return false;
             //if (!base.Equals(obj))
@@ -149,6 +162,20 @@ namespace OICNet.OicResource
                 return false;
 
             return true;
+        }
+
+        public IOicResource CreateResource(OicResolver resolver)
+        {
+            if (!resolver.TryGetResourseType(ResourceTypes, out var type))
+                throw new NotImplementedException($"Unsupported resource types [\"{string.Join("\", ", ResourceTypes)}\"]");
+            var resource = (IOicResource)Activator.CreateInstance(type);
+
+            resource.Name = Title;
+            resource.RelativeUri = Href.OriginalString; // Todo: Figure out how to get the relative path from a Resource Link and not assume OriginalString will always work
+            resource.ResourceTypes = new List<string>(ResourceTypes);
+            resource.Interfaces = new List<OicResourceInterface>(Interfaces);
+
+            return resource;
         }
     }
 }

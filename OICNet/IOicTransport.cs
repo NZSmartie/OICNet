@@ -31,10 +31,9 @@ namespace OICNet
         // ummm...?
     }
 
-    // TODO: create Request/Response sub-classes?
     public class OicMessage
     {
-        public string Uri { get; set; }
+        public Uri Uri { get; set; }
 
         public byte[] Payload { get; set; }
     }

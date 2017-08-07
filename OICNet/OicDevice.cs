@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,8 @@ namespace OICNet
     public class OicDevice
     {
         public string Name { get; set; }
+
+        public Guid DeviceId { get; set; }
 
         public List<IOicResource> Resources { get; set; }
 
@@ -37,11 +40,12 @@ namespace OICNet
             RemoteEndpoint = remoteEndpoint;
         }
 
-        internal void PassMessage(OicResponse response)
+        internal void UpdateResourceInternal(IOicResource resource)
         {
-            //var resource = _configuration.Serialiser.Deserialise(response.Payload, response.ContentType);
-            //if(response.Uri.Equals("/oic/res",StringComparison.OrdinalIgnoreCase))
-            //    resource.
+            switch (resource)
+            {
+                    
+            }
         }
     }
 }
