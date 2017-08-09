@@ -81,31 +81,30 @@ namespace OICNet.Tests
             var expectedDevice = new OicDevice(null)
             {
                 DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
-                Resources = new List<IOicResource>
-                {
+                Resources = {
                     new CoreResources.OicDevice
                     {
                         RelativeUri = "/oid/d",
-                        ResourceTypes = new List<string>{"oic.d.light", "oic.wk.d"},
-                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.d.light", "oic.wk.d"},
+                        Interfaces = {OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
                     },
                     new CoreResources.OicPlatform
                     {
                         RelativeUri = "/oid/p",
-                        ResourceTypes = new List<string>{"oic.wk.p"},
-                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.wk.p"},
+                        Interfaces = {OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
                     },
                     new ResourceTypes.SwitchBinary
                     {
                         RelativeUri = "/switch",
-                        ResourceTypes = new List<string>{"oic.r.switch.binary"},
-                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.r.switch.binary"},
+                        Interfaces = {OicResourceInterface.Actuator, OicResourceInterface.Baseline},
                     },
                     new ResourceTypes.LightBrightness
                     {
                         RelativeUri = "/brightness",
-                        ResourceTypes = new List<string>{"oic.r.light.brightness"},
-                        Interfaces = new List<OicResourceInterface>{OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.r.light.brightness"},
+                        Interfaces = {OicResourceInterface.Actuator, OicResourceInterface.Baseline},
                     }
                 }
             };

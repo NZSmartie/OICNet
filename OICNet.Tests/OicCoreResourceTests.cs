@@ -81,8 +81,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.r.foo"},
+                        Interfaces = {OicResourceInterface.Baseline},
                         Value = 0.5f,
                         Range = new List<float> {0.0f, 1.0f}
                     });
@@ -101,8 +101,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.foo"},
+                        Interfaces = {OicResourceInterface.Baseline},
                         Value = 50,
                         Range = new List<int> {0, 100}
                     });
@@ -119,8 +119,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.r.foo"},
+                        Interfaces = {OicResourceInterface.Baseline},
                         Value = "Test String"
                     });
 
@@ -134,12 +134,11 @@ namespace OICNet.Tests
                 {
                     Id = "test",
                     Name = "Test Asset",
-                    ResourceTypes = new List<string>
+                    ResourceTypes = 
                     {
                         "oic.r.test"
                     },
-                    Interfaces = new List<OicResourceInterface>
-                    {
+                    Interfaces = {
                         OicResourceInterface.Baseline
                     }
                 });
@@ -154,8 +153,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces = {OicResourceInterface.Baseline},
                     Value = 0.5f,
                     Range = new List<float> {0.0f, 1.0f}
                 }).Returns(new byte[]
@@ -170,8 +169,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces = {OicResourceInterface.Baseline},
                     Value = 50,
                     Range = new List<int> {0, 100}
                 }).Returns(new byte[]
@@ -187,8 +186,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces = {OicResourceInterface.Baseline},
                     Value = "Test String"
                 }).Returns(new byte[]
                 {
@@ -203,11 +202,11 @@ namespace OICNet.Tests
                 {
                     Id = "test",
                     Name = "Test Asset",
-                    ResourceTypes = new List<string>
+                    ResourceTypes = 
                     {
                         "oic.r.test"
                     },
-                    Interfaces = new List<OicResourceInterface>
+                    Interfaces =
                     {
                         OicResourceInterface.Baseline
                     }
@@ -229,8 +228,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface>
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces =
                     {
                         OicResourceInterface.Baseline
                     },
@@ -243,8 +242,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces = {OicResourceInterface.Baseline},
                     Value = 50,
                     Range = new List<int> {0, 100}
                 }).Returns(
@@ -254,8 +253,8 @@ namespace OICNet.Tests
                 {
                     Id = "foo",
                     Name = "Foo",
-                    ResourceTypes = new List<string> {"oic.r.foo"},
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.foo"},
+                    Interfaces = {OicResourceInterface.Baseline},
                     Value = "Test String"
                 }).Returns(
                     "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":\"Test String\"}");
@@ -264,11 +263,11 @@ namespace OICNet.Tests
                 {
                     Id = "test",
                     Name = "Test Asset",
-                    ResourceTypes = new List<string>
+                    ResourceTypes = 
                     {
                         "oic.r.test"
                     },
-                    Interfaces = new List<OicResourceInterface>
+                    Interfaces =
                     {
                         OicResourceInterface.Baseline
                     }
@@ -288,8 +287,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface>
+                        ResourceTypes =  {"oic.r.foo"},
+                        Interfaces =
                         {
                             OicResourceInterface.Baseline
                         },
@@ -304,8 +303,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.foo"},
+                        Interfaces = {OicResourceInterface.Baseline},
                         Value = 50,
                         Range = new List<int> {0, 100}
                     });
@@ -317,8 +316,8 @@ namespace OICNet.Tests
                     {
                         Id = "foo",
                         Name = "Foo",
-                        ResourceTypes = new List<string> {"oic.r.foo"},
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.foo"},
+                        Interfaces = {OicResourceInterface.Baseline},
                         Value = "Test String"
                     });
 
@@ -329,11 +328,11 @@ namespace OICNet.Tests
                     {
                         Id = "test",
                         Name = "Test Asset",
-                        ResourceTypes = new List<string>
+                        ResourceTypes = 
                         {
                             "oic.r.test"
                         },
-                        Interfaces = new List<OicResourceInterface>
+                        Interfaces =
                         {
                             OicResourceInterface.Baseline
                         }

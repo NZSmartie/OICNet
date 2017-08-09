@@ -92,12 +92,12 @@ namespace OICNet
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
-        public List<string> ResourceTypes { get; set; }
+        public List<string> ResourceTypes { get; } = new List<string>();
 
         public virtual bool ShouldSerializeInterfaces() { return true; }
 
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public List<OicResourceInterface> Interfaces { get; set; }
+        public List<OicResourceInterface> Interfaces { get; } = new List<OicResourceInterface>();
 
         public virtual bool ShouldSerializeName() { return true; }
 

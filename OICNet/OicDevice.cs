@@ -19,7 +19,7 @@ namespace OICNet
 
         public Guid DeviceId { get; set; }
 
-        public List<IOicResource> Resources { get; set; }
+        public List<IOicResource> Resources { get; } = new List<IOicResource>();
 
         public IOicEndpoint Endpoint { get; }
 

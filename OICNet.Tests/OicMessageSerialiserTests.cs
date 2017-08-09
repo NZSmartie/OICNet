@@ -65,8 +65,8 @@ namespace OICNet.Tests
                 {
                     Name = "Test",
                     Id = "test",
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                    ResourceTypes = new List<string> {"oic.r.core"}
+                    Interfaces =  {OicResourceInterface.Baseline},
+                    ResourceTypes =  {"oic.r.core"}
                 }, OicMessageContentType.ApplicationJson).Returns(Encoding.UTF8.GetBytes(
                     "{\"rt\":[\"oic.r.core\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test\",\"id\":\"test\"}"));
 
@@ -74,8 +74,8 @@ namespace OICNet.Tests
                     {
                         Name = "AudioTest",
                         Id = "audio-test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.audio"},
+                        Interfaces = {OicResourceInterface.Baseline},
+                        ResourceTypes = {"oic.r.audio"},
                         Mute = false,
                         Volume = 75
                     }, OicMessageContentType.ApplicationJson)
@@ -86,8 +86,8 @@ namespace OICNet.Tests
                 {
                     Name = "Test",
                     Id = "test",
-                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                    ResourceTypes = new List<string> {"oic.r.core"}
+                    Interfaces = {OicResourceInterface.Baseline},
+                    ResourceTypes = {"oic.r.core"}
                 }, OicMessageContentType.ApplicationCbor).Returns(new byte[]
                 {
                     0xA4, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x63, 0x6F, 0x72, 0x65,
@@ -100,8 +100,8 @@ namespace OICNet.Tests
                     {
                         Name = "AudioTest",
                         Id = "audio-test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.audio"},
+                        Interfaces =  {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.audio"},
                         Mute = false,
                         Volume = 75
                     }, OicMessageContentType.ApplicationCbor)
@@ -128,8 +128,8 @@ namespace OICNet.Tests
                     {
                         Name = "Test",
                         Id = "test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.core"}
+                        Interfaces =  {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.core"}
                     });
 
                 yield return new TestCaseData(new byte[]
@@ -143,8 +143,8 @@ namespace OICNet.Tests
                     {
                         Name = "Test",
                         Id = "test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.core"}
+                        Interfaces =  {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.core"}
                     });
 
                 yield return new TestCaseData(
@@ -155,8 +155,8 @@ namespace OICNet.Tests
                     {
                         Name = "AudioTest",
                         Id = "audio-test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.audio"},
+                        Interfaces =  {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.audio"},
                         Mute = false,
                         Volume = 75
                     });
@@ -173,8 +173,8 @@ namespace OICNet.Tests
                     {
                         Name = "AudioTest",
                         Id = "audio-test",
-                        Interfaces = new List<OicResourceInterface> {OicResourceInterface.Baseline},
-                        ResourceTypes = new List<string> {"oic.r.audio"},
+                        Interfaces =  {OicResourceInterface.Baseline},
+                        ResourceTypes =  {"oic.r.audio"},
                         Mute = false,
                         Volume = 75
                     });
@@ -193,7 +193,7 @@ namespace OICNet.Tests
                     {
                         new CoreResources.OicResourceDirectory
                         {
-                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            ResourceTypes =  {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                             Links = new List<CoreResources.OicResourceLink>
                             {
@@ -201,21 +201,21 @@ namespace OICNet.Tests
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
-                                    ResourceTypes = new List<string> {"oic.r.collection"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                    ResourceTypes =  {"oic.r.collection"},
+                                    Interfaces =  {OicResourceInterface.LinkLists},
                                 },
                                 new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
-                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                    ResourceTypes =  {"oic.d.smartDevice"},
+                                    Interfaces =  {OicResourceInterface.Actuator},
                                 }
                             }
                         },
                         new CoreResources.OicResourceDirectory
                         {
-                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            ResourceTypes =  {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                             Links = new List<CoreResources.OicResourceLink>
                             {
@@ -223,15 +223,15 @@ namespace OICNet.Tests
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
-                                    ResourceTypes = new List<string> {"oic.r.collection"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                    ResourceTypes =  {"oic.r.collection"},
+                                    Interfaces =  {OicResourceInterface.LinkLists},
                                 },
                                 new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
-                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                    ResourceTypes =  {"oic.d.smartDevice"},
+                                    Interfaces =  {OicResourceInterface.Actuator},
                                 }
                             }
                         }
@@ -243,7 +243,7 @@ namespace OICNet.Tests
                     {
                         new CoreResources.OicResourceDirectory
                         {
-                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            ResourceTypes =  {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                             Links = new List<CoreResources.OicResourceLink>
                             {
@@ -251,21 +251,21 @@ namespace OICNet.Tests
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
-                                    ResourceTypes = new List<string> {"oic.r.collection"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                    ResourceTypes =  {"oic.r.collection"},
+                                    Interfaces =  {OicResourceInterface.LinkLists},
                                 },
                                 new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
-                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                    ResourceTypes =  {"oic.d.smartDevice"},
+                                    Interfaces =  {OicResourceInterface.Actuator},
                                 }
                             }
                         },
                         new CoreResources.OicResourceDirectory
                         {
-                            ResourceTypes = new List<string> {"oic.wk.res"},
+                            ResourceTypes =  {"oic.wk.res"},
                             DeviceId = new Guid("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                             Links = new List<CoreResources.OicResourceLink>
                             {
@@ -273,15 +273,15 @@ namespace OICNet.Tests
                                 {
                                     Href = new Uri("/res", UriKind.Relative),
                                     Rel = "self",
-                                    ResourceTypes = new List<string> {"oic.r.collection"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.LinkLists},
+                                    ResourceTypes =  {"oic.r.collection"},
+                                    Interfaces =  {OicResourceInterface.LinkLists},
                                 },
                                 new CoreResources.OicResourceLink
                                 {
                                     Href = new Uri("/smartDevice", UriKind.Relative),
                                     Rel = "contained",
-                                    ResourceTypes = new List<string> {"oic.d.smartDevice"},
-                                    Interfaces = new List<OicResourceInterface> {OicResourceInterface.Actuator},
+                                    ResourceTypes =  {"oic.d.smartDevice"},
+                                    Interfaces =  {OicResourceInterface.Actuator},
                                 }
                             }
                         }

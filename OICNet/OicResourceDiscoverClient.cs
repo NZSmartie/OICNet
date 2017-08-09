@@ -64,10 +64,7 @@ namespace OICNet
 
                     device.Name = device.Name ?? directory.Name;
                     var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
-                    if(device.Resources == null)
-                        device.Resources = new List<IOicResource>(newResources) ;
-                    else 
-                        device.Resources.AddRange(newResources);
+                    device.Resources.AddRange(newResources);
                 }
                 else
                 {
