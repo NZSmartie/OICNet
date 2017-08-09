@@ -168,6 +168,9 @@ namespace OICNet.CoreResources
         {
             if (!resolver.TryGetResourseType(ResourceTypes, out var type))
                 throw new NotImplementedException($"Unsupported resource types [\"{string.Join("\", ", ResourceTypes)}\"]");
+            if(!Rel.Equals("hosts", StringComparison.OrdinalIgnoreCase))
+                throw new NotImplementedException($"Unsure how to implement rel = \"{Rel}\" at this stage.");
+
             var resource = (IOicResource)Activator.CreateInstance(type);
 
             resource.Name = Title;
