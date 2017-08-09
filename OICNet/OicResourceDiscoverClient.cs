@@ -16,10 +16,11 @@ namespace OICNet
     {
         private readonly List<OicDevice> _devices = new List<OicDevice>();
 
-        private readonly List<IOicInterface> _broadcastInterfaces = new List<IOicInterface>();
+        private readonly List<IOicTransport> _broadcastTransports = new List<IOicTransport>();
 
         private readonly OicConfiguration _configuration;
 
+        //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
         public event EventHandler<OicNewDeviceEventArgs> NewDevice;
 
         public OicResourceDiscoverClient()
@@ -33,12 +34,12 @@ namespace OICNet
             _configuration = configuration;
         }
 
-        public void AddInterface(IOicInterface provider)
+        public void AddTransport(IOicTransport provider)
         {
             if (provider is null)
                 throw new ArgumentNullException(nameof(provider));
             provider.ReceivedMessage += OnReceivedMessage;
-            _broadcastInterfaces.Add(provider);
+            _broadcastTransports.Add(provider);
         }
 
         private void OnReceivedMessage(object sender, OicReceivedMessageEventArgs e)
@@ -53,10 +54,11 @@ namespace OICNet
                     device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
                     if (device == null)
                     {
-                        device = new OicDevice(_configuration, sender as IOicInterface, e.Endpoint)
+                        device = new OicDevice(e.Endpoint, _configuration)
                         {
                             DeviceId = directory.DeviceId
                         };
+                        _devices.Add(device);
                         NewDevice?.Invoke(this, new OicNewDeviceEventArgs {Device = device});
                     }
 
@@ -69,11 +71,12 @@ namespace OICNet
                 }
                 else
                 {
-                    //TODO: match up sender with an interface
-                    device = _devices.FirstOrDefault(d => d.RemoteEndpoint.Authority == e.Endpoint.Authority);
+                    //TODO: Verify this will correctly match up devices
+                    device = _devices.FirstOrDefault(d => d.Endpoint.Transport == e.Endpoint.Transport && d.Endpoint.Authority == e.Endpoint.Authority);
                     if (device == null)
                     {
-                        device = new OicDevice(_configuration, (sender as IOicInterface), e.Endpoint);
+                        device = new OicDevice(e.Endpoint, _configuration);
+                        _devices.Add(device);
                         NewDevice?.Invoke(this, new OicNewDeviceEventArgs {Device = device});
                     }
                     device.UpdateResourceInternal(resource);
@@ -93,7 +96,7 @@ namespace OICNet
 
 
             // Send over transport using multicast/broadcast
-            Task.WaitAll(_broadcastInterfaces.Select(transport => 
+            Task.WaitAll(_broadcastTransports.Select(transport => 
                 Task.Run(async () => await transport.BroadcastMessageAsync(payload))).ToArray());
             
             // Listen for responses

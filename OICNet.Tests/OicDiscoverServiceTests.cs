@@ -15,37 +15,48 @@ namespace OICNet.Tests
         public void TestDiscoverOnAllInterfaces()
         {
             // Arrange
-            var mockInterface1 = new Mock<IOicInterface>();
+            var mockInterface1 = new Mock<IOicTransport>();
             mockInterface1
                 .Setup(b => b.BroadcastMessageAsync(It.IsAny<OicRequest>()))
                 .Returns(Task.CompletedTask);
-            var mockInterface2 = new Mock<IOicInterface>();
+            var mockInterface2 = new Mock<IOicTransport>();
             mockInterface2
                 .Setup(b => b.BroadcastMessageAsync(It.IsAny<OicRequest>()))
                 .Returns(Task.CompletedTask);
 
-            var service = new OicResourceDiscoverClient();
+            var client = new OicResourceDiscoverClient();
 
-            service.AddInterface(mockInterface1.Object);
-            service.AddInterface(mockInterface2.Object);
+            client.AddTransport(mockInterface1.Object);
+            client.AddTransport(mockInterface2.Object);
 
             // Act
-            service.Discover();
+            client.Discover();
 
             // Assert
             Mock.VerifyAll(mockInterface1, mockInterface2);
         }
 
         [Test]
+        public void TestAddNullTransport()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var client = new OicResourceDiscoverClient();
+
+                client.AddTransport(null);
+            });
+        }
+
+        [Test]
         public void TestDiscoverDevice()
         {
-            var mockInterface = new Mock<IOicInterface>();
+            var mockInterface = new Mock<IOicTransport>();
 
             bool newDeviceCallbackInvoked = false;
             var service = new OicResourceDiscoverClient();
             OicDevice actualDevice = null;
 
-            service.AddInterface(mockInterface.Object);
+            service.AddTransport(mockInterface.Object);
             service.NewDevice += (s, e) =>
             {
                 newDeviceCallbackInvoked = true;
@@ -67,7 +78,7 @@ namespace OICNet.Tests
             // Assert
             Assert.IsTrue(newDeviceCallbackInvoked, $"{typeof(OicResourceDiscoverClient)}.{nameof(service.NewDevice)} was not invoked");
 
-            var expectedDevice = new OicDevice(null, null)
+            var expectedDevice = new OicDevice(null)
             {
                 DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                 Resources = new List<IOicResource>

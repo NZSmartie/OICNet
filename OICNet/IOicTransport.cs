@@ -11,7 +11,7 @@ namespace OICNet
         public OicResponse Message;
     }
 
-    public interface IOicInterface
+    public interface IOicTransport
     {
         Task BroadcastMessageAsync(OicRequest message);
 
@@ -24,6 +24,8 @@ namespace OICNet
 
     public interface IOicEndpoint
     {
+        IOicTransport Transport { get; }
+
         bool IsSecure { get; }
 
         string Authority { get; }

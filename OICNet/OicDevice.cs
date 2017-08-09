@@ -21,23 +21,20 @@ namespace OICNet
 
         public List<IOicResource> Resources { get; set; }
 
-        public IOicInterface LocalInterface{ get; }
-
-        public IOicEndpoint RemoteEndpoint { get; }
+        public IOicEndpoint Endpoint { get; }
 
         private readonly OicConfiguration _configuration;
 
-        public OicDevice(IOicInterface localInterface, IOicEndpoint remoteEndpoint)
-            :this(OicConfiguration.Default, localInterface, remoteEndpoint)
+        public OicDevice(IOicEndpoint remoteEndpoint)
+            :this(remoteEndpoint, OicConfiguration.Default)
         {
             
         }
 
-        public OicDevice(OicConfiguration configuration, IOicInterface localInterface, IOicEndpoint remoteEndpoint)
+        public OicDevice(IOicEndpoint endpoint, OicConfiguration configuration)
         {
             _configuration = configuration;
-            LocalInterface = localInterface;
-            RemoteEndpoint = remoteEndpoint;
+            Endpoint = endpoint;
         }
 
         internal void UpdateResourceInternal(IOicResource resource)
