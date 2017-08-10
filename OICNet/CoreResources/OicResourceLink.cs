@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OICNet;
+using OICNet.Utilities;
 
 namespace OICNet.CoreResources
 {
@@ -140,9 +141,9 @@ namespace OICNet.CoreResources
                 return false;
             if (Rel != other.Rel)
                 return false;
-            if (!ResourceTypes.SequenceEqual(other.ResourceTypes))
+            if (!ResourceTypes.NullRespectingSequenceEqual(other.ResourceTypes))
                 return false;
-            if (!Interfaces.SequenceEqual(other.Interfaces))
+            if (!Interfaces.NullRespectingSequenceEqual(other.Interfaces))
                 return false;
             if (DeviceId != other.DeviceId)
                 return false;
@@ -158,7 +159,7 @@ namespace OICNet.CoreResources
                 return false;
             if (InstanceId?.Value != other.InstanceId?.Value)
                 return false;
-            if (!TypeHints.SequenceEqual(other.TypeHints))
+            if (!TypeHints.NullRespectingSequenceEqual(other.TypeHints))
                 return false;
 
             return true;

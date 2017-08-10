@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace OICNet.Tests
 {
     [TestFixture]
-    public class OicDiscoverServiceTests
+    public class OicResourceDiscoverClientTests
     {
         [Test]
         public void TestDiscoverOnAllInterfaces()

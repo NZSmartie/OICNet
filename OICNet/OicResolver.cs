@@ -28,7 +28,7 @@ namespace OICNet
     /// <remarks>(Will) Support all OIC v1.1.0 defined resource-types</remarks>
     public class OicResolver : ResourceTypeResolver
     {
-        private readonly Dictionary<string, Type> _resourceTypes;
+        protected readonly Dictionary<string, Type> _resourceTypes;
 
         public OicResolver()
         {

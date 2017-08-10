@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OICNet.Utilities;
 
 namespace OICNet
 {
@@ -74,9 +75,46 @@ namespace OICNet
 
         public Task RetrieveAsync()
         {
-            throw new NotImplementedException();
+            if (Device == null)
+                throw new NullReferenceException($"{GetType().FullName}.{nameof(Device)} cannot be null null");
+            
+            var endoint = Device.Endpoint;
+
+            var response = endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
+            {
+                Accepts = new List<OicMessageContentType>
+                {
+                    OicMessageContentType.ApplicationCbor,
+                    OicMessageContentType.ApplicationJson
+                },
+                Method = OicMessageMethod.Get,
+                Uri = new Uri(RelativeUri, UriKind.Relative)
+            }).Result;
+
+            using (var results = Device.Configuration.Serialiser.Deserialise(response.Payload, response.ContentType)
+                .GetEnumerator())
+            {
+                results.MoveNext();
+                var result = results.Current;
+
+                UpdateFields(result);
+
+                // We should not have more than one result in a response to a Retreive.
+                if (results.MoveNext())
+                    throw new InvalidOperationException($"Received multiple objects during {nameof(RetrieveAsync)}");
+            }
+
+            return Task.FromResult<object>(null);
         }
 
+        public virtual void UpdateFields(IOicResource source)
+        {
+            var coreResource = source as OicCoreResource ??
+                               throw ExceptionUtil.CreateResourceCastException<OicCoreResource>(nameof(source));
+
+            Name = coreResource.Name ?? Name;
+            Id = coreResource.Id ?? Id;
+        }
 
         #endregion
 
@@ -131,9 +169,9 @@ namespace OICNet
 
             if (!string.Equals(RelativeUri, other.RelativeUri))
                 return false;
-            if (!ResourceTypes?.SequenceEqual(other.ResourceTypes) ?? false)
+            if (!ResourceTypes.NullRespectingSequenceEqual(other.ResourceTypes))
                 return false;
-            if (!Interfaces?.SequenceEqual(other.Interfaces) ?? false)
+            if (!Interfaces.NullRespectingSequenceEqual(other.Interfaces))
                 return false;
             if (!string.Equals(Name, other.Name))
                 return false;
@@ -153,7 +191,8 @@ namespace OICNet
         {
             if (_hashCode.TryGetValue(GetType(), out int hashcode) == false)
             {
-                hashcode = GetType().FullName.GetHashCode();
+                var fullName = GetType().FullName ?? throw new InvalidOperationException();
+                hashcode = fullName.GetHashCode();
                 _hashCode.Add(GetType(), hashcode);
             }
 
@@ -162,15 +201,23 @@ namespace OICNet
     }
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class OicBaseResouece<VType> : OicCoreResource
+    public class OicBaseResouece<TValue> : OicCoreResource
     {
         [JsonProperty("value", Required = Required.Always, Order = 5)]
-        public VType Value { get; set; }
+        public TValue Value { get; set; }
+
+        public override void UpdateFields(IOicResource source)
+        {
+            var baseResource = source as OicBaseResouece<TValue> ?? throw ExceptionUtil.CreateResourceCastException<OicCoreResource>(nameof(source));
+            base.UpdateFields(source);
+
+            Value = baseResource.Value;
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var other = obj as OicBaseResouece<VType>;
+            var other = obj as OicBaseResouece<TValue>;
             if (other == null)
                 return false;
             if (!base.Equals(obj))
@@ -186,6 +233,14 @@ namespace OICNet
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<int> Range { get; set; }
 
+        public override void UpdateFields(IOicResource source)
+        {
+            var baseResource = source as OicIntResouece ?? throw ExceptionUtil.CreateResourceCastException<OicIntResouece>(nameof(source));
+            base.UpdateFields(source);
+
+            Range = baseResource.Range ?? Range;
+        }
+
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
@@ -194,7 +249,7 @@ namespace OICNet
                 return false;
             if (!base.Equals(obj))
                 return false;
-            if (!Range.SequenceEqual(other.Range))
+            if (!Range.NullRespectingSequenceEqual(other.Range))
                 return false;
             return true;
         }
@@ -205,6 +260,14 @@ namespace OICNet
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<float> Range { get; set; }
 
+        public override void UpdateFields(IOicResource source)
+        {
+            var baseResource = source as OicNumberResouece ?? throw ExceptionUtil.CreateResourceCastException<OicNumberResouece>(nameof(source));
+            base.UpdateFields(source);
+
+            Range = baseResource.Range ?? Range;
+        }
+
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
@@ -213,7 +276,7 @@ namespace OICNet
                 return false;
             if (!base.Equals(obj))
                 return false;
-            if (!Range.SequenceEqual(other.Range))
+            if (!Range.NullRespectingSequenceEqual(other.Range))
                 return false;
             return true;
         }

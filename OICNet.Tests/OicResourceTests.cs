@@ -1,0 +1,152 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Moq;
+using Moq.Language;
+using NUnit.Framework;
+
+
+namespace OICNet.Tests
+{
+    [TestFixture]
+    public class OicResourceTests
+    {
+        private class TestResourceResolver : OicResolver
+        {
+            public TestResourceResolver()
+            {
+                _resourceTypes.Add("test.int", typeof(OicIntResouece));
+                _resourceTypes.Add("test.number", typeof(OicNumberResouece));
+            }
+        }
+
+        private Mock<IOicTransport> _mockTransport;
+        private Mock<IOicEndpoint> _mockEndpoint;
+        private OicConfiguration _configuration;
+
+        [OneTimeSetUp]
+        public void CreateOicConfiguration()
+        {
+            _configuration = new OicConfiguration {Resolver = new TestResourceResolver()};
+            _configuration.Serialiser = new OicMessageSerialiser(_configuration.Resolver);
+        }
+
+        [SetUp]
+        public void CreateTransportMocks()
+        {
+            _mockTransport = new Mock<IOicTransport>();
+            _mockEndpoint = new Mock<IOicEndpoint>();
+            _mockEndpoint.Setup(e => e.Transport).Returns(_mockTransport.Object);
+        }
+
+        [Test]
+        public void TestRetreiveNullDevice()
+        {
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                var resource = new OicCoreResource();
+
+                resource.RetrieveAsync();
+            });
+        }
+
+        [Test]
+        public void TestRetreiveMultipleResults()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Arrange
+                _mockTransport
+                    .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
+                        It.Is((OicRequest r) => r.Method == OicMessageMethod.Get)))
+                    .Returns(Task.FromResult(new OicResponse
+                    {
+                        ContentType = OicMessageContentType.ApplicationJson,
+                        Payload = Encoding.UTF8.GetBytes(
+                            @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
+                    }));
+
+                var resource = new OicCoreResource
+                {
+                    Device = new OicDevice(_mockEndpoint.Object),
+                    RelativeUri = "test"
+                };
+
+                // Act
+                resource.RetrieveAsync().Wait();
+
+            });
+        }
+
+        [Test]
+        [TestCaseSource(typeof(ResourceTestCaseSource), nameof(ResourceTestCaseSource.RetreiveTestCaseData))]
+        public IOicResource TestRetreive(OicResponse response, IOicResource actual)
+        {
+            // Arrange
+            _mockTransport
+                .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
+                    It.Is((OicRequest r) => r.Method == OicMessageMethod.Get)))
+                .Returns(Task.FromResult(response));
+
+            actual.Device = new OicDevice(_mockEndpoint.Object, _configuration);
+
+            // Act
+            actual.RetrieveAsync().Wait();
+
+            // Assert
+            Mock.VerifyAll(_mockTransport);
+
+            return actual;
+        }
+    }
+
+    public static class ResourceTestCaseSource
+    {
+        public static IEnumerable RetreiveTestCaseData
+        {
+            get
+            {
+                yield return new TestCaseData(new OicResponse
+                {
+                    ContentType = OicMessageContentType.ApplicationJson,
+                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}")
+                }, new OicCoreResource
+                {
+                    RelativeUri = ""
+                }).Returns(new OicCoreResource
+                {
+                    RelativeUri = ""
+                });
+
+                yield return new TestCaseData(new OicResponse
+                {
+                    ContentType = OicMessageContentType.ApplicationJson,
+                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],value:1234}")
+                }, new OicIntResouece
+                {
+                    RelativeUri = ""
+                }).Returns(new OicIntResouece
+                {
+                    Value = 1234,
+                    RelativeUri = ""
+                });
+
+                yield return new TestCaseData(new OicResponse
+                {
+                    ContentType = OicMessageContentType.ApplicationJson,
+                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],value:12.34,range:[0,100]}")
+                }, new OicNumberResouece
+                {
+                    RelativeUri = ""
+                }).Returns(new OicNumberResouece
+                {
+                    Value = 12.34f,
+                    Range = new List<float>{0,100},
+                    RelativeUri = ""
+                });
+            }
+        }
+    }
+}

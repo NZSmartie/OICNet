@@ -24,5 +24,7 @@ namespace OICNet
         Task DeleteAsync();
 
         Task RetrieveAsync();
+
+        void UpdateFields(IOicResource source);
     }
 }

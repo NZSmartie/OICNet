@@ -23,7 +23,7 @@ namespace OICNet
 
         public IOicEndpoint Endpoint { get; }
 
-        private readonly OicConfiguration _configuration;
+        public OicConfiguration Configuration { get; }
 
         public OicDevice(IOicEndpoint remoteEndpoint)
             :this(remoteEndpoint, OicConfiguration.Default)
@@ -33,7 +33,7 @@ namespace OICNet
 
         public OicDevice(IOicEndpoint endpoint, OicConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
             Endpoint = endpoint;
         }
 
