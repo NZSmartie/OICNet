@@ -7,7 +7,7 @@
     <RootNamespace>OICNet</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>NZSmartie.OICNet</PackageId>
-    <Version>0.3.1-alpha1</Version>
+    <Version>0.3.1-alpha2</Version>
     <Authors>Roman Vaughan</Authors>
     <Company>NZSmartie</Company>
     <Description>Open Connectivity Foundation's (OCF) Open Inter-Conneect (OIC) for .Net providing device discovery, arbitrary transport, client/server communication.

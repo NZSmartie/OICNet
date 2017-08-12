@@ -7,21 +7,18 @@
 
         private static OicConfiguration _default;
 
-        public static OicConfiguration Default
+        public static OicConfiguration Default => _default ?? (_default = new OicConfiguration());
+
+        public OicConfiguration()
         {
-            get
-            {
-                if(_default!= null)
-                    return _default;
+            Resolver = new OicResolver();
+            Serialiser = new OicMessageSerialiser(Resolver);
+        }
 
-                _default = new OicConfiguration
-                {
-                    Resolver = new OicResolver()
-                };
-                _default.Serialiser = new OicMessageSerialiser(_default.Resolver);
-
-                return _default;
-            }
+        public OicConfiguration(OicResolver resolver)
+        {
+            Resolver = resolver;
+            Serialiser = new OicMessageSerialiser(resolver);
         }
     }
 }
