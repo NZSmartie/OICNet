@@ -54,6 +54,8 @@ namespace OICNet
                 token = token.First;
             while (token != null)
             {
+                if(token["rt"] == null)
+                    throw new InvalidDataException("Key \"rt\" was not present in the message to deserialise");
                 var rt = token["rt"].Select(t => (string)t);
                 if(!_resolver.TryGetResourseType(rt, out var type))
                     throw new NotImplementedException($"Unknow resource types {token["rt"].ToString()} are not supported."); //Todo: fail gracefully instead of hard faulting while deserialising.

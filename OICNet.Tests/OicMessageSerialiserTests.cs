@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -26,6 +27,34 @@ namespace OICNet.Tests
             mockResolver.Setup(c => c.TryGetResourseType("oic.wk.res", out type)).Returns(true);
 
             _resolver = mockResolver.Object;
+        }
+
+        [Test]
+        public void DeserialiseMissingResourceType()
+        {
+            Assert.Throws<InvalidDataException>(() =>
+            {
+                // Arrange
+                var serialiser = new OicMessageSerialiser(_resolver);
+
+                var input = Encoding.UTF8.GetBytes(
+                    "{\"if\":[\"oic.if.baseline\"],\"n\":\"Test\",\"id\":\"test\"}");
+
+                //Only worried about the first result
+                serialiser.Deserialise(input, OicMessageContentType.ApplicationJson).ToList();
+            });
+
+            Assert.Throws<InvalidDataException>(() =>
+            {
+                // Arrange
+                var serialiser = new OicMessageSerialiser(_resolver);
+
+                var input = Encoding.UTF8.GetBytes(
+                    "[{\"if\":[\"oic.if.baseline\"],\"n\":\"Test\",\"id\":\"test\"}]");
+
+                //Only worried about the first result
+                serialiser.Deserialise(input, OicMessageContentType.ApplicationJson).ToList();
+            });
         }
 
         [Test, TestCaseSource(typeof(SerialiserTestCaseData), nameof(SerialiserTestCaseData.SerialiseTestCases))]

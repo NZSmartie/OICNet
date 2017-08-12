@@ -42,7 +42,7 @@ namespace OICNet
 
     public static class OicResourceExtensions
     {
-        public static string GetResourceTypeId(this OicCoreResource resource)
+        public static string GetResourceTypeId(this IOicResource resource)
         {
             var info = resource.GetType()
                 .GetTypeInfo()
@@ -50,6 +50,15 @@ namespace OICNet
                 .FirstOrDefault(i => i is OicResourceTypeAttribute)
                 as OicResourceTypeAttribute;
             return info.Id;
+        }
+
+        public static Uri GetResourceUri(this IOicResource resource)
+        {
+            return new UriBuilder($"oic://{resource.Device.Endpoint.Authority}")
+            {
+                Path = resource.RelativeUri
+            }.Uri;
+
         }
     }
 
