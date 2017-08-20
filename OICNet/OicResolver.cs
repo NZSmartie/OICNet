@@ -36,8 +36,8 @@ namespace OICNet
             _resourceTypes = new Dictionary<string, Type>
             {
                 { "oic.wk.res" ,typeof(CoreResources.OicResourceDirectory) },
-                { "oic.wk.d" ,typeof(CoreResources.OicDevice) },
-                { "oic.wk.p" ,typeof(CoreResources.OicPlatform) },
+                { "oic.wk.d" ,typeof(CoreResources.OicDeviceResource) },
+                { "oic.wk.p" ,typeof(CoreResources.OicPlatformResource) },
                 // Todo: In .Net Standard 2.0, replace hardcoded references with reflection, looking for classes with OicResourceTypeAttribute
                 { "oic.r.core", typeof(OicCoreResource) },
                 { "oic.r.audio", typeof(ResourceTypes.Audio) },

@@ -11,7 +11,7 @@ namespace OICNet.CoreResources
 {
     [OicResourceType("oic.wk.p")]
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class OicPlatform : OicCoreResource
+    public class OicPlatformResource : OicCoreResource
     {
         public override bool ShouldSerializeInterfaces() { return false; }
 
@@ -94,7 +94,7 @@ namespace OICNet.CoreResources
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var other = obj as OicPlatform;
+            var other = obj as OicPlatformResource;
             if (other == null)
                 return false;
             if(PlatformId != other.PlatformId)

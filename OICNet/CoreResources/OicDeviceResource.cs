@@ -10,7 +10,7 @@ namespace OICNet.CoreResources
 {
     [OicResourceType("oic.wk.d")]
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public class OicDevice : OicCoreResource
+    public class OicDeviceResource : OicCoreResource
     {
         public override bool ShouldSerializeInterfaces() { return false; }
 
@@ -69,7 +69,7 @@ namespace OICNet.CoreResources
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var other = obj as OicDevice;
+            var other = obj as OicDeviceResource;
             if (other == null)
                 return false;
             if (DeviceId != other.DeviceId)

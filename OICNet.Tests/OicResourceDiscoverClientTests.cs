@@ -82,13 +82,13 @@ namespace OICNet.Tests
             {
                 DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                 Resources = {
-                    new CoreResources.OicDevice
+                    new CoreResources.OicDeviceResource
                     {
                         RelativeUri = "/oid/d",
                         ResourceTypes = {"oic.d.light", "oic.wk.d"},
                         Interfaces = {OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
                     },
-                    new CoreResources.OicPlatform
+                    new CoreResources.OicPlatformResource
                     {
                         RelativeUri = "/oid/p",
                         ResourceTypes = {"oic.wk.p"},
