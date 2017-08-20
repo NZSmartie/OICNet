@@ -123,25 +123,28 @@ namespace OICNet.Tests
                 yield return new TestCaseData(new OicResponse
                 {
                     ContentType = OicMessageContentType.ApplicationJson,
-                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],value:1234}")
+                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],""id"":""04d0e642-2b18-41fb-8983-7e60fba3be44"",""n"":""Integer"",value:1234}")
                 }, new OicIntResouece
                 {
                     RelativeUri = ""
                 }).Returns(new OicIntResouece
                 {
+                    Id = "04d0e642-2b18-41fb-8983-7e60fba3be44",
+                    Name = "Integer",
                     Value = 1234,
                     RelativeUri = ""
                 });
-
+    
                 yield return new TestCaseData(new OicResponse
                 {
                     ContentType = OicMessageContentType.ApplicationJson,
-                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],value:12.34,range:[0,100]}")
+                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],""n"":""Number"",value:12.34,range:[0,100]}")
                 }, new OicNumberResouece
                 {
                     RelativeUri = ""
                 }).Returns(new OicNumberResouece
                 {
+                    Name = "Number",
                     Value = 12.34f,
                     Range = new List<float>{0,100},
                     RelativeUri = ""

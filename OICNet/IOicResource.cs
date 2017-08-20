@@ -11,11 +11,11 @@ namespace OICNet
 
         string Id { get; set; }
 
-        List<OicResourceInterface> Interfaces { get; }
+        IList<OicResourceInterface> Interfaces { get; }
 
         string Name { get; set; }
 
-        List<string> ResourceTypes { get; }
+        IList<string> ResourceTypes { get; }
 
         Task CreateAsync(IOicResource resource);
 

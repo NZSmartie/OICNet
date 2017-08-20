@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +65,7 @@ namespace OICNet
         }
     }
 
-    public class OicCoreResource : IOicResource
+    public class OicCoreResource : IOicResource, INotifyPropertyChanged
     {
         #region CRUDN Operations
 
@@ -91,16 +94,16 @@ namespace OICNet
 
             var response = endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
             {
-                Accepts = new List<OicMessageContentType>
+                Accepts = 
                 {
                     OicMessageContentType.ApplicationCbor,
                     OicMessageContentType.ApplicationJson
                 },
-                Method = OicMessageMethod.Get,
-                Uri = new Uri(RelativeUri, UriKind.Relative)
+                Operation = OicRequestOperation.Get,
+                ToUri = new Uri(RelativeUri, UriKind.Relative)
             }).Result;
 
-            using (var results = Device.Configuration.Serialiser.Deserialise(response.Payload, response.ContentType)
+            using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
                 .GetEnumerator())
             {
                 results.MoveNext();
@@ -139,22 +142,58 @@ namespace OICNet
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
-        public List<string> ResourceTypes { get; } = new List<string>();
+        public IList<string> ResourceTypes { get; } = new ObservableCollection<string>();
 
         public virtual bool ShouldSerializeInterfaces() { return true; }
 
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public List<OicResourceInterface> Interfaces { get; } = new List<OicResourceInterface>();
 
+        public IList<OicResourceInterface> Interfaces { get; } = new ObservableCollection<OicResourceInterface>();
         public virtual bool ShouldSerializeName() { return true; }
 
-        [JsonProperty("n", NullValueHandling=NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        private string _name;
+
+        [JsonProperty("n", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name == value)
+                    return;
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
 
         public virtual bool ShouldSerializeId() { return true; }
 
+        private string _id;
+
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public string Id { get; set; }
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                if (_id == value)
+                    return;
+                _id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
+
+        #endregion
+
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         #endregion
 

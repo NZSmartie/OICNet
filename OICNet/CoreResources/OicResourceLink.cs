@@ -120,7 +120,7 @@ namespace OICNet.CoreResources
         /// <para><see cref="Uri"/> - Any unique string including a URI</para>
         /// <para><see cref="int"/> - An ordinal number that is not repeated - must be unique in the collection context</para>
         /// </summary>
-        // Todo: verify this type is either a GUID, Uri(maxLen=256) or int
+        // Todo: verify this type is either a GUID, ToUri(maxLen=256) or int
         [JsonProperty("ins", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public JValue InstanceId { get; set; }
 
@@ -176,8 +176,8 @@ namespace OICNet.CoreResources
 
             resource.Name = Title;
             resource.RelativeUri = Href.OriginalString; // Todo: Figure out how to get the relative path from a Resource Link and not assume OriginalString will always work
-            resource.ResourceTypes.AddRange(ResourceTypes);
-            resource.Interfaces.AddRange(Interfaces);
+            ResourceTypes.ForEach(resource.ResourceTypes.Add);
+            Interfaces.ForEach(resource.Interfaces.Add);
 
             return resource;
         }
