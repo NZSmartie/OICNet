@@ -19,6 +19,7 @@ namespace OICNet
         ApplicationXml
     }
 
+    // TODO: review OIC Core Specification v1.1.1 section 12.3: Content Encoding in CBOR 
     public class OicMessageSerialiser
     {
         private readonly ResourceTypeResolver _resolver;

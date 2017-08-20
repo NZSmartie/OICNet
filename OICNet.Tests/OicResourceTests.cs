@@ -60,11 +60,11 @@ namespace OICNet.Tests
                 // Arrange
                 _mockTransport
                     .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
-                        It.Is((OicRequest r) => r.Method == OicMessageMethod.Get)))
+                        It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
                     .Returns(Task.FromResult(new OicResponse
                     {
                         ContentType = OicMessageContentType.ApplicationJson,
-                        Payload = Encoding.UTF8.GetBytes(
+                        Content = Encoding.UTF8.GetBytes(
                             @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
                     }));
 
@@ -87,7 +87,7 @@ namespace OICNet.Tests
             // Arrange
             _mockTransport
                 .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
-                    It.Is((OicRequest r) => r.Method == OicMessageMethod.Get)))
+                    It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
                 .Returns(Task.FromResult(response));
 
             actual.Device = new OicDevice(_mockEndpoint.Object, _configuration);
@@ -111,7 +111,7 @@ namespace OICNet.Tests
                 yield return new TestCaseData(new OicResponse
                 {
                     ContentType = OicMessageContentType.ApplicationJson,
-                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}")
+                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}")
                 }, new OicCoreResource
                 {
                     RelativeUri = ""
@@ -123,7 +123,7 @@ namespace OICNet.Tests
                 yield return new TestCaseData(new OicResponse
                 {
                     ContentType = OicMessageContentType.ApplicationJson,
-                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],""id"":""04d0e642-2b18-41fb-8983-7e60fba3be44"",""n"":""Integer"",value:1234}")
+                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],""id"":""04d0e642-2b18-41fb-8983-7e60fba3be44"",""n"":""Integer"",value:1234}")
                 }, new OicIntResouece
                 {
                     RelativeUri = ""
@@ -138,7 +138,7 @@ namespace OICNet.Tests
                 yield return new TestCaseData(new OicResponse
                 {
                     ContentType = OicMessageContentType.ApplicationJson,
-                    Payload = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],""n"":""Number"",value:12.34,range:[0,100]}")
+                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],""n"":""Number"",value:12.34,range:[0,100]}")
                 }, new OicNumberResouece
                 {
                     RelativeUri = ""

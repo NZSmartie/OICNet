@@ -8,16 +8,16 @@ namespace OICNet
     {
         public IOicEndpoint Endpoint;
 
-        public OicResponse Message;
+        public OicMessage Message;
     }
 
     public interface IOicTransport
     {
         Task BroadcastMessageAsync(OicRequest message);
 
-        Task SendMessageAsync(IOicEndpoint endpoint, OicRequest message);
+        Task SendMessageAsync(IOicEndpoint endpoint, OicMessage message);
 
-        Task<OicResponse> SendMessageWithResponseAsync(IOicEndpoint endpoint, OicRequest message);
+        Task<OicResponse> SendMessageWithResponseAsync(IOicEndpoint endpoint, OicMessage message);
 
         event EventHandler<OicReceivedMessageEventArgs> ReceivedMessage;
     }
@@ -35,23 +35,56 @@ namespace OICNet
 
     public class OicMessage
     {
-        public Uri Uri { get; set; }
+        public Uri ToUri { get; set; }
 
-        public byte[] Payload { get; set; }
+        public Uri FromUri { get; set; }
+
+        public int RequestId { get; set; }
+
+        public byte[] Content { get; set; }
+
+        public OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
+
     }
 
     public class OicRequest : OicMessage
     {
-        public OicMessageMethod Method { get; set; } = OicMessageMethod.Get;
+        public OicRequestOperation Operation { get; set; } = OicRequestOperation.Get;
 
-        public List<string> Filters { get; set; }
-
-        public List<OicMessageContentType> Accepts { get; set; } = new List<OicMessageContentType>();
+        public List<OicMessageContentType> Accepts { get; } = new List<OicMessageContentType>();
     }
 
     public class OicResponse : OicMessage
     {
-        public OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
+        public OicResponseCode ResposeCode;
+    }
+
+    public enum OicResponseCode
+    {
+        // 2.xx Success
+        Created = 201,
+        Deleted = 202,
+        Valid = 203,
+        Changed = 204,
+        Content = 205,
+        // 4.xx Client Error
+        BadRequest = 400,
+        Unauthorized = 401,
+        BadOption = 402,
+        Forbidden = 403,
+        NotFound = 404,
+        MethodNotAllowed = 405,
+        NotAcceptable = 406,
+        PreconditionFailed = 412,
+        RequestEntityTooLarge = 413,
+        UnsupportedContentFormat = 415,
+        // 5.xx Server Error
+        InternalServerError = 500,
+        NotImplemented = 501,
+        BadGateway = 502,
+        ServiceUnavailable = 503,
+        GatewayTimeout = 504,
+        ProxyingNotSupported = 505
     }
 
     public enum OicMessageContentType
@@ -61,7 +94,7 @@ namespace OICNet
         ApplicationXml,
     }
 
-    public enum OicMessageMethod
+    public enum OicRequestOperation
     {
         Get,
         Post,
