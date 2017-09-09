@@ -1,0 +1,68 @@
+# Set our package version
+environment:
+  package_version: '0.3.1'
+
+version: '{branch}-{build}'
+
+image: Visual Studio 2017
+
+# Restore NuGet packages
+before_build:
+  - cmd: nuget restore
+
+build:
+  verbosity: minimal
+
+# Unit tests in .Net Core don't behave as well 
+test: off
+
+configuration: Debug
+
+for:
+  # Development
+  - branches:
+      only: 
+        - master
+
+    # Patch package version to all match
+    dotnet_csproj:
+      patch: true
+      file: '**\*.csproj'
+      version: '$(package_version)-pre{build}'
+      package_version: '$(package_version)-pre{build}'
+
+    build:
+      publish_nuget: true
+      publish_nuget_symbols: true
+
+    # Deploy to MyGet
+    deploy:
+      - provider: NuGet
+        server: https://www.myget.org/F/oicnet/api/v2/package
+        api_key:
+          secure: gXj5iu2gWjqUfY5EbDi7pG7w6x3CNtWpG5p4Qy4KuWZ1rVXAzmVWXz6MIrmAUDeA
+        symbol_server: https://www.myget.org/F/oicnet/symbols/api/v2/package
+  
+  # Releases
+  - branches:
+      only: 
+        - releases
+    
+    configuration: Release
+
+    # Patch package version to all match
+    dotnet_csproj:
+      patch: true
+      file: '**\*.csproj'
+      version: '{package_version}'
+      package_version: '{package_version}'
+
+    build:
+      publish_nuget: true
+      publish_nuget_symbols: true
+
+    # Deploy to NuGet
+    deploy:
+      - provider: NuGet
+        api_key:
+          secure: UCjrAYYDUxNW2lKDcDQ5ySo4YnD1TmgiQwiyHDsFkKMlqopx82C40xUWst9Ai18G
