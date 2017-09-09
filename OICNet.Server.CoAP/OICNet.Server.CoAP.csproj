@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>OICNet.Server.CoAP</AssemblyName>
+    <RootNamespace>OICNet.Server.CoAP</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.3.1-alpha5</Version>
+    <PackageId>NZSmartie.OICNet.Server.CoAP</PackageId>
+    <Authors>Roman Vaughan</Authors>
+    <Company>NZSmartie</Company>
+    <Description>A lite MVC server library that mimmics ASPNet Core to provide familiarity to developers</Description>
+    <PackageProjectUrl>https://github.com/NZSmartie/OICNet</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation mvc server</PackageTags>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NZSmartie.CoAPNet.Server" Version="0.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OICNet\OICNet.csproj" />
+    <ProjectReference Include="..\OICNet.Server\OICNet.Server.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>OICNet.Server</AssemblyName>
+    <RootNamespace>OICNet.Server</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.3.1-alpha5</Version>
+    <PackageId>NZSmartie.OICNet.Server</PackageId>
+    <Authors>Roman Vaughan</Authors>
+    <Company>NZSmartie</Company>
+    <Description>A lite MVC server library that mimmics ASPNet Core to provide familiarity to developers</Description>
+    <PackageProjectUrl>https://github.com/NZSmartie/OICNet</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation mvc server</PackageTags>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.2" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\OICNet\OICNet.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>..\..\..\..\..\.nuget\packages\system.diagnostics.diagnosticsource\4.3.1\lib\netstandard1.3\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+</Project>

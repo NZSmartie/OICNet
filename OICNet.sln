@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet", "OICNet\OICNet.csproj", "{4667B478-CCD5-4BD4-85E9-BD0018134C35}"
 EndProject
@@ -13,6 +13,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.travis.yml = .travis.yml
 		Readme.md = Readme.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server", "OICNet.Server\OICNet.Server.csproj", "{689A39EC-3626-420C-B775-D8AD4D06085E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{27650582-F55E-48E4-A8BA-ECE467558234}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.Example", "OICNet.Server.Example\OICNet.Server.Example.csproj", "{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.Server.CoAP", "OICNet.Server.CoAP\OICNet.Server.CoAP.csproj", "{278CDEF6-B009-4079-8F6A-769CC0DA16F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,8 +36,26 @@ Global
 		{02809F5E-56C4-4636-9224-3D74D31BC90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02809F5E-56C4-4636-9224-3D74D31BC90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02809F5E-56C4-4636-9224-3D74D31BC90E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{689A39EC-3626-420C-B775-D8AD4D06085E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{689A39EC-3626-420C-B775-D8AD4D06085E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{689A39EC-3626-420C-B775-D8AD4D06085E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{689A39EC-3626-420C-B775-D8AD4D06085E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278CDEF6-B009-4079-8F6A-769CC0DA16F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278CDEF6-B009-4079-8F6A-769CC0DA16F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278CDEF6-B009-4079-8F6A-769CC0DA16F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278CDEF6-B009-4079-8F6A-769CC0DA16F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{27398AAD-DD7D-4386-9AE8-A55FAEC88CB4} = {27650582-F55E-48E4-A8BA-ECE467558234}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFE29590-7C0F-4B53-9F4A-1A0EA63089B0}
 	EndGlobalSection
 EndGlobal
