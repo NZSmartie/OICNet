@@ -1,4 +1,4 @@
-# OICNet [![Build status](https://ci.appveyor.com/api/projects/status/2lo0p69h27cwr4iq?svg=true)](https://ci.appveyor.com/project/NZSmartie/oicnet-iea8q) [![NuGet](https://img.shields.io/nuget/v/NZSmartie.OICNet.svg)](https://www.nuget.org/packages/NZSmartie.OICNet/)
+# OICNet [![Build status](https://ci.appveyor.com/api/projects/status/2lo0p69h27cwr4iq?svg=true)](https://ci.appveyor.com/project/NZSmartie/oicnet-iea8q) [![NuGet](https://img.shields.io/nuget/v/NZSmartie.OICNet.svg)](https://www.nuget.org/packages/NZSmartie.OICNet/) [![license](https://img.shields.io/github/license/NZSmartie/OICNet.svg)](https://github.com/NZSmartie/OICNet/blob/master/LICENSE)
 
 A clean and portable library (written for .Net Standard) to discover and interact with recourses on IoT Devices supporting OpenConenctivity's (OCF) OpenInterConnect (OIC) Specification.
 
