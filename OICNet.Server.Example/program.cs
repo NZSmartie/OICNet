@@ -20,8 +20,8 @@ namespace OICNet.Server.Example
                 .UseConfiguration(config)
                 .ConfigureLogging(loggerFactory =>
                 {
-                    loggerFactory.AddConsole(LogLevel.Information);
-                    loggerFactory.AddDebug(LogLevel.Debug);
+                    loggerFactory.AddConsole();
+                    loggerFactory.AddDebug();
                 })
                 .UseCoap(options =>
                 {

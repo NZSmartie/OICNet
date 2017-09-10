@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using OICNet.Server.Builder.Internal;
 using OICNet.Server.Hosting;
 using OICNet.Server.Hosting.Internal;
 
@@ -13,11 +14,12 @@ namespace OICNet.Server.Builder
 {
     public class OicHostBuilder
     {
-        private readonly IList<Action<IServiceCollection>> _configureServicesDelegates = new List<Action<IServiceCollection>>();
-        private readonly IList<Action<ILoggerFactory>> _configureLoggingDelegates = new List<Action<ILoggerFactory>>();
-        private readonly IConfiguration _config;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private ILoggerFactory _loggerFactory;
+        private readonly IList<Action<OicHostBuilderContext, IServiceCollection>> _configureServicesDelegates = new List<Action<OicHostBuilderContext, IServiceCollection>>();
+
+        private readonly IConfiguration _config;
+
+        private readonly OicHostBuilderContext _context;
 
         public OicHostBuilder()
         {
@@ -25,6 +27,11 @@ namespace OICNet.Server.Builder
             _config = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: "OICNET_")
                 .Build();
+
+            _context = new OicHostBuilderContext
+            {
+                Configuration = _config
+            };
         }
 
         public OicHostBuilder UseSetting(string key, string value)
@@ -45,53 +52,72 @@ namespace OICNet.Server.Builder
             return this;
         }
 
-        public OicHostBuilder UseStartup<TStartup>() where TStartup : class, IStartup
-        {
-            // TODO: Support Startup by convention rather by implementing IStartup
-            return ConfigureServices(services => services.AddTransient<IStartup, TStartup>());
-        }
-
+        /// <summary>
+        /// Adds a delegate for configuring additional services for the host or web application. This may be called
+        /// multiple times.
+        /// </summary>
+        /// <param name="configureServices">A delegate for configuring the <see cref="IServiceCollection"/>.</param>
+        /// <returns>The <see cref="OicHostBuilder"/>.</returns>
         public OicHostBuilder ConfigureServices(Action<IServiceCollection> configureServices)
         {
-            _configureServicesDelegates.Add(configureServices ?? throw new ArgumentNullException(nameof(configureServices)));
-            return this;
+            if (configureServices == null)
+            {
+                throw new ArgumentNullException(nameof(configureServices));
+            }
+
+            return ConfigureServices((_, services) => configureServices(services));
         }
 
-        public OicHostBuilder ConfigureLogging(Action<ILoggerFactory> configureLogging)
+        /// <summary>
+        /// Adds a delegate for configuring additional services for the host or web application. This may be called
+        /// multiple times.
+        /// </summary>
+        /// <param name="configureServices">A delegate for configuring the <see cref="IServiceCollection"/>.</param>
+        /// <returns>The <see cref="OicHostBuilder"/>.</returns>
+        public OicHostBuilder ConfigureServices(Action<OicHostBuilderContext, IServiceCollection> configureServices)
         {
-            _configureLoggingDelegates.Add(configureLogging ?? throw new ArgumentNullException(nameof(configureLogging)));
+            if (configureServices == null)
+            {
+                throw new ArgumentNullException(nameof(configureServices));
+            }
+
+            _configureServicesDelegates.Add(configureServices);
             return this;
         }
 
         public OicHost Build()
         {
-            var services = new ServiceCollection();
-
-            services.AddSingleton(_hostingEnvironment);
-
-            if(_loggerFactory == null)
-                _loggerFactory = new LoggerFactory();
-
-            
-            foreach (var configureLoggingDelegate in _configureLoggingDelegates)
-                configureLoggingDelegate(_loggerFactory);
-
-            services.AddSingleton(_loggerFactory);
-            services.AddLogging();
-
-            foreach (var configureServiceDelegate in _configureServicesDelegates)
-                configureServiceDelegate(services);
-
-            services.AddOptions();
+            var hostingServices = BuildCommonServices();
 
             // Create a IServiceCollection for the applciation container based on the host's application container. 
             var applicationServiceCollection = new ServiceCollection();
-            foreach (var service in services)
+            foreach (var service in hostingServices)
                 applicationServiceCollection.Add(service);
 
-            applicationServiceCollection.Replace(ServiceDescriptor.Singleton(_loggerFactory));
+            return new OicHost(applicationServiceCollection, hostingServices.BuildServiceProvider(), _config);
+        }
 
-            return new OicHost(applicationServiceCollection, services.BuildServiceProvider(), _config);
+        private IServiceCollection BuildCommonServices()
+        {
+            // TODO: find all IHostingStartup implementations and configure this OicHostBuilder?
+
+            var services = new ServiceCollection();
+
+            services.AddSingleton(_hostingEnvironment);
+            services.AddLogging();
+
+            services.AddScoped<IMiddlewareFactory, DefaultMiddlewareFactory>();
+            services.AddTransient<IServiceProviderFactory<IServiceCollection>, DefaultServiceProviderFactory>();
+
+            // Conjure up a RequestServices
+            services.AddTransient<IStartupFilter, AutoRequestServicesStartupFilter>();
+
+            foreach (var configureServiceDelegate in _configureServicesDelegates)
+                configureServiceDelegate(_context, services);
+
+            services.AddOptions();
+
+            return services;
         }
     }
 }

@@ -5,18 +5,16 @@ using OICNet.Server.Hosting;
 
 namespace OICNet.Server.Example
 {
-    public class Startup : IStartup
+    public class Startup
     {
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            return services
-                //.AddMvc()
-                .BuildServiceProvider();
+            
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            //app.UseMvc();
+            
         }
     }
 }
