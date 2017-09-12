@@ -11,7 +11,7 @@ namespace OICNet.Server.CoAP.Utils
             var request = new OicRequest
             {
                 //FromUri = TODO populate FromUri
-                //ToUri = TODO populate ToUri
+                ToUri = message.GetUri(),
 
                 Content = message.Payload,
                 ContentType = message.Options.Get<CoAPNet.Options.ContentFormat>()?.MediaType.ToOicMessageContentType() ?? OicMessageContentType.None,

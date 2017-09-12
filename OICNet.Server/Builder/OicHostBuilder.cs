@@ -20,6 +20,7 @@ namespace OICNet.Server.Builder
         private readonly IConfiguration _config;
 
         private readonly OicHostBuilderContext _context;
+        private OicHostOptions _options;
 
         public OicHostBuilder()
         {
@@ -100,6 +101,9 @@ namespace OICNet.Server.Builder
         private IServiceCollection BuildCommonServices()
         {
             // TODO: find all IHostingStartup implementations and configure this OicHostBuilder?
+            _options = new OicHostOptions(_config);
+
+            _hostingEnvironment.Initialize(_options);
 
             var services = new ServiceCollection();
 
@@ -114,6 +118,9 @@ namespace OICNet.Server.Builder
 
             foreach (var configureServiceDelegate in _configureServicesDelegates)
                 configureServiceDelegate(_context, services);
+
+            if (!services.Any(sd => typeof(OicConfiguration).IsAssignableFrom(sd.ImplementationType)))
+                services.AddSingleton(OicConfiguration.Default);
 
             services.AddOptions();
 

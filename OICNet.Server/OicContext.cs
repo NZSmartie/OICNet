@@ -8,7 +8,7 @@ namespace OICNet.Server
 
         public ConnectionInfo Connection { get; }
 
-        public OicResponse Response { get; } = new OicResponse();
+        public OicResponse Response { get; set; } = new OicResponse();
 
         public OicRequest Request { get; }
 
@@ -18,6 +18,7 @@ namespace OICNet.Server
 
         public OicContext(OicRequest request, ConnectionInfo connection)
         {
+            //TODO: verify request has minimum parameters set to prevent null refernce exceptions
             Request = request;
             Connection = connection;
         }

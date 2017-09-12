@@ -21,10 +21,5 @@
         /// Gets or sets the absolute path to the directory that contains the web-servable application content files.
         /// </summary>
         string WebRootPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the absolute path to the directory that contains the application content files.
-        /// </summary>
-        string ContentRootPath { get; set; }
     }
 }
