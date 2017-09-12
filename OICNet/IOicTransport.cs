@@ -35,28 +35,28 @@ namespace OICNet
 
     public class OicMessage
     {
-        public Uri ToUri { get; set; }
+        public virtual Uri ToUri { get; set; }
 
-        public Uri FromUri { get; set; }
+        public virtual Uri FromUri { get; set; }
 
-        public int RequestId { get; set; }
+        public virtual int RequestId { get; set; }
 
-        public byte[] Content { get; set; }
+        public virtual byte[] Content { get; set; }
 
-        public OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
+        public virtual OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
 
     }
 
     public class OicRequest : OicMessage
     {
-        public OicRequestOperation Operation { get; set; } = OicRequestOperation.Get;
+        public virtual OicRequestOperation Operation { get; set; } = OicRequestOperation.Get;
 
-        public List<OicMessageContentType> Accepts { get; } = new List<OicMessageContentType>();
+        public virtual List<OicMessageContentType> Accepts { get; } = new List<OicMessageContentType>();
     }
 
     public class OicResponse : OicMessage
     {
-        public OicResponseCode ResposeCode;
+        public virtual OicResponseCode ResposeCode { get; set; }
     }
 
     public enum OicResponseCode

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OICNet.Server.CoAP\OICNet.Server.CoAP.csproj" />
+    <ProjectReference Include="..\OICNet.Server.ProvidedResources\OICNet.Server.ProvidedResources.csproj" />
     <ProjectReference Include="..\OICNet.Server\OICNet.Server.csproj" />
     <ProjectReference Include="..\OICNet\OICNet.csproj" />
   </ItemGroup>
