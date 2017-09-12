@@ -1,5 +1,7 @@
 # OICNet [![Build status](https://ci.appveyor.com/api/projects/status/ss24gekefu1tbis5?svg=true)](https://ci.appveyor.com/project/NZSmartie/oicnet) [![NuGet](https://img.shields.io/nuget/v/NZSmartie.OICNet.svg)](https://www.nuget.org/packages/NZSmartie.OICNet/) [![MyGet](https://img.shields.io/myget/oicnet/v/NZSmartie.OICNet.svg?label=myget)](https://www.myget.org/feed/Packages/oicnet) [![license](https://img.shields.io/github/license/NZSmartie/OICNet.svg)](https://github.com/NZSmartie/OICNet/blob/master/LICENSE)
 
+> **Note**: Nuget will be used for stable releases and release candidates. MyGet will be used for pre-release builds straight from the build server. Sorry for the confusion with the above `-alpha` and `-pre` versions
+
 A clean and portable library (written for .Net Standard) to discover and interact with recourses on IoT Devices supporting OpenConenctivity's (OCF) OpenInterConnect (OIC) Specification.
 
 OIC is used to standardaise (and defragment) commmunication and access across the Internet of Things. 
