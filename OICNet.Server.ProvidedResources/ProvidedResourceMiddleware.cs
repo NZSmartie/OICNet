@@ -26,7 +26,7 @@ namespace OICNet.Server.ProvidedResources
 
         public Task Invoke(OicContext context)
         {
-            var resourceContext = new OicResourceContext(context, _options, _resourceProvider);
+            var resourceContext = new ProvidedResourceContext(context, _options, _resourceProvider);
 
             if (!resourceContext.ValidatePath())
                 return _next(context);

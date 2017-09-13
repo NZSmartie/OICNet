@@ -2,7 +2,7 @@
 
 namespace OICNet.Server.ProvidedResources
 {
-    public class OicResourceContext
+    public class ProvidedResourceContext
     {
         private readonly IOicResourceProvider _resourceProvider;
         private readonly OicContext _context;
@@ -10,12 +10,13 @@ namespace OICNet.Server.ProvidedResources
 
         private readonly string _requestPath;
 
-        public OicResourceContext(OicContext context, ProvidedResourceOptions options, IOicResourceProvider resourceProvider)
+        public ProvidedResourceContext(OicContext context, ProvidedResourceOptions options, IOicResourceProvider resourceProvider)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _resourceProvider = resourceProvider ?? throw new ArgumentNullException(nameof(resourceProvider));
 
+            // Since request path is a segment, ensure it is surrounded with slashes.
             _requestPath = _options.RequestPath ?? "/";
             if (!_requestPath.EndsWith("/"))
                 _requestPath += "/";
@@ -40,12 +41,15 @@ namespace OICNet.Server.ProvidedResources
             return false;
         }
 
-        public string GetPath()
+        public Uri GetPath()
         {
             var requestedPath = _context.Request.ToUri?.AbsolutePath 
                 ?? throw new InvalidOperationException();
 
-            return requestedPath.Substring(_requestPath.Length - 1);
+            return new UriBuilder(_context.Request.ToUri)
+            {
+                Path = requestedPath.Substring(_requestPath.Length - 1)
+            }.Uri;
         }
     }
 }

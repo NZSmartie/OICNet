@@ -1,7 +1,12 @@
-﻿namespace OICNet.Server.ProvidedResources
+﻿using System;
+using System.Collections.Generic;
+
+namespace OICNet.Server.ProvidedResources
 {
     public interface IOicResourceProvider
     {
-        IOicResource GetResource(string id);
+        IOicResource GetResource(Uri uri);
+
+        IList<IOicResource> Resources { get; }
     }
 }

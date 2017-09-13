@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using OICNet.Server.ProvidedResources;
+using System.Linq;
 
 namespace OICNet.Server.Example
 {
@@ -11,14 +13,23 @@ namespace OICNet.Server.Example
 
         public MyResources()
         {
-            _helloResource = new OicBaseResouece<string> { Value = "Hello World"};
+            Resources = new ObservableCollection<IOicResource>
+            {
+                new OicBaseResouece<string>
+                {
+                    Interfaces = {OicResourceInterface.Baseline, OicResourceInterface.ReadOnly},
+                    ResourceTypes = {"oicnet.hello"},
+                    RelativeUri = "/hello",
+                    Value = "Hello World"
+                }
+            };
         }
 
-        public IOicResource GetResource(string id)
+        public IList<IOicResource> Resources { get; }
+
+        public IOicResource GetResource(Uri uri)
         {
-            if (string.Equals(id, "/hello", StringComparison.OrdinalIgnoreCase))
-                return _helloResource;
-            return null;
+            return Resources.FirstOrDefault(r => uri.AbsolutePath.Equals(r.RelativeUri, StringComparison.Ordinal));
         }
     }
 }
