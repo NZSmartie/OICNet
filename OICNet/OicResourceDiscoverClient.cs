@@ -65,12 +65,7 @@ namespace OICNet
                     }
 
                     device.Name = device.Name ?? directory.Name;
-                    var newResources = directory.Links.Select(l =>
-                    {
-                        var r = l.CreateResource(_configuration.Resolver);
-                        r.Device = device;
-                        return r;
-                    });
+                    var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
                     device.Resources.AddRange(newResources);
                 }
                 else

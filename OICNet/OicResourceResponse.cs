@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace OICNet.Server
+namespace OICNet
 {
     /// <summary>
     /// Simple wrapper for <see cref="IOicResource"/> to be used as a Response in a <see cref="OicContext"/>
@@ -9,7 +11,8 @@ namespace OICNet.Server
     {
         private readonly OicConfiguration _configuration;
         private readonly IOicResource _resource;
-        public override OicMessageContentType ContentType { get; set; }
+
+        public IOicResource Resource => _resource;
 
         public override byte[] Content
         {

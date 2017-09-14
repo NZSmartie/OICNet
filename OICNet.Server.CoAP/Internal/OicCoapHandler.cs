@@ -4,6 +4,8 @@ using CoAPNet.Server;
 using Microsoft.Extensions.Logging;
 using OICNet.Server.CoAP.Utils;
 using OICNet.Server.Hosting;
+using CoAPNet.Utils;
+using System;
 
 namespace OICNet.Server.CoAP.Internal
 {
@@ -31,6 +33,12 @@ namespace OICNet.Server.CoAP.Internal
             var response = context.Response.ResposeCode != default(OicResponseCode)
                 ? context.Response.ToCoapMessage()
                 : null;
+
+            if (response == null)
+            {
+                _logger.LogError($"{context.GetType()}.{nameof(context.Response)}.{nameof(context.Response.ResposeCode)} was not set!");
+                response = CoapMessageUtility.FromException(new InvalidOperationException());
+            }
 
             _application.DisposeContext<OicCoapContext>(context, null);
 

@@ -6,7 +6,7 @@
     <RootNamespace>OICNet.Server.ProvidedResources</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.3.1-alpha5</Version>
-    <PackageId>NZSmartie.OICNet.Server.ProvidedResources</PackageId>
+    <PackageId>NZSmartie.OICNet.Server.ResourceRepository</PackageId>
     <Authors>Roman Vaughan</Authors>
     <Company>NZSmartie</Company>
     <Description>Similar to static files, This will serve resources on request.</Description>
@@ -17,6 +17,7 @@
     <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation mvc server</PackageTags>
     <IncludeSource>True</IncludeSource>
     <IncludeSymbols>True</IncludeSymbols>
+    <Product>OICNet.Server.ResourceRepository</Product>
   </PropertyGroup>
 
   <ItemGroup>

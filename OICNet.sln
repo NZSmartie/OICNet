@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet", "OICNet\OICNet.csproj", "{4667B478-CCD5-4BD4-85E9-BD0018134C35}"
 EndProject
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.Example", "OI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.CoAP", "OICNet.Server.CoAP\OICNet.Server.CoAP.csproj", "{278CDEF6-B009-4079-8F6A-769CC0DA16F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.Server.ProvidedResources", "OICNet.Server.ProvidedResources\OICNet.Server.ProvidedResources.csproj", "{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.ResourceRepository", "OICNet.Server.ProvidedResources\OICNet.Server.ResourceRepository.csproj", "{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -55,70 +55,19 @@ namespace OICNet
             return info.Id;
         }
 
-        public static Uri GetResourceUri(this IOicResource resource)
+        public static Uri GetResourceUri(this IOicResourceRepository resource)
         {
-            return new UriBuilder($"oic://{resource.Device.Endpoint.Authority}")
-            {
-                Path = resource.RelativeUri
-            }.Uri;
+            throw new NotImplementedException();
+            //return new UriBuilder($"oic://{resource.Device.Endpoint.Authority}")
+            //{
+            //    Path = resource.RelativeUri
+            //}.Uri;
 
         }
     }
 
     public class OicCoreResource : IOicResource, INotifyPropertyChanged
     {
-        #region CRUDN Operations
-
-
-        public Task CreateAsync(IOicResource resource)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(IOicResource resource)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RetrieveAsync()
-        {
-            if (Device == null)
-                throw new NullReferenceException($"{GetType().FullName}.{nameof(Device)} cannot be null null");
-            
-            var endoint = Device.Endpoint;
-
-            var response = endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
-            {
-                Accepts = 
-                {
-                    OicMessageContentType.ApplicationCbor,
-                    OicMessageContentType.ApplicationJson
-                },
-                Operation = OicRequestOperation.Get,
-                ToUri = new Uri(RelativeUri, UriKind.Relative)
-            }).Result;
-
-            using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
-                .GetEnumerator())
-            {
-                results.MoveNext();
-                var result = results.Current;
-
-                UpdateFields(result);
-
-                // We should not have more than one result in a response to a Retreive.
-                if (results.MoveNext())
-                    throw new InvalidOperationException($"Received multiple objects during {nameof(RetrieveAsync)}");
-            }
-
-            return Task.FromResult<object>(null);
-        }
-
         public virtual void UpdateFields(IOicResource source)
         {
             var coreResource = source as OicCoreResource ??
@@ -127,12 +76,6 @@ namespace OICNet
             Name = coreResource.Name ?? Name;
             Id = coreResource.Id ?? Id;
         }
-
-        #endregion
-
-
-        [JsonIgnore]
-        public OicDevice Device { get; set; }
 
         [JsonIgnore]
         public string RelativeUri { get; set; }
@@ -197,11 +140,6 @@ namespace OICNet
 
         #endregion
 
-
-        internal OicCoreResource(OicDevice device)
-        {
-            Device = device;
-        }
 
         public OicCoreResource()
         {

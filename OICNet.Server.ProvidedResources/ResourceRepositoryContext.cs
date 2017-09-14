@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace OICNet.Server.ProvidedResources
+namespace OICNet.Server.ResourceRepository
 {
-    public class ProvidedResourceContext
+    public class ResourceRepositoryContext
     {
-        private readonly IOicResourceProvider _resourceProvider;
+        private readonly IOicResourceRepository _resourceProvider;
         private readonly OicContext _context;
-        private readonly ProvidedResourceOptions _options;
+        private readonly ResourceRepositoryOptions _options;
 
         private readonly string _requestPath;
 
-        public ProvidedResourceContext(OicContext context, ProvidedResourceOptions options, IOicResourceProvider resourceProvider)
+        public ResourceRepositoryContext(OicContext context, ResourceRepositoryOptions options, IOicResourceRepository resourceProvider)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _options = options ?? throw new ArgumentNullException(nameof(options));
