@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>OICNet.Server.ProvidedResources</AssemblyName>
+    <RootNamespace>OICNet.Server.ProvidedResources</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.3.1-alpha5</Version>
+    <PackageId>NZSmartie.OICNet.Server.ResourceRepository</PackageId>
+    <Authors>Roman Vaughan</Authors>
+    <Company>NZSmartie</Company>
+    <Description>Similar to static files, This will serve resources on request.</Description>
+    <PackageProjectUrl>https://github.com/NZSmartie/OICNet</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation mvc server</PackageTags>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+    <Product>OICNet.Server.ResourceRepository</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OICNet.Server\OICNet.Server.csproj" />
+  </ItemGroup>
+
+</Project>

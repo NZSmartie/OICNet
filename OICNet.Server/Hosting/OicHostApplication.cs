@@ -69,6 +69,8 @@ namespace OICNet.Server.Hosting
             //        _diagnosticSource.Write(_debugEndRequestTag, new { oicContext = oicContext, timestamp = currentTimestamp });
             //}
             //else
+            if(exception != null)
+                _logger.LogError(exception, "Exception occured during handling request in application stack");
 
             //{
             //    var diagnoticsEnabled = _diagnosticSource.IsEnabled(_debugUnhandledExceptionTag);

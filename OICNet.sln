@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet", "OICNet\OICNet.csproj", "{4667B478-CCD5-4BD4-85E9-BD0018134C35}"
 EndProject
@@ -24,6 +24,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.CoAP", "OICNet.Server.CoAP\OICNet.Server.CoAP.csproj", "{278CDEF6-B009-4079-8F6A-769CC0DA16F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.Mvc", "OICNet.Server.Mvc\OICNet.Server.Mvc.csproj", "{342C85DF-2FA8-45CF-96C5-9F9505E0D6AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.ResourceRepository", "OICNet.Server.ResourceRepository\OICNet.Server.ResourceRepository.csproj", "{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +56,10 @@ Global
 		{342C85DF-2FA8-45CF-96C5-9F9505E0D6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{342C85DF-2FA8-45CF-96C5-9F9505E0D6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{342C85DF-2FA8-45CF-96C5-9F9505E0D6AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

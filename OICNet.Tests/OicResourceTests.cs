@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Language;
 using NUnit.Framework;
-
+using OICNet.Utilities;
 
 namespace OICNet.Tests
 {
@@ -46,19 +46,17 @@ namespace OICNet.Tests
         {
             Assert.Throws<NullReferenceException>(() =>
             {
-                var resource = new OicCoreResource();
+                var repository = new OicRemoteResourceRepository();
 
-                resource.RetrieveAsync();
+                repository.RetrieveAsync("").Wait();
             });
         }
 
         [Test]
         public void TestRetreiveMultipleResults()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                // Arrange
-                _mockTransport
+            // Arrange
+            _mockTransport
                     .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
                         It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
                     .Returns(Task.FromResult(new OicResponse
@@ -68,16 +66,13 @@ namespace OICNet.Tests
                             @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
                     }));
 
-                var resource = new OicCoreResource
-                {
-                    Device = new OicDevice(_mockEndpoint.Object),
-                    RelativeUri = "test"
-                };
+            var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object));
 
-                // Act
-                resource.RetrieveAsync().Wait();
+            // Act
+            TestDelegate operation = () => repository.RetrieveAsync("test").Wait();
 
-            });
+            // Assert
+            Assert.Throws<InvalidOperationException>(operation);
         }
 
         [Test]
@@ -90,10 +85,10 @@ namespace OICNet.Tests
                     It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
                 .Returns(Task.FromResult(response));
 
-            actual.Device = new OicDevice(_mockEndpoint.Object, _configuration);
+            var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object, _configuration));
 
             // Act
-            actual.RetrieveAsync().Wait();
+            actual = repository.RetrieveAsync(actual.RelativeUri).GetAwaiter().GetResult().GetResource(OicConfiguration.Default);
 
             // Assert
             Mock.VerifyAll(_mockTransport);
@@ -109,46 +104,49 @@ namespace OICNet.Tests
             get
             {
                 yield return new TestCaseData(new OicResponse
-                {
-                    ContentType = OicMessageContentType.ApplicationJson,
-                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}")
-                }, new OicCoreResource
-                {
-                    RelativeUri = ""
-                }).Returns(new OicCoreResource
-                {
-                    RelativeUri = ""
-                });
+                    {
+                        ContentType = OicMessageContentType.ApplicationJson,
+                        Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}")
+                    }, new OicCoreResource
+                    {
+                        RelativeUri = ""
+                    })
+                    .Returns(new OicCoreResource
+                    {
+                        RelativeUri = ""
+                    });
 
                 yield return new TestCaseData(new OicResponse
-                {
-                    ContentType = OicMessageContentType.ApplicationJson,
-                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],""id"":""04d0e642-2b18-41fb-8983-7e60fba3be44"",""n"":""Integer"",value:1234}")
-                }, new OicIntResouece
-                {
-                    RelativeUri = ""
-                }).Returns(new OicIntResouece
-                {
-                    Id = "04d0e642-2b18-41fb-8983-7e60fba3be44",
-                    Name = "Integer",
-                    Value = 1234,
-                    RelativeUri = ""
-                });
+                    {
+                        ContentType = OicMessageContentType.ApplicationJson,
+                        Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.int""],""id"":""04d0e642-2b18-41fb-8983-7e60fba3be44"",""n"":""Integer"",value:1234}")
+                    }, new OicIntResouece
+                    {
+                        RelativeUri = ""
+                    })
+                    .Returns(new OicIntResouece
+                    {
+                        Id = "04d0e642-2b18-41fb-8983-7e60fba3be44",
+                        Name = "Integer",
+                        Value = 1234,
+                        RelativeUri = ""
+                    });
     
                 yield return new TestCaseData(new OicResponse
-                {
-                    ContentType = OicMessageContentType.ApplicationJson,
-                    Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],""n"":""Number"",value:12.34,range:[0,100]}")
-                }, new OicNumberResouece
-                {
-                    RelativeUri = ""
-                }).Returns(new OicNumberResouece
-                {
-                    Name = "Number",
-                    Value = 12.34f,
-                    Range = new List<float>{0,100},
-                    RelativeUri = ""
-                });
+                    {
+                        ContentType = OicMessageContentType.ApplicationJson,
+                        Content = Encoding.UTF8.GetBytes(@"{""if"":[""oic.if.baseline""],""rt"":[""test.number""],""n"":""Number"",value:12.34,range:[0,100]}")
+                    }, new OicNumberResouece
+                    {
+                        RelativeUri = ""
+                    })
+                    .Returns(new OicNumberResouece
+                    {
+                        Name = "Number",
+                        Value = 12.34f,
+                        Range = new List<float>{0,100},
+                        RelativeUri = ""
+                    });
             }
         }
     }

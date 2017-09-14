@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OICNet.Server.Builder;
 using OICNet.Server.Builder.Internal;
 using OICNet.Server.Hosting.Internal;
 
@@ -18,7 +21,6 @@ namespace OICNet.Server.Hosting
         private IOicServer _server;
 
         private RequestDelegate _application;
-        private ILogger<OicHost> _logger;
         private IStartup _startup;
         private IServiceProvider _applicationServices;
         private readonly ApplicationLifetime _applicationLifetime;
@@ -41,8 +43,6 @@ namespace OICNet.Server.Hosting
             if (_application == null)
                 _application = BuildApplication();
 
-            _logger = _hostingServiceProvider.GetRequiredService<ILogger<OicHost>>();
-
             _server = _hostingServiceProvider.GetRequiredService<IOicServer>();
 
             var hostApplication = ActivatorUtilities.CreateInstance<OicHostApplication>(_hostingServiceProvider, _application);
@@ -58,7 +58,15 @@ namespace OICNet.Server.Hosting
             _applicationServices = _startup.ConfigureServices(_applicationServiceCollection);
 
             var builder = new OicApplicationBuilder(_applicationServices);
-            _startup.Configure(builder);
+
+            var startupFilters = _applicationServices.GetService<IEnumerable<IStartupFilter>>();
+            Action<IApplicationBuilder> configure = _startup.Configure;
+            foreach (var filter in startupFilters.Reverse())
+            {
+                configure = filter.Configure(configure);
+            }
+
+            configure(builder);
 
             return builder.Build();
         }

@@ -18,10 +18,11 @@ namespace OICNet.Server.Example
 
             var host = new OicHostBuilder()
                 .UseConfiguration(config)
-                .ConfigureLogging(loggerFactory =>
+                .ConfigureLogging(logging =>
                 {
-                    loggerFactory.AddConsole(LogLevel.Information);
-                    loggerFactory.AddDebug(LogLevel.Debug);
+                    logging
+                        .AddDebug()
+                        .AddConsole();
                 })
                 .UseCoap(options =>
                 {

@@ -8,12 +8,13 @@ namespace OICNet.Server.Builder.Internal
 {
     public class OicApplicationBuilder : IApplicationBuilder
     {
-        private readonly IServiceProvider _applicationServices;
+        public IServiceProvider ApplicationServices { get; }
+
         private readonly IList<Func<RequestDelegate, RequestDelegate>> _applicationLayers = new List<Func<RequestDelegate, RequestDelegate>>();
 
         public OicApplicationBuilder(IServiceProvider applicationServices)
         {
-            _applicationServices = applicationServices;
+            ApplicationServices = applicationServices;
         }
 
         public IApplicationBuilder Use(Func<RequestDelegate, RequestDelegate> component)
