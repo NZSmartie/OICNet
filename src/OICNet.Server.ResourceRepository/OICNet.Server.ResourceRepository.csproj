@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OICNet.Server\OICNet.Server.csproj" />
+    <ProjectReference Include="..\OICNet\OICNet.csproj" />
   </ItemGroup>
 
 </Project>

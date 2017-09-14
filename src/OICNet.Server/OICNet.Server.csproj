@@ -32,10 +32,4 @@
     <ProjectReference Include="..\OICNet\OICNet.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <Reference Include="System.Diagnostics.DiagnosticSource">
-      <HintPath>..\..\..\..\..\.nuget\packages\system.diagnostics.diagnosticsource\4.3.1\lib\netstandard1.3\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  
 </Project>
