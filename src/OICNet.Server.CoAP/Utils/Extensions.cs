@@ -53,7 +53,7 @@ namespace OICNet.Server.CoAP.Utils
                 return OicMessageContentType.ApplicationJson;
             if (formatType == CoAPNet.Options.ContentFormatType.ApplicationXml)
                 return OicMessageContentType.ApplicationXml;
-            throw new NotSupportedException();
+            throw new OicException("Unsupported content type", OicResponseCode.UnsupportedContentType);
         }
 
         public static CoAPNet.Options.ContentFormat ToCoapContentFormat(this OicMessageContentType contentType)
@@ -71,7 +71,7 @@ namespace OICNet.Server.CoAP.Utils
                     contentFormat.MediaType = CoAPNet.Options.ContentFormatType.ApplicationXml;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
+                    throw new OicException("Unsupported content type", new ArgumentOutOfRangeException(nameof(contentType), contentType, null));
             }
             return contentFormat;
         }
@@ -89,7 +89,7 @@ namespace OICNet.Server.CoAP.Utils
                 case CoapMessageCode.Delete:
                     return OicRequestOperation.Delete;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(code), code, null);
+                    throw new OicException("Unsupported operation", new ArgumentOutOfRangeException(nameof(code), code, null), OicResponseCode.BadRequest);
             }
         }
 
@@ -117,7 +117,7 @@ namespace OICNet.Server.CoAP.Utils
                     return CoapMessageCode.Forbidden;
                 case OicResponseCode.NotFound:
                     return CoapMessageCode.NotFound;
-                case OicResponseCode.MethodNotAllowed:
+                case OicResponseCode.OperationNotAllowed:
                     return CoapMessageCode.MethodNotAllowed;
                 case OicResponseCode.NotAcceptable:
                     return CoapMessageCode.NotAcceptable;
@@ -125,7 +125,7 @@ namespace OICNet.Server.CoAP.Utils
                     return CoapMessageCode.PreconditionFailed;
                 case OicResponseCode.RequestEntityTooLarge:
                     return CoapMessageCode.RequestEntityTooLarge;
-                case OicResponseCode.UnsupportedContentFormat:
+                case OicResponseCode.UnsupportedContentType:
                     return CoapMessageCode.UnsupportedContentFormat;
                 case OicResponseCode.InternalServerError:
                     return CoapMessageCode.InternalServerError;
@@ -140,7 +140,7 @@ namespace OICNet.Server.CoAP.Utils
                 case OicResponseCode.ProxyingNotSupported:
                     return CoapMessageCode.ProxyingNotSupported;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(code), code, null);
+                    throw new OicException("Unsupported response code", new ArgumentOutOfRangeException(nameof(code), code, null));
             }
         }
 

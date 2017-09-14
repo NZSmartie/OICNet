@@ -28,42 +28,82 @@ namespace OICNet.Server.Example
             
         }
 
-        public Task<OicResponse> CreateAsync(string path, IOicResource resource)
+        private IOicResource GetResource(string path)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+
+            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
+                return _helloResource;
+
+            return null;
         }
+
+
+        // Async to synchronous proxies
+
+        public Task<OicResponse> CreateAsync(string path, IOicResource resource)
+            => Task.FromResult(Create(path, resource));
 
         public Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
-        {
-            if(resource == null)
-                return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "No valid OIC resource was provided"));
-
-            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
-            {
-                _helloResource.UpdateFields(resource);
-
-                return Task.FromResult<OicResponse>(new OicResourceResponse(_configuration, _helloResource)
-                {
-                    ResposeCode = OicResponseCode.Changed
-                });
-            }
-            return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found"));
-        }
+            => Task.FromResult(CreateOrUpdate(path, resource));
 
         public Task<OicResponse> DeleteAsync(string path)
+            => Task.FromResult(Delete(path));
+
+        public Task<OicResponse> RetrieveAsync(string path)
+            => Task.FromResult(Retrieve(path));
+
+
+        public OicResponse Create(string path, IOicResource resource)
         {
+            var myResource = GetResource(path);
+            if (myResource == null)
+                return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
+
             throw new NotImplementedException();
         }
 
-        public Task<OicResponse> RetrieveAsync(string path)
+        public OicResponse CreateOrUpdate(string path, IOicResource resource)
         {
-            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
-                return Task.FromResult<OicResponse>(new OicResourceResponse(_configuration, _helloResource)
-                    {
-                        ResposeCode = OicResponseCode.Content
-                    });
+            var myResource = GetResource(path);
+            if (myResource == null)
+                return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
-            return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found"));
+            if (!myResource.Interfaces.Contains(OicResourceInterface.ReadWrite))
+                return OicResponseUtility.CreateMessage(OicResponseCode.OperationNotAllowed, "Operation not allowed");
+
+            if (resource == null)
+                return OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "No valid OIC resource was provided");
+
+            myResource.UpdateFields(resource);
+
+            return new OicResourceResponse(_configuration, _helloResource)
+            {
+                ResposeCode = OicResponseCode.Changed
+            };
+
+        }
+
+        public OicResponse Delete(string path)
+        {
+            var myResource = GetResource(path);
+            if (myResource == null)
+                return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
+
+            throw new NotImplementedException();
+        }
+
+        public OicResponse Retrieve(string path)
+        {
+            var myResource = GetResource(path);
+            if (myResource == null)
+                return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
+
+            return new OicResourceResponse(_configuration, myResource)
+            {
+                ResposeCode = OicResponseCode.Content
+            };
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OICNet.Utilities
 {
@@ -24,6 +21,9 @@ namespace OICNet.Utilities
 
             switch (exception)
             {
+                case OicException oicEx:
+                    result.ResposeCode = oicEx.ResponseCode;
+                    break;
                 case NotImplementedException _:
                     result.ResposeCode = OicResponseCode.NotImplemented;
                     break;

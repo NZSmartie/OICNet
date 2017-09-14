@@ -1,11 +1,13 @@
+using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
 using CoAPNet;
 using CoAPNet.Server;
-using Microsoft.Extensions.Logging;
+using CoAPNet.Utils;
+
 using OICNet.Server.CoAP.Utils;
 using OICNet.Server.Hosting;
-using CoAPNet.Utils;
-using System;
 using OICNet.Utilities;
 
 namespace OICNet.Server.CoAP.Internal
@@ -25,39 +27,43 @@ namespace OICNet.Server.CoAP.Internal
         {
             _logger.LogDebug($"New request! {message}");
 
-            var context = _application.CreateContext(new OicCoapContext(connectionInformation, message));
+            var response = OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Not found");
+            OicContext context = null;
             Exception exception = null;
 
             try
             {
+                // Create the OiCContext
+                context = _application.CreateContext(new OicCoapContext(connectionInformation, message));
+
                 await _application.ProcessRequestAsync(context);
+
+                if (context.Response.ResposeCode != default(OicResponseCode))
+                {
+                    response = context.Response;
+                }
+                else
+                {
+                    // This should only occur during development.
+                    var errorMessage = $"{context.GetType()}.{nameof(context.Response)}.{nameof(context.Response.ResposeCode)} was not set!";
+                    _logger.LogError(errorMessage);
+                    response = OicResponseUtility
+                        .CreateMessage(OicResponseCode.InternalServerError, errorMessage);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 exception = ex;
                 // TODO: Do we want to restrict error messages to developers/logging only? 
-                context.Response = OicResponseUtility.FromException(ex);
+                response = OicResponseUtility.FromException(ex);
             }
-            
-            _logger.LogDebug($"Responding with {context.Response}");
-
-            var response = context.Response.ResposeCode != default(OicResponseCode)
-                ? context.Response.ToCoapMessage()
-                : null;
-
-            if (response == null)
+            finally
             {
-                // This should only occur during development.
-                var errorMessage = $"{context.GetType()}.{nameof(context.Response)}.{nameof(context.Response.ResposeCode)} was not set!";
-                _logger.LogError(errorMessage);
-                response = OicResponseUtility
-                    .CreateMessage(OicResponseCode.InternalServerError, errorMessage)
-                    .ToCoapMessage();
+                _application.DisposeContext<OicCoapContext>(context, exception);
             }
 
-            _application.DisposeContext<OicCoapContext>(context, exception);
-
-            return response;
+            _logger.LogDebug($"Responding with {response}");
+            return response.ToCoapMessage();
         }
     }
 }

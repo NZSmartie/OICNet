@@ -40,7 +40,6 @@ namespace OICNet.Server.ResourceRepository
 
             var path = resourceContext.GetPath().AbsolutePath;
 
-            // TODO: verify grabbing the first resource is okay and enumeration is not needed.
             IOicResource requestResource = null;
             if (context.Request.ContentType != OicMessageContentType.None) {
                 if (context.Request.Content == null)
@@ -49,6 +48,7 @@ namespace OICNet.Server.ResourceRepository
                     return;
                 }
 
+                // TODO: verify grabbing the first resource is okay and enumeration is not needed.
                 requestResource = _oicConfiguration.Serialiser.Deserialise(context.Request.Content, context.Request.ContentType).First();
             }
 
@@ -70,7 +70,7 @@ namespace OICNet.Server.ResourceRepository
             }
             else
             {
-                result = OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "Bad Request");
+                result = OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "Bad request");
             }
 
             context.Response = result;

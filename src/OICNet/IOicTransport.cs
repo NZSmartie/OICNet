@@ -103,11 +103,11 @@ namespace OICNet
         BadOption = 402,
         Forbidden = 403,
         NotFound = 404,
-        MethodNotAllowed = 405,
+        OperationNotAllowed = 405,
         NotAcceptable = 406,
         PreconditionFailed = 412,
         RequestEntityTooLarge = 413,
-        UnsupportedContentFormat = 415,
+        UnsupportedContentType = 415,
         // 5.xx Server Error
         InternalServerError = 500,
         NotImplemented = 501,
