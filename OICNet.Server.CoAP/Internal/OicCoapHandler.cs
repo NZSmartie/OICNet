@@ -6,6 +6,7 @@ using OICNet.Server.CoAP.Utils;
 using OICNet.Server.Hosting;
 using CoAPNet.Utils;
 using System;
+using OICNet.Utilities;
 
 namespace OICNet.Server.CoAP.Internal
 {
@@ -25,9 +26,19 @@ namespace OICNet.Server.CoAP.Internal
             _logger.LogDebug($"New request! {message}");
 
             var context = _application.CreateContext(new OicCoapContext(connectionInformation, message));
+            Exception exception = null;
 
-            await _application.ProcessRequestAsync(context);
-
+            try
+            {
+                await _application.ProcessRequestAsync(context);
+            }
+            catch(Exception ex)
+            {
+                exception = ex;
+                // TODO: Do we want to restrict error messages to developers/logging only? 
+                context.Response = OicResponseUtility.FromException(ex);
+            }
+            
             _logger.LogDebug($"Responding with {context.Response}");
 
             var response = context.Response.ResposeCode != default(OicResponseCode)
@@ -36,11 +47,15 @@ namespace OICNet.Server.CoAP.Internal
 
             if (response == null)
             {
-                _logger.LogError($"{context.GetType()}.{nameof(context.Response)}.{nameof(context.Response.ResposeCode)} was not set!");
-                response = CoapMessageUtility.FromException(new InvalidOperationException());
+                // This should only occur during development.
+                var errorMessage = $"{context.GetType()}.{nameof(context.Response)}.{nameof(context.Response.ResposeCode)} was not set!";
+                _logger.LogError(errorMessage);
+                response = OicResponseUtility
+                    .CreateMessage(OicResponseCode.InternalServerError, errorMessage)
+                    .ToCoapMessage();
             }
 
-            _application.DisposeContext<OicCoapContext>(context, null);
+            _application.DisposeContext<OicCoapContext>(context, exception);
 
             return response;
         }
