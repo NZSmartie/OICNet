@@ -20,10 +20,10 @@ This lirbary is built to help me learn the OIC specification and create an Xamar
   - [X] Resource Discovery
   - [ ] Securtiy (See [Support for OIC Security #3](https://github.com/NZSmartie/OICNet/issues/3))
   - CRUDN Operations
-    - [ ] Create (POST/PUT)
-    - [ ] Retreive (GET)
-    - [ ] Update (POST)
-    - [ ] Delete (DELETE)
+    - [X] Create (POST/PUT)
+    - [X] Retreive (GET)
+    - [X] Update (POST)
+    - [X] Delete (DELETE)
     - [ ] Notify (OBSERVE)
   - IoT Data Models 
     - [ ] Enforce data validation
