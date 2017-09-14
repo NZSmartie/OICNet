@@ -37,7 +37,7 @@ namespace OICNet.Server.Example
         {
             if (resource.RelativeUri == _helloResource.RelativeUri)
             {
-                if(resource is OicRemoteResourceRepository request)
+                if(resource is OicResourceRequest request)
                     _helloResource.UpdateFields(request.Resource);
                 else
                     _helloResource.UpdateFields(resource);

@@ -37,7 +37,7 @@ namespace OICNet.Server.ResourceRepository
 
             OicResponse result;
 
-            var requestResource = new OicRemoteResourceRepository(_oicConfiguration, context.Request, resourceContext.GetPath().AbsolutePath);
+            var requestResource = new OicResourceRequest(_oicConfiguration, context.Request, resourceContext.GetPath().AbsolutePath);
 
             if (context.Request.Operation == OicRequestOperation.Get)
             {
