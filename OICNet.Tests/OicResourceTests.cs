@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Language;
 using NUnit.Framework;
-
+using OICNet.Utilities;
 
 namespace OICNet.Tests
 {
@@ -48,7 +48,7 @@ namespace OICNet.Tests
             {
                 var repository = new OicRemoteResourceRepository();
 
-                repository.RetrieveAsync(new OicCoreResource());
+                repository.RetrieveAsync("").Wait();
             });
         }
 
@@ -66,11 +66,10 @@ namespace OICNet.Tests
                             @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
                     }));
 
-            var resource = new OicCoreResource() { RelativeUri = "test" };
             var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object));
 
             // Act
-            TestDelegate operation = () => repository.RetrieveAsync(resource).Wait();
+            TestDelegate operation = () => repository.RetrieveAsync("test").Wait();
 
             // Assert
             Assert.Throws<InvalidOperationException>(operation);
@@ -89,7 +88,7 @@ namespace OICNet.Tests
             var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object, _configuration));
 
             // Act
-            repository.RetrieveAsync(actual).Wait();
+            actual = repository.RetrieveAsync(actual.RelativeUri).GetAwaiter().GetResult().GetResource(OicConfiguration.Default);
 
             // Assert
             Mock.VerifyAll(_mockTransport);

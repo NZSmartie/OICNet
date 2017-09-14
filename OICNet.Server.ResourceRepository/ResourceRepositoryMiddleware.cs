@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using OICNet.Server.Hosting;
 using OICNet.Server.ResourceRepository.Internal;
 using System.Linq;
+using OICNet.Utilities;
 
 namespace OICNet.Server.ResourceRepository
 {
@@ -37,27 +38,39 @@ namespace OICNet.Server.ResourceRepository
 
             OicResponse result;
 
-            var requestResource = new OicResourceRequest(_oicConfiguration, context.Request, resourceContext.GetPath().AbsolutePath);
+            var path = resourceContext.GetPath().AbsolutePath;
+
+            // TODO: verify grabbing the first resource is okay and enumeration is not needed.
+            IOicResource requestResource = null;
+            if (context.Request.ContentType != OicMessageContentType.None) {
+                if (context.Request.Content == null)
+                {
+                    context.Response = OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "Content type provided with no content");
+                    return;
+                }
+
+                requestResource = _oicConfiguration.Serialiser.Deserialise(context.Request.Content, context.Request.ContentType).First();
+            }
 
             if (context.Request.Operation == OicRequestOperation.Get)
             {
-                result = await _resourceRepository.RetrieveAsync(requestResource);
+                result = await _resourceRepository.RetrieveAsync(path);
             }
             else if (context.Request.Operation == OicRequestOperation.Post)
             {
-                result = await _resourceRepository.CreateOrUpdateAsync(requestResource);
+                result = await _resourceRepository.CreateOrUpdateAsync(path, requestResource);
             }
             else if (context.Request.Operation == OicRequestOperation.Put)
             {
-                result = await _resourceRepository.CreateAsync(requestResource);
+                result = await _resourceRepository.CreateAsync(path, requestResource);
             }
             else if (context.Request.Operation == OicRequestOperation.Delete)
             {
-                result = await _resourceRepository.DeleteAsync(requestResource);
+                result = await _resourceRepository.DeleteAsync(path);
             }
             else
             {
-                throw new InvalidOperationException($"TODO: resopnd with a {nameof(OicResponseCode.BadRequest)}");
+                result = OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "Bad Request");
             }
 
             context.Response = result;

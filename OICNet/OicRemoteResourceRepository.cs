@@ -18,29 +18,29 @@ namespace OICNet
             Device = device;
         }
 
-        public virtual Task<OicResponse> CreateAsync(IOicResource resource)
+        public virtual Task<OicResponse> CreateAsync(string path, IOicResource resource)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Task<OicResponse> CreateOrUpdateAsync(IOicResource resource)
+        public virtual Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Task<OicResponse> DeleteAsync(IOicResource resource)
+        public virtual Task<OicResponse> DeleteAsync(string path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Task<OicResponse> RetrieveAsync(IOicResource resource)
+        public virtual async Task<OicResponse> RetrieveAsync(string path)
         {
             if (Device == null)
                 throw new NullReferenceException($"{GetType().FullName}.{nameof(Device)} cannot be null null");
 
             var endoint = Device.Endpoint;
 
-            var response = endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
+            return await endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
             {
                 Accepts =
                 {
@@ -48,23 +48,23 @@ namespace OICNet
                     OicMessageContentType.ApplicationJson
                 },
                 Operation = OicRequestOperation.Get,
-                ToUri = new Uri(resource.RelativeUri, UriKind.Relative)
-            }).Result;
+                ToUri = new Uri(path, UriKind.Relative)
+            });
 
-            using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
-                .GetEnumerator())
-            {
-                results.MoveNext();
-                var result = results.Current;
+            //using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
+            //    .GetEnumerator())
+            //{
+            //    results.MoveNext();
+            //    var result = results.Current;
 
-                resource.UpdateFields(result);
+            //    resource.UpdateFields(result);
 
-                // We should not have more than one result in a response to a Retreive.
-                if (results.MoveNext())
-                    throw new InvalidOperationException($"Received multiple objects during {nameof(RetrieveAsync)}");
-            }
+            //    // We should not have more than one result in a response to a Retreive.
+            //    if (results.MoveNext())
+            //        throw new InvalidOperationException($"Received multiple objects during {nameof(RetrieveAsync)}");
+            //}
 
-            return Task.FromResult(response);
+            //return Task.FromResult(response);
         }
     }
 }

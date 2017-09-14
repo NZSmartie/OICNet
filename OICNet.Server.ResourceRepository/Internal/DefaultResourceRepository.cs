@@ -69,24 +69,24 @@ namespace OICNet.Server.ResourceRepository.Internal
             return meh;
         }
 
-        public Task<OicResponse> CreateAsync(IOicResource resource)
+        public Task<OicResponse> CreateAsync(string path, IOicResource resource)
         {
-            return _resourceRepository.CreateAsync(resource);
+            return _resourceRepository.CreateAsync(path, resource);
         }
 
-        public Task<OicResponse> RetrieveAsync(IOicResource resource)
+        public Task<OicResponse> RetrieveAsync(string path)
         {
-            return _resourceRepository.RetrieveAsync(resource);
+            return _resourceRepository.RetrieveAsync(path);
         }
 
-        public Task<OicResponse> CreateOrUpdateAsync(IOicResource resource)
+        public Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
         {
-            return _resourceRepository.CreateOrUpdateAsync(resource);
+            return _resourceRepository.CreateOrUpdateAsync(path, resource);
         }
 
-        public Task<OicResponse> DeleteAsync(IOicResource resource)
+        public Task<OicResponse> DeleteAsync(string path)
         {
-            return _resourceRepository.DeleteAsync(resource);
+            return _resourceRepository.DeleteAsync(path);
         }
     }
 }

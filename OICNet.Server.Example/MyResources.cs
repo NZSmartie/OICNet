@@ -28,42 +28,42 @@ namespace OICNet.Server.Example
             
         }
 
-        public Task<OicResponse> CreateAsync(IOicResource resource)
+        public Task<OicResponse> CreateAsync(string path, IOicResource resource)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OicResponse> CreateOrUpdateAsync(IOicResource resource)
+        public Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
         {
-            if (resource.RelativeUri == _helloResource.RelativeUri)
+            if(resource == null)
+                return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "No valid OIC resource was provided"));
+
+            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
             {
-                if(resource is OicResourceRequest request)
-                    _helloResource.UpdateFields(request.Resource);
-                else
-                    _helloResource.UpdateFields(resource);
+                _helloResource.UpdateFields(resource);
 
                 return Task.FromResult<OicResponse>(new OicResourceResponse(_configuration, _helloResource)
                 {
                     ResposeCode = OicResponseCode.Changed
                 });
             }
-            throw new NotImplementedException("TODO: return 4.04 not found OicResponse");
+            return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found"));
         }
 
-        public Task<OicResponse> DeleteAsync(IOicResource resource)
+        public Task<OicResponse> DeleteAsync(string path)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OicResponse> RetrieveAsync(IOicResource resource)
+        public Task<OicResponse> RetrieveAsync(string path)
         {
-            if (resource.RelativeUri == _helloResource.RelativeUri)
+            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
                 return Task.FromResult<OicResponse>(new OicResourceResponse(_configuration, _helloResource)
                     {
                         ResposeCode = OicResponseCode.Content
                     });
 
-            throw new NotImplementedException("TODO: return 4.04 not found OicResponse");
+            return Task.FromResult(OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found"));
         }
     }
 }
