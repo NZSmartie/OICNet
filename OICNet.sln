@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.Example", "OI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.CoAP", "OICNet.Server.CoAP\OICNet.Server.CoAP.csproj", "{278CDEF6-B009-4079-8F6A-769CC0DA16F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.ResourceRepository", "OICNet.Server.ProvidedResources\OICNet.Server.ResourceRepository.csproj", "{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.Server.ResourceRepository", "OICNet.Server.ResourceRepository\OICNet.Server.ResourceRepository.csproj", "{F74BAFA1-E4FD-4D3D-9801-77F0591BC9AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
