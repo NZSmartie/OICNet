@@ -20,6 +20,11 @@ namespace OICNet.Server.Example
         public void Configure(IApplicationBuilder app)
         {
             app.UseResourceRepository("test");
+            app.UseResourceRepository(options => 
+            {
+                options.RequestPath = "youre";
+                options.UseResourceRepository<MyOtherResources>("/awesome");
+            });
         }
     }
 }

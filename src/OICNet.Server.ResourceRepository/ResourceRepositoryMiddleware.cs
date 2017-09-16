@@ -23,7 +23,9 @@ namespace OICNet.Server.ResourceRepository
             _options = options.Value;
             _oicConfiguration = services.GetRequiredService<OicConfiguration>();
             _resourceRepository = _options.ResourceRepository
-                                ?? ActivatorUtilities.CreateInstance<DefaultResourceRepository>(services);
+                                ?? (_options.ResourceRepositoryType != null
+                                    ? (IOicResourceRepository)ActivatorUtilities.CreateInstance(services, _options.ResourceRepositoryType, _options.ResourceRepositoryArgs)
+                                    : ActivatorUtilities.CreateInstance<DefaultResourceRepository>(services));
         }
 
         public async Task Invoke(OicContext context)
