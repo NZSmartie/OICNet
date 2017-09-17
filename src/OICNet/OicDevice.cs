@@ -13,29 +13,39 @@ namespace OICNet
         public OicMessage Message;
     }
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public class OicDeviceTypeAttribute : Attribute
+    {
+        public OicDeviceTypeAttribute(string type)
+        {
+            Type = type;
+        }
+
+        public string Type { get; }
+    }
+
     public class OicDevice
     {
-        public string Name { get; set; }
+        public IReadOnlyList<string> DeviceTypes { get; }
 
-        public Guid DeviceId { get; set; }
+        public virtual string Name { get; set; }
 
-        public List<IOicResource> Resources { get; } = new List<IOicResource>();
+        public virtual Guid DeviceId { get; set; }
 
-        public IOicEndpoint Endpoint { get; }
+        // TODO: Do we want to remove this in favour of finding resources in subclasses? or make this a lambda?
+        public virtual List<IOicResource> Resources { get; } = new List<IOicResource>();
 
-        public OicConfiguration Configuration { get; }
-
-        public OicDevice(IOicEndpoint remoteEndpoint)
-            :this(remoteEndpoint, OicConfiguration.Default)
+        public OicDevice(Guid deviceId, params string[] deviceTypes)
         {
-            
+            DeviceId = deviceId;
+            DeviceTypes = deviceTypes != null
+                ? deviceTypes.Concat(new[] { "oic.wk.d" }).ToList()
+                : new List<string> { "oic.wk.d" };
         }
 
-        public OicDevice(IOicEndpoint endpoint, OicConfiguration configuration)
-        {
-            Configuration = configuration;
-            Endpoint = endpoint;
-        }
+        public OicDevice(params string[] deviceTypes)
+            : this(Guid.NewGuid(), deviceTypes)
+        { }
 
         internal void UpdateResourceInternal(IOicResource resource)
         {
@@ -43,6 +53,26 @@ namespace OICNet
             {
                     
             }
+        }
+    }
+
+    public class OicRemoteDevice : OicDevice
+    {
+        public OicDevice Device { get; }
+        public IOicEndpoint Endpoint { get; }
+
+        public override string Name { get => base.Name; set => base.Name = value; }
+        public override Guid DeviceId { get => base.DeviceId; set => base.DeviceId = value; }
+        public override List<IOicResource> Resources => base.Resources;
+
+        public OicRemoteDevice(IOicEndpoint endpoint)
+            : this(endpoint, new OicDevice())
+        { }
+
+        public OicRemoteDevice(IOicEndpoint endpoint, OicDevice device)
+        {
+            Endpoint = endpoint;
+            Device = device;
         }
     }
 }

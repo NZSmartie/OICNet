@@ -1,10 +1,10 @@
 ﻿using System;
-using OICNet.Server.Builder;
+using Microsoft.Extensions.Options;
+
 using OICNet.Server.ResourceRepository;
-using OICNet;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace OICNet.Server.Builder
 {
     public static class ResourceRepositoryExtensions
     {
@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var resourceRepositoryOptions = new ResourceRepositoryOptions();
             options(resourceRepositoryOptions);
-            return app.UseMiddleware<ResourceRepositoryMiddleware>(Options.Options.Create(resourceRepositoryOptions));
+            return app.UseMiddleware<ResourceRepositoryMiddleware>(Options.Create(resourceRepositoryOptions));
         }
     }
 }

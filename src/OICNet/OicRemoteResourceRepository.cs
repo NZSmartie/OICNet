@@ -11,9 +11,9 @@ namespace OICNet
     {
         public IList<IOicResource> Resourcse { get; }
 
-        public OicDevice Device { get; }
+        public OicRemoteDevice Device { get; }
 
-        public OicRemoteResourceRepository(OicDevice device = null)
+        public OicRemoteResourceRepository(OicRemoteDevice device = null)
         {
             Device = device;
         }

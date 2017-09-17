@@ -29,8 +29,7 @@ namespace OICNet.Tests
         [OneTimeSetUp]
         public void CreateOicConfiguration()
         {
-            _configuration = new OicConfiguration {Resolver = new TestResourceResolver()};
-            _configuration.Serialiser = new OicMessageSerialiser(_configuration.Resolver);
+            _configuration = new OicConfiguration(new TestResourceResolver());
         }
 
         [SetUp]
@@ -44,40 +43,40 @@ namespace OICNet.Tests
         [Test]
         public void TestRetreiveNullDevice()
         {
-            Assert.Throws<NullReferenceException>(() =>
+            Assert.ThrowsAsync<NullReferenceException>(async () =>
             {
                 var repository = new OicRemoteResourceRepository();
 
-                repository.RetrieveAsync("").Wait();
+                await repository.RetrieveAsync("");
             });
         }
 
-        [Test]
-        public void TestRetreiveMultipleResults()
-        {
-            // Arrange
-            _mockTransport
-                    .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
-                        It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
-                    .Returns(Task.FromResult(new OicResponse
-                    {
-                        ContentType = OicMessageContentType.ApplicationJson,
-                        Content = Encoding.UTF8.GetBytes(
-                            @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
-                    }));
+        //[Test]
+        //public void TestRetreiveMultipleResults()
+        //{
+        //    // Arrange
+        //    _mockTransport
+        //            .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
+        //                It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
+        //            .Returns(Task.FromResult(new OicResponse
+        //            {
+        //                ContentType = OicMessageContentType.ApplicationJson,
+        //                Content = Encoding.UTF8.GetBytes(
+        //                    @"[{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]},{""if"":[""oic.if.baseline""],""rt"":[""oic.r.core""]}]")
+        //            }));
 
-            var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object));
+        //    var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
 
-            // Act
-            TestDelegate operation = () => repository.RetrieveAsync("test").Wait();
+        //    // Act
+        //    AsyncTestDelegate operation = async () => await repository.RetrieveAsync("test");
 
-            // Assert
-            Assert.Throws<InvalidOperationException>(operation);
-        }
+        //    // Assert
+        //    Assert.ThrowsAsync<InvalidOperationException>(operation);
+        //}
 
         [Test]
         [TestCaseSource(typeof(ResourceTestCaseSource), nameof(ResourceTestCaseSource.RetreiveTestCaseData))]
-        public IOicResource TestRetreive(OicResponse response, IOicResource actual)
+        public async Task<IOicResource> TestRetreive(OicResponse response, IOicResource actual)
         {
             // Arrange
             _mockTransport
@@ -85,10 +84,12 @@ namespace OICNet.Tests
                     It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
                 .Returns(Task.FromResult(response));
 
-            var repository = new OicRemoteResourceRepository(new OicDevice(_mockEndpoint.Object, _configuration));
+            var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
 
             // Act
-            actual = repository.RetrieveAsync(actual.RelativeUri).GetAwaiter().GetResult().GetResource(OicConfiguration.Default);
+            var result = await repository.RetrieveAsync(actual.RelativeUri);
+
+            actual = result.GetResource(_configuration);
 
             // Assert
             Mock.VerifyAll(_mockTransport);

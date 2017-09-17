@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OICNet.Server.Builder;
-using OICNet.Server.Hosting;
-using OICNet.Server.ResourceRepository;
+using OICNet.Server.Example.Devices;
 
 namespace OICNet.Server.Example
 {
@@ -20,11 +17,9 @@ namespace OICNet.Server.Example
         public void Configure(IApplicationBuilder app)
         {
             app.UseResourceRepository("test");
-            app.UseResourceRepository(options => 
-            {
-                options.RequestPath = "youre";
-                options.UseResourceRepository<MyOtherResources>("/awesome");
-            });
+
+            // Provide default /oic/ resources for our LightDevice
+            app.UseOicResources<LightDevice>();
         }
     }
 }

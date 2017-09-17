@@ -40,6 +40,7 @@ namespace OICNet.CoreResources
         [JsonProperty("ld", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore), MinLength(1)]
         public IList<LocalisedDescription> LocalisedDescriptions { get; set; } = new List<LocalisedDescription>();
 
+        public bool ShouldSerializeLocalisedDescriptions() { return LocalisedDescriptions.Count > 0; }
 
         /// <summary>
         /// Software version
@@ -53,6 +54,8 @@ namespace OICNet.CoreResources
         [JsonProperty("dmn", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore), MinLength(1)]
         public IList<LocalisedDescription> ManufacturerName { get; set; } = new List<LocalisedDescription>();
 
+        public bool ShouldSerializeManufacturerName() { return ManufacturerName.Count > 0; }
+
         /// <summary>
         /// Model number as designated by manufacturer
         /// </summary>
@@ -64,7 +67,12 @@ namespace OICNet.CoreResources
         /// </summary>
         [JsonProperty("piid"), JsonRequired]
         public Guid PlatformId { get; set; }
-        //}
+
+        public OicDeviceResource()
+        {
+            Interfaces.Add(OicResourceInterface.Baseline);
+            Interfaces.Add(OicResourceInterface.ReadOnly);
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

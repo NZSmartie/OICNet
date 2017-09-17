@@ -78,7 +78,7 @@ namespace OICNet.Tests
             // Assert
             Assert.IsTrue(newDeviceCallbackInvoked, $"{typeof(OicResourceDiscoverClient)}.{nameof(service.NewDevice)} was not invoked");
 
-            var expectedDevice = new OicDevice(null)
+            var expectedDevice = new OicDevice()
             {
                 DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
                 Resources = {

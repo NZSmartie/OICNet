@@ -14,6 +14,7 @@ namespace OICNet.CoreResources
     [Flags]
     public enum LinkPolicyFlags : byte
     {
+        None = 0,
         /// <summary>
         /// The discoverable rule defines whether the <see cref="OicResourceLink"/> is to be included in the Resource discovery message via /oic/res.
         /// </summary>
@@ -39,14 +40,14 @@ namespace OICNet.CoreResources
             /// <summary>
             /// Specifies if security needs to be turned on when looking to interact with the Resource
             /// </summary>
-            [JsonProperty("sec")]
+            [JsonProperty("sec", DefaultValueHandling = DefaultValueHandling.Ignore)]
             public bool IsSecure { get; set; }
 
             /// <summary>
             /// Secure port to be used for connection
             /// </summary>
-            [JsonProperty("port")]
-            public int SecurePort { get; set; }
+            [JsonProperty("port", DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public int SecurePort { get; set; } = 0;
 
             public override bool Equals(object obj)
             {
@@ -68,6 +69,8 @@ namespace OICNet.CoreResources
         [JsonProperty("rel", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore), StringLength(64)]
         public string Rel { get; set; } = "hosts";
 
+        public bool ShouldSerializeRel() { return Rel != "hosts"; }
+
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
         public IList<string> ResourceTypes { get; set; } = new List<string>();
@@ -81,8 +84,8 @@ namespace OICNet.CoreResources
         /// <summary>
         /// The Device ID on which the Relative Reference in href is to be resolved on. Base URI should be used in preference where possible
         /// </summary>
-        [JsonProperty("di", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public Guid DeviceId { get; set; }
+        [JsonProperty("di", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore,DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public Guid DeviceId { get; set; } = Guid.Empty;
 
         /// <summary>
         /// The base URI used to fully qualify a Relative Reference in the href parameter. Use the OCF Schema for URI
@@ -93,7 +96,7 @@ namespace OICNet.CoreResources
         /// <summary>
         /// Specifies the framework policies on the Resource referenced by the target URI
         /// </summary>
-        [JsonProperty("p", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("p", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public LinkPolicies Policies { get; set; }
         
         /// <summary>
@@ -129,6 +132,8 @@ namespace OICNet.CoreResources
         /// </summary>
         [JsonProperty("type", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public IList<string> TypeHints { get; set; } = new List<string>{ "application/cbor" };
+
+        public bool ShouldSerializeTypeHints() { return !TypeHints.SequenceEqual(new[] { "application/cbor" }); }
 
         public override bool Equals(object obj)
         {

@@ -15,7 +15,7 @@ namespace OICNet
 
     public interface IOicRemoteResourceRepository : IOicResourceRepository
     {
-        OicDevice Device { get; }
+        OicRemoteDevice Device { get; }
     }
 
 }
