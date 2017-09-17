@@ -70,13 +70,13 @@ namespace OICNet.CoreResources
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
-        public List<string> ResourceTypes { get; } = new List<string>();
+        public IList<string> ResourceTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// The interface set supported by this resource
         /// </summary>
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter)), JsonRequired()]
-        public List<OicResourceInterface> Interfaces { get; } = new List<OicResourceInterface>();
+        public IList<OicResourceInterface> Interfaces { get; set; } = new List<OicResourceInterface>();
 
         /// <summary>
         /// The Device ID on which the Relative Reference in href is to be resolved on. Base URI should be used in preference where possible
@@ -128,7 +128,7 @@ namespace OICNet.CoreResources
         /// A hint at the representation of the resource referenced by the target URI. This represents the media types that are used for both accepting and emitting
         /// </summary>
         [JsonProperty("type", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> TypeHints { get; set; } = new List<string>{ "application/cbor" };
+        public IList<string> TypeHints { get; set; } = new List<string>{ "application/cbor" };
 
         public override bool Equals(object obj)
         {
@@ -176,8 +176,10 @@ namespace OICNet.CoreResources
 
             resource.Name = Title;
             resource.RelativeUri = Href.OriginalString; // Todo: Figure out how to get the relative path from a Resource Link and not assume OriginalString will always work
-            ResourceTypes.ForEach(resource.ResourceTypes.Add);
-            Interfaces.ForEach(resource.Interfaces.Add);
+            foreach(var resourceType in ResourceTypes)
+                resource.ResourceTypes.Add(resourceType);
+            foreach(var @interface in Interfaces)
+                resource.Interfaces.Add(@interface);
 
             return resource;
         }

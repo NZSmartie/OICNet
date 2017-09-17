@@ -29,7 +29,7 @@ namespace OICNet.CoreResources
         public string MessagingProtocols { get; set; }
 
         [JsonProperty("links", Required = Required.Always, Order = 11)]
-        public List<OicResourceLink> Links { get; set; }
+        public IList<OicResourceLink> Links { get; set; } = new List<OicResourceLink>();
 
         public override bool Equals(object obj)
         {

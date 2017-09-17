@@ -38,7 +38,7 @@ namespace OICNet.CoreResources
         /// Device description in the indicated language.
         /// </summary>
         [JsonProperty("ld", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore), MinLength(1)]
-        public List<LocalisedDescription> LocalisedDescriptions { get; set; }
+        public IList<LocalisedDescription> LocalisedDescriptions { get; set; } = new List<LocalisedDescription>();
 
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace OICNet.CoreResources
         /// Manufacturer name in the indicated language.
         /// </summary>
         [JsonProperty("dmn", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore), MinLength(1)]
-        public List<LocalisedDescription> ManufacturerName { get; set; }
+        public IList<LocalisedDescription> ManufacturerName { get; set; } = new List<LocalisedDescription>();
 
         /// <summary>
         /// Model number as designated by manufacturer

@@ -81,17 +81,15 @@ namespace OICNet
         public string RelativeUri { get; set; }
 
 
-        #region Serialised Properties
-
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
-        public IList<string> ResourceTypes { get; } = new ObservableCollection<string>();
+        public IList<string> ResourceTypes { get; set; } = new ObservableCollection<string>();
 
         public virtual bool ShouldSerializeInterfaces() { return true; }
 
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
 
-        public IList<OicResourceInterface> Interfaces { get; } = new ObservableCollection<OicResourceInterface>();
+        public IList<OicResourceInterface> Interfaces { get; set; } = new ObservableCollection<OicResourceInterface>();
         public virtual bool ShouldSerializeName() { return true; }
 
         private string _name;
@@ -125,10 +123,7 @@ namespace OICNet
                 OnPropertyChanged(nameof(Id));
             }
         }
-
-        #endregion
-
-
+        
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
