@@ -10,9 +10,19 @@ namespace OICNet
     public class OicResourceResponse : OicResponse
     {
         private readonly OicConfiguration _configuration;
-        private readonly IOicResource _resource;
+        private readonly IOicSerialisableResource _resource;
 
-        public IOicResource Resource => _resource;
+        public bool IsCollection => _resource is OicResourceList;
+
+        public OicResourceList Resources 
+            => _resource != null 
+                ? (_resource as OicResourceList ?? new OicResourceList(new[] { Resource })) 
+                : null;
+
+        public IOicResource Resource 
+            => _resource != null 
+            ? _resource as IOicResource ?? Resources.First()
+            : null;
 
         public override byte[] Content
         {
@@ -20,7 +30,7 @@ namespace OICNet
             set => throw new InvalidOperationException();
         }
 
-        public OicResourceResponse(OicConfiguration configuration, IOicResource resource)
+        public OicResourceResponse(OicConfiguration configuration, IOicSerialisableResource resource)
         {
             _configuration = configuration;
             _resource = resource;

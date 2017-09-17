@@ -31,6 +31,11 @@ namespace OICNet.CoreResources
         [JsonProperty("links", Required = Required.Always, Order = 11)]
         public IList<OicResourceLink> Links { get; set; } = new List<OicResourceLink>();
 
+        public OicResourceDirectory()
+        {
+            ResourceTypes.Add("oic.wk.res");
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as OicResourceDirectory;

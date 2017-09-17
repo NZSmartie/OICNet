@@ -16,12 +16,12 @@ namespace OICNet.Server.Internal
     {
         private readonly IList<IOicResource> _resources = new List<IOicResource>();
 
-        private readonly OicResourceDirectory _resourceDirectory;
+        private readonly OicResourceList _resourceDirectory = new OicResourceList();
         private readonly OicConfiguration _configuration;
         private readonly IServiceProvider _services;
         private readonly OicDevice _device;
 
-        private readonly OicDeviceResource _deviceResource;
+        private readonly OicDeviceResource _deviceResource = new OicDeviceResource();
 
         public OicHostDevice(OicConfiguration configuration, IServiceProvider services, OicDevice device)
         {
@@ -45,31 +45,31 @@ namespace OICNet.Server.Internal
                 .Where(p => p.GetCustomAttributes(typeof(ResourceDiscoverableAttribute),false).Any())
                 .Select(p => Tuple.Create((IOicResource)p.GetMethod.Invoke(_device, null), p.CustomAttributes));
 
-            _resourceDirectory = new OicResourceDirectory
+            _resourceDirectory.Add(new OicResourceDirectory
             {
                 DeviceId = _device.DeviceId,
-            };
+                Name = _device.Name,
+                Links = discoverableResources
+                    .Select(r => new OicResourceLink
+                    {
+                        Href = new Uri(r.Item1.RelativeUri, UriKind.Relative),
+                        ResourceTypes = r.Item1.ResourceTypes,
+                        Interfaces = r.Item1.Interfaces,
 
-            _resourceDirectory.Links = discoverableResources
-                .Select(r => new OicResourceLink
-                {
-                    Href = new Uri(r.Item1.RelativeUri, UriKind.Relative),
-                    ResourceTypes = r.Item1.ResourceTypes,
-                    Interfaces = r.Item1.Interfaces,
-
-                    // Inlucde policies if a resource requires secure channel.
-                    // TODO: Add observable policy
-                    Policies = r.Item2.Any(a => typeof(ResourceSecureAttribute).IsAssignableFrom(a.AttributeType))
-                        ? new OicResourceLink.LinkPolicies
-                        {
-                            Policies = LinkPolicyFlags.Discoverable,
-                            IsSecure = true
-                        }
-                        : null,
-                }).ToList();
+                        // Inlucde policies if a resource requires secure channel.
+                        // TODO: Add observable policy
+                        Policies = r.Item2.Any(a => typeof(ResourceSecureAttribute).IsAssignableFrom(a.AttributeType))
+                            ? new OicResourceLink.LinkPolicies
+                            {
+                                Policies = LinkPolicyFlags.Discoverable,
+                                IsSecure = true
+                            }
+                            : null,
+                    }).ToList(),
+            });
         }
 
-        private IOicResource GetResourceForPath(string path)
+        private IOicSerialisableResource GetResourceForPath(string path)
         {
             if ("/res".Equals(path, StringComparison.Ordinal))
                 return _resourceDirectory;

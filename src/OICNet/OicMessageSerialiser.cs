@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Cbor;
-using Newtonsoft.Json.Cbor.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace OICNet
@@ -35,7 +33,10 @@ namespace OICNet
         /// <param name="message"></param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public IEnumerable<IOicResource> Deserialise(byte[] message, OicMessageContentType contentType)
+        public OicResourceList Deserialise(byte[] message, OicMessageContentType contentType)
+            => new OicResourceList(DeserialiseInternal(message,contentType));
+
+        private IEnumerable<IOicResource> DeserialiseInternal(byte[] message, OicMessageContentType contentType)
         {
             var stream = new MemoryStream(message);
             JToken token;
@@ -66,9 +67,8 @@ namespace OICNet
             }
         }
 
-        //Todo: support serialising multiple IOicResouces in an array/list
         //Todo: Enumerate all base calsses, extracting out their ResourceType to generate a "fall-back" array for the "rt" property
-        public byte[] Serialise(IOicResource resource, OicMessageContentType contentType)
+        public byte[] Serialise(IOicSerialisableResource resource, OicMessageContentType contentType)
         {
             var writer = new MemoryStream();
             switch (contentType)

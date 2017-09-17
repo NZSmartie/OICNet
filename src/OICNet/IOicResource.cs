@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 
 namespace OICNet
 {
-    public interface IOicResource
+    public interface IOicSerialisableResource { }
+
+    public interface IOicResource : IOicSerialisableResource
     {
         string RelativeUri { get; set; }
 
@@ -17,5 +19,20 @@ namespace OICNet
         IList<string> ResourceTypes { get; set; }
 
         void UpdateFields(IOicResource source);
+    }
+
+    public class OicResourceList : List<IOicResource>, IOicSerialisableResource
+    {
+        public OicResourceList()
+            :base()
+        { }
+
+        public OicResourceList(IEnumerable<IOicResource> collection)
+            : base(collection)
+        { }
+        
+        public OicResourceList(int capacity)
+            : base(capacity)
+        { }
     }
 }
