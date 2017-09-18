@@ -13,6 +13,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.light.brightness")]
     public class LightBrightness : OicCoreResource
     {
+        public LightBrightness()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.light.brightness")
+        { }
+
         /// <summary>
         /// Quantized representation in the range 0-100 of the current sensed or set value for Brightness
         /// </summary>

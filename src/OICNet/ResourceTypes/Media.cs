@@ -12,6 +12,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.media")]
     public class Media : OicCoreResource
     {
+        public Media()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Sensor, "oic.r.media")
+        { }
+
         /// <summary>
         /// The state of the door (open or closed).
         /// </summary>

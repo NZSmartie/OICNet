@@ -19,6 +19,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.lock.status")]
     public class LockStatus : OicCoreResource
     {
+        public LockStatus()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.lock.status")
+        { }
+
         /// <summary>
         /// State of the lock.
         /// </summary>

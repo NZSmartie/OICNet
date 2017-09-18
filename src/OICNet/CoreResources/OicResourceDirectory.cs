@@ -32,9 +32,8 @@ namespace OICNet.CoreResources
         public IList<OicResourceLink> Links { get; set; } = new List<OicResourceLink>();
 
         public OicResourceDirectory()
-        {
-            ResourceTypes.Add("oic.wk.res");
-        }
+            : base(OicResourceInterface.Baseline | OicResourceInterface.LinkLists, "oic.wk.res")
+        { }
 
         public override bool Equals(object obj)
         {

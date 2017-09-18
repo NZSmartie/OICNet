@@ -22,6 +22,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.temperature")]
     public class Temperature : OicCoreResource
     {
+        public Temperature()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator | OicResourceInterface.Sensor, "oic.r.temperature")
+        { }
+
         /// <summary>
         /// Current temperature setting or measurement.
         /// </summary>

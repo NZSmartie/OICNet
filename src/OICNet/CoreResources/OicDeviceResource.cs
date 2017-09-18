@@ -69,9 +69,8 @@ namespace OICNet.CoreResources
         public Guid PlatformId { get; set; }
 
         public OicDeviceResource()
-        {
-            Interfaces = OicResourceInterface.Baseline | OicResourceInterface.ReadOnly;
-        }
+            : base(OicResourceInterface.Baseline | OicResourceInterface.ReadOnly, "oic.wk.d")
+        { }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

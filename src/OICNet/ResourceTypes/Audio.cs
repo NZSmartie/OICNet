@@ -10,6 +10,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.audio")]
     public class Audio : OicCoreResource
     {
+        public Audio()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.audio")
+        { }
+
         /// <summary>
         /// Volume setting of an audio rendering device.
         /// </summary>

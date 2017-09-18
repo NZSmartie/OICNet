@@ -10,6 +10,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.automaticdocumentfeeder")]
     public class AutomaticDocumentFeeder : OicCoreResource
     {
+        public AutomaticDocumentFeeder()
+            : base (OicResourceInterface.Baseline | OicResourceInterface.Sensor, "oic.r.automaticdocumentfeeder")
+        { }
+
         /// <summary>
         /// Array of the possible adf states.
         /// </summary>

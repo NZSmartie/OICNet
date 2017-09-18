@@ -21,6 +21,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.mediasource")]
     public class MediaSource : OicCoreResource
     {
+        public MediaSource()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.mediasource")
+        { }
+
         /// <summary>
         /// Specifies a pre-defined media input or output.
         /// </summary>

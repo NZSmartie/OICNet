@@ -143,7 +143,14 @@ namespace OICNet
         {
             
         }
-        
+
+        public OicCoreResource(OicResourceInterface interfaces, params string[] resourceTypes)
+        {
+            Interfaces = interfaces;
+            foreach (var resource in resourceTypes)
+                ResourceTypes.Add(resource);
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as OicCoreResource;
@@ -187,6 +194,13 @@ namespace OICNet
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class OicBaseResouece<TValue> : OicCoreResource
     {
+        public OicBaseResouece()
+        { }
+
+        public OicBaseResouece(OicResourceInterface interfaces, params string[] resourceTypes)
+            : base(interfaces, resourceTypes)
+        { }
+
         [JsonProperty("value", Required = Required.Always, Order = 5)]
         public TValue Value { get; set; }
 
@@ -214,6 +228,13 @@ namespace OICNet
 
     public class OicIntResouece : OicBaseResouece<int>
     {
+        public OicIntResouece()
+        { }
+
+        public OicIntResouece(OicResourceInterface interfaces, params string[] resourceTypes) 
+            : base(interfaces, resourceTypes)
+        { }
+
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<int> Range { get; set; }
 
@@ -241,6 +262,13 @@ namespace OICNet
 
     public class OicNumberResouece : OicBaseResouece<float>
     {
+        public OicNumberResouece()
+        { }
+
+        public OicNumberResouece(OicResourceInterface interfaces, params string[] resourceTypes) 
+            : base(interfaces, resourceTypes)
+        { }
+
         [JsonProperty("range", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 6)]
         public List<float> Range { get; set; }
 

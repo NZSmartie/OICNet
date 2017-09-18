@@ -13,6 +13,10 @@ namespace OICNet.CoreResources
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class OicPlatformResource : OicCoreResource
     {
+        public OicPlatformResource()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.ReadOnly, "oic.wk.p")
+        { }
+
         public override bool ShouldSerializeInterfaces() { return false; }
 
         public override bool ShouldSerializeId() { return false; }

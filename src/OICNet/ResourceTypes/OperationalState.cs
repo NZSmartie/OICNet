@@ -12,6 +12,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.operational.state")]
     public class OperationalState : OicCoreResource
     {
+        public OperationalState()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.operational.state")
+        { }
+
         /// <summary>
         /// Array of the possible operational states.
         /// </summary>

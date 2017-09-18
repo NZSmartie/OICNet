@@ -12,6 +12,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.mode")]
     public class Mode : OicCoreResource
     {
+        public Mode()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.mode")
+        { }
+
         /// <summary>
         /// Array of possible modes the device supports.
         /// </summary>

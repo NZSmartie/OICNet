@@ -12,6 +12,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.openlevel")]
     public class OpenLevel : OicCoreResource
     {
+        public OpenLevel()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.openlevel")
+        { }
+
         /// <summary>
         /// How open or ajar the entity is.
         /// </summary>

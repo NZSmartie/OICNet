@@ -19,6 +19,10 @@ namespace OICNet.ResourceTypes
     [OicResourceType("oic.r.door")]
     public class Door : OicCoreResource
     {
+        public Door()
+            : base(OicResourceInterface.Baseline | OicResourceInterface.Actuator, "oic.r.door")
+        { }
+
         /// <summary>
         /// The state of the door (open or closed).
         /// </summary>
