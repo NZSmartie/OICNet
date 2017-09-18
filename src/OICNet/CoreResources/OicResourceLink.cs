@@ -78,7 +78,7 @@ namespace OICNet.CoreResources
         /// <summary>
         /// The interface set supported by this resource
         /// </summary>
-        [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter)), JsonRequired()]
+        [JsonProperty("if"), JsonRequired()]
         public OicResourceInterface Interfaces { get; set; }
 
         /// <summary>
