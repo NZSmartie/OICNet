@@ -47,7 +47,7 @@ namespace OICNet.Tests
             {
                 var repository = new OicRemoteResourceRepository();
 
-                await repository.RetrieveAsync("");
+                await repository.RetrieveAsync(OicRequest.Create(""));
             });
         }
 
@@ -87,7 +87,7 @@ namespace OICNet.Tests
             var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
 
             // Act
-            var result = await repository.RetrieveAsync(actual.RelativeUri);
+            var result = await repository.RetrieveAsync(OicRequest.Create(actual.RelativeUri));
 
             actual = result.GetResource(_configuration);
 
