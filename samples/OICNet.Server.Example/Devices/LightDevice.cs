@@ -1,14 +1,11 @@
 ﻿using System;
-using OICNet.CoreResources;
 using OICNet.ResourceTypes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace OICNet.Server.Example.Devices
 {
     public class LightDevice : OicDevice
     {
-        [ResourceDiscoverable, ResourceSecure]
+        [OicResource(OicResourcePolicies.Discoverable | OicResourcePolicies.Secure)]
         public LightBrightness Brightness { get; } = new LightBrightness
         {
             RelativeUri = "/light/brightness",
@@ -16,7 +13,7 @@ namespace OICNet.Server.Example.Devices
             Interfaces = { OicResourceInterface.Baseline, OicResourceInterface.Actuator }
         };
 
-        [ResourceDiscoverable, ResourceSecure]
+        [OicResource(OicResourcePolicies.Discoverable | OicResourcePolicies.Secure)]
         public SwitchBinary Switch { get; } = new SwitchBinary
         {
             RelativeUri = "/light/switch",

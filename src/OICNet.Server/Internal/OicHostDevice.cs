@@ -42,8 +42,8 @@ namespace OICNet.Server.Internal
 
             var discoverableResources = _device.GetType()
                 .GetProperties()
-                .Where(p => p.GetCustomAttributes(typeof(ResourceDiscoverableAttribute),false).Any())
-                .Select(p => Tuple.Create((IOicResource)p.GetMethod.Invoke(_device, null), p.CustomAttributes));
+                .Where(p => p.GetCustomAttributes<OicResourceAttribute>(false).Any())
+                .Select(p => Tuple.Create((IOicResource)p.GetMethod.Invoke(_device, null), p.GetCustomAttributes<OicResourceAttribute>(false)));
 
             _resourceDirectory.Add(new OicResourceDirectory
             {
@@ -58,7 +58,7 @@ namespace OICNet.Server.Internal
 
                         // Inlucde policies if a resource requires secure channel.
                         // TODO: Add observable policy
-                        Policies = r.Item2.Any(a => typeof(ResourceSecureAttribute).IsAssignableFrom(a.AttributeType))
+                        Policies = r.Item2.Any(a => (a.Policies & OicResourcePolicies.Secure) != OicResourcePolicies.None)
                             ? new OicResourceLink.LinkPolicies
                             {
                                 Policies = LinkPolicyFlags.Discoverable,
