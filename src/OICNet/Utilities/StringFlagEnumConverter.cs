@@ -6,6 +6,12 @@ using Newtonsoft.Json.Converters;
 
 namespace OICNet.Utilities
 {
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Parameter, AllowMultiple = false)]
+    public sealed class StringFlagEnumConverterOptionsAttribute : Attribute
+    {
+        public bool ReverseOrder { get; set; }
+    }
+
     public class StringFlagEnumConverter : StringEnumConverter
     {
         public StringFlagEnumConverter()
@@ -24,10 +30,18 @@ namespace OICNet.Utilities
             }
 
             Enum e = (Enum)value;
-
+#if !NETSTANDARD1_3
+            var options = value.GetType().GetCustomAttribute<StringFlagEnumConverterOptionsAttribute>();
+#else
+            var options = value.GetType().GetTypeInfo().GetCustomAttribute<StringFlagEnumConverterOptionsAttribute>();
+#endif
             writer.WriteStartArray();
 
-            foreach (Enum member in Enum.GetValues(e.GetType()))
+            var members = Enum.GetValues(e.GetType());
+            if (options?.ReverseOrder ?? false)
+                Array.Reverse(members);
+
+            foreach (Enum member in members)
                 if(e.HasFlag(member) && Convert.ToInt32(member) != 0)
                     base.WriteJson(writer, member, serializer);
 

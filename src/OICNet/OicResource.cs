@@ -15,7 +15,7 @@ using OICNet.Utilities;
 namespace OICNet
 {
     [Flags]
-    [JsonConverter(typeof(StringFlagEnumConverter))]
+    [JsonConverter(typeof(StringFlagEnumConverter)), StringFlagEnumConverterOptions(ReverseOrder = true)]
     public enum OicResourceInterface
     {
         None = 0,
@@ -143,7 +143,7 @@ namespace OICNet
         {
             
         }
-
+        
         public override bool Equals(object obj)
         {
             var other = obj as OicCoreResource;
