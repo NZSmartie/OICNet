@@ -18,38 +18,29 @@ namespace OICNet
             Device = device;
         }
 
-        public virtual Task<OicResponse> CreateAsync(string path, IOicResource resource)
+        public virtual Task<OicResponse> CreateAsync(OicRequest request, IOicResource resource)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
+        public virtual Task<OicResponse> CreateOrUpdateAsync(OicRequest request, IOicResource resource)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Task<OicResponse> DeleteAsync(string path)
+        public virtual Task<OicResponse> DeleteAsync(OicRequest request)
         {
             throw new NotSupportedException();
         }
 
-        public virtual async Task<OicResponse> RetrieveAsync(string path)
+        public virtual async Task<OicResponse> RetrieveAsync(OicRequest request)
         {
             if (Device == null)
                 throw new NullReferenceException($"{GetType().FullName}.{nameof(Device)} cannot be null null");
 
             var endoint = Device.Endpoint;
 
-            return await endoint.Transport.SendMessageWithResponseAsync(endoint, new OicRequest
-            {
-                Accepts =
-                {
-                    OicMessageContentType.ApplicationCbor,
-                    OicMessageContentType.ApplicationJson
-                },
-                Operation = OicRequestOperation.Get,
-                ToUri = new Uri(path, UriKind.Relative)
-            });
+            return await endoint.Transport.SendMessageWithResponseAsync(endoint, request);
 
             //using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
             //    .GetEnumerator())

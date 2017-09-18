@@ -4,13 +4,13 @@ namespace OICNet
 {
     public interface IOicResourceRepository
     {
-        Task<OicResponse> CreateAsync(string path, IOicResource resource);
+        Task<OicResponse> CreateAsync(OicRequest request, IOicResource resource);
 
-        Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource);
+        Task<OicResponse> CreateOrUpdateAsync(OicRequest request, IOicResource resource);
 
-        Task<OicResponse> DeleteAsync(string path);
+        Task<OicResponse> DeleteAsync(OicRequest request);
 
-        Task<OicResponse> RetrieveAsync(string path);
+        Task<OicResponse> RetrieveAsync(OicRequest request);
     }
 
     public interface IOicRemoteResourceRepository : IOicResourceRepository

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OICNet
@@ -31,62 +30,6 @@ namespace OICNet
         string Authority { get; }
 
         // ummm...?
-    }
-
-    public class OicMessage
-    {
-        /// <summary>
-        /// The URI of the recipient of the message.
-        /// </summary>
-        public virtual Uri ToUri { get; set; }
-
-        /// <summary>
-        /// The URI of the message originator.
-        /// </summary>
-        public virtual Uri FromUri { get; set; }
-
-        /// <summary>
-        /// The identifier that uniquely identifies the message in the originator and the recipient.
-        /// </summary>
-        public virtual int RequestId { get; set; }
-
-        /// <summary>
-        /// Information specific to the operation.
-        /// </summary>
-        public virtual byte[] Content { get; set; }
-
-        public virtual OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
-    }
-
-    public class OicRequest : OicMessage
-    {
-        /// <summary>
-        /// Specific operation requested to be performed by the Server.
-        /// </summary>
-        public virtual OicRequestOperation Operation { get; set; } = OicRequestOperation.Get;
-
-        public virtual List<OicMessageContentType> Accepts { get; } = new List<OicMessageContentType>();
-
-        /// <summary>
-        /// Indicator for an observe request.
-        /// </summary>
-        public virtual bool Observe { get; set; }
-    }
-
-    public class OicResponse : OicMessage
-    {
-        /// <summary>
-        /// Indicator of the result of the request; whether it was accepted and what the conclusion of the operation was.
-        /// </summary>
-        /// <remarks>
-        /// The values of the response code for CRUDN operations shall conform to those as defined in section 5.9 and 12.1.2 in IETF RFC 7252.
-        /// </remarks>
-        public virtual OicResponseCode ResposeCode { get; set; }
-
-        /// <summary>
-        /// Indicator for an observe response.
-        /// </summary>
-        public virtual bool Observe { get; set; }
     }
 
     public enum OicResponseCode

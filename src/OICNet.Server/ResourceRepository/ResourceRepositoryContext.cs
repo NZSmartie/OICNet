@@ -41,15 +41,24 @@ namespace OICNet.Server.ResourceRepository
             return false;
         }
 
-        public Uri GetPath()
+        public OicRequest GetSubRequest()
         {
             var requestedPath = _context.Request.ToUri?.AbsolutePath 
                 ?? throw new InvalidOperationException();
 
-            return new UriBuilder(_context.Request.ToUri)
+            return new OicRequest(_context.Request.Accepts)
             {
-                Path = requestedPath.Substring(_requestPath.Length - 1)
-            }.Uri;
+                Content = _context.Request.Content,
+                ContentType = _context.Request.ContentType,
+                FromUri = _context.Request.FromUri,
+                Observe = _context.Request.Observe,
+                Operation = _context.Request.Operation,
+                RequestId = _context.Request.RequestId,
+                ToUri = new UriBuilder(_context.Request.ToUri)
+                {
+                    Path = requestedPath.Substring(_requestPath.Length - 1)
+                }.Uri
+            };
         }
     }
 }
