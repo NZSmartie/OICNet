@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace OICNet.Utilities
 {
@@ -11,7 +12,7 @@ namespace OICNet.Utilities
             {
                 ResposeCode = code,
                 ContentType = OicMessageContentType.ApplicationJson,
-                Content = Encoding.UTF8.GetBytes($"{{\"message\": \"{message}\"}}")
+                Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { message = message }))
             };
         }
 
