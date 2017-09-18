@@ -10,7 +10,7 @@ namespace OICNet.Server.Example.Devices
         {
             RelativeUri = "/light/brightness",
             ResourceTypes = { "oic.r.light.brightness" },
-            Interfaces = { OicResourceInterface.Baseline, OicResourceInterface.Actuator }
+            Interfaces = OicResourceInterface.Baseline | OicResourceInterface.Actuator
         };
 
         [OicResource(OicResourcePolicies.Discoverable | OicResourcePolicies.Secure)]
@@ -18,7 +18,7 @@ namespace OICNet.Server.Example.Devices
         {
             RelativeUri = "/light/switch",
             ResourceTypes = { "oic.r.switch.binary" },
-            Interfaces = { OicResourceInterface.Baseline, OicResourceInterface.Actuator }
+            Interfaces = OicResourceInterface.Baseline | OicResourceInterface.Actuator
         };
 
         public LightDevice()

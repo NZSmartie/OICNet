@@ -14,22 +14,25 @@ using OICNet.Utilities;
 
 namespace OICNet
 {
+    [Flags]
+    [JsonConverter(typeof(StringFlagEnumConverter))]
     public enum OicResourceInterface
     {
+        None = 0,
         [EnumMember(Value = "oic.if.baseline")]
-        Baseline,
+        Baseline = 0x01,
         [EnumMember(Value = "oic.if.ll")]
-        LinkLists,
+        LinkLists = 0x02,
         [EnumMember(Value = "oic.if.b")]
-        Batch,
+        Batch = 0x04,
         [EnumMember(Value = "oic.if.r")]
-        ReadOnly,
+        ReadOnly = 0x08,
         [EnumMember(Value = "oic.if.rw")]
-        ReadWrite,
+        ReadWrite = 0x10,
         [EnumMember(Value = "oic.if.a")]
-        Actuator,
+        Actuator = 0x20,
         [EnumMember(Value = "oic.if.s")]
-        Sensor,
+        Sensor = 0x40,
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
@@ -83,19 +86,19 @@ namespace OICNet
 
         [JsonProperty("rt"), JsonRequired()]
         [MinLength(1), StringLength(64)]
-        public IList<string> ResourceTypes { get; set; } = new ObservableCollection<string>();
+        public virtual IList<string> ResourceTypes { get; set; } = new ObservableCollection<string>();
 
         public virtual bool ShouldSerializeInterfaces() { return true; }
 
-        [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        [JsonProperty("if")]
+        public virtual OicResourceInterface Interfaces { get; set; }
 
-        public IList<OicResourceInterface> Interfaces { get; set; } = new ObservableCollection<OicResourceInterface>();
         public virtual bool ShouldSerializeName() { return true; }
 
         private string _name;
 
         [JsonProperty("n", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name
+        public virtual string Name
         {
             get => _name;
             set
@@ -112,7 +115,7 @@ namespace OICNet
         private string _id;
 
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public string Id
+        public virtual string Id
         {
             get => _id;
             set
@@ -152,7 +155,7 @@ namespace OICNet
                 return false;
             if (!ResourceTypes.NullRespectingSequenceEqual(other.ResourceTypes))
                 return false;
-            if (!Interfaces.NullRespectingSequenceEqual(other.Interfaces))
+            if (Interfaces != other.Interfaces)
                 return false;
             if (!string.Equals(Name, other.Name))
                 return false;

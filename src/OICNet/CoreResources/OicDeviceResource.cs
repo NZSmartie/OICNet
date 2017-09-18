@@ -70,8 +70,7 @@ namespace OICNet.CoreResources
 
         public OicDeviceResource()
         {
-            Interfaces.Add(OicResourceInterface.Baseline);
-            Interfaces.Add(OicResourceInterface.ReadOnly);
+            Interfaces = OicResourceInterface.Baseline | OicResourceInterface.ReadOnly;
         }
 
         /// <inheritdoc />

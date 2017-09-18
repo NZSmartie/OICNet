@@ -20,7 +20,7 @@ namespace OICNet.Server.Example
             _configuration = configuration;
             _helloResource = new OicBaseResouece<string>
             {
-                Interfaces = { OicResourceInterface.Baseline, OicResourceInterface.ReadOnly },
+                Interfaces = OicResourceInterface.Baseline | OicResourceInterface.ReadOnly,
                 ResourceTypes = { "oicnet.hello" },
                 RelativeUri = "/hello",
                 Value = "Hello World"
@@ -70,7 +70,7 @@ namespace OICNet.Server.Example
             if (myResource == null)
                 return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
-            if (!myResource.Interfaces.Contains(OicResourceInterface.ReadWrite))
+            if ((myResource.Interfaces & OicResourceInterface.ReadWrite) == OicResourceInterface.ReadWrite)
                 return OicResponseUtility.CreateMessage(OicResponseCode.OperationNotAllowed, "Operation not allowed");
 
             if (resource == null)

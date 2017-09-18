@@ -82,7 +82,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes = {"oic.r.foo"},
-                        Interfaces = {OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = 0.5f,
                         Range = new List<float> {0.0f, 1.0f}
                     });
@@ -102,7 +102,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes =  {"oic.r.foo"},
-                        Interfaces = {OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = 50,
                         Range = new List<int> {0, 100}
                     });
@@ -120,7 +120,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes = {"oic.r.foo"},
-                        Interfaces = {OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = "Test String"
                     });
 
@@ -138,9 +138,7 @@ namespace OICNet.Tests
                     {
                         "oic.r.test"
                     },
-                    Interfaces = {
-                        OicResourceInterface.Baseline
-                    }
+                    Interfaces = OicResourceInterface.Baseline
                 });
             }
         }
@@ -154,7 +152,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces = {OicResourceInterface.Baseline},
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = 0.5f,
                     Range = new List<float> {0.0f, 1.0f}
                 }).Returns(new byte[]
@@ -170,7 +168,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces = {OicResourceInterface.Baseline},
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = 50,
                     Range = new List<int> {0, 100}
                 }).Returns(new byte[]
@@ -187,7 +185,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces = {OicResourceInterface.Baseline},
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = "Test String"
                 }).Returns(new byte[]
                 {
@@ -206,10 +204,7 @@ namespace OICNet.Tests
                     {
                         "oic.r.test"
                     },
-                    Interfaces =
-                    {
-                        OicResourceInterface.Baseline
-                    }
+                    Interfaces = OicResourceInterface.Baseline
                 }).Returns(new byte[]
                 {
                     0xA4, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x74, 0x65, 0x73, 0x74,
@@ -229,10 +224,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces =
-                    {
-                        OicResourceInterface.Baseline
-                    },
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = 0.5f,
                     Range = new List<float> {0.0f, 1.0f}
                 }).Returns(
@@ -243,7 +235,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces = {OicResourceInterface.Baseline},
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = 50,
                     Range = new List<int> {0, 100}
                 }).Returns(
@@ -254,7 +246,7 @@ namespace OICNet.Tests
                     Id = "foo",
                     Name = "Foo",
                     ResourceTypes =  {"oic.r.foo"},
-                    Interfaces = {OicResourceInterface.Baseline},
+                    Interfaces = OicResourceInterface.Baseline,
                     Value = "Test String"
                 }).Returns(
                     "{\"rt\":[\"oic.r.foo\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Foo\",\"id\":\"foo\",\"value\":\"Test String\"}");
@@ -267,10 +259,7 @@ namespace OICNet.Tests
                     {
                         "oic.r.test"
                     },
-                    Interfaces =
-                    {
-                        OicResourceInterface.Baseline
-                    }
+                    Interfaces = OicResourceInterface.Baseline
                 }).Returns(
                     "{\"rt\":[\"oic.r.test\"],\"if\":[\"oic.if.baseline\"],\"n\":\"Test Asset\",\"id\":\"test\"}");
             }
@@ -288,10 +277,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes =  {"oic.r.foo"},
-                        Interfaces =
-                        {
-                            OicResourceInterface.Baseline
-                        },
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = 0.5f,
                         Range = new List<float> {0.0f, 1.0f}
                     });
@@ -304,7 +290,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes =  {"oic.r.foo"},
-                        Interfaces = {OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = 50,
                         Range = new List<int> {0, 100}
                     });
@@ -317,7 +303,7 @@ namespace OICNet.Tests
                         Id = "foo",
                         Name = "Foo",
                         ResourceTypes =  {"oic.r.foo"},
-                        Interfaces = {OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Baseline,
                         Value = "Test String"
                     });
 
@@ -332,10 +318,7 @@ namespace OICNet.Tests
                         {
                             "oic.r.test"
                         },
-                        Interfaces =
-                        {
-                            OicResourceInterface.Baseline
-                        }
+                        Interfaces = OicResourceInterface.Baseline
                     });
             }
         }

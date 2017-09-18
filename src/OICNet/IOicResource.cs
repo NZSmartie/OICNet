@@ -12,7 +12,7 @@ namespace OICNet
 
         string Id { get; set; }
 
-        IList<OicResourceInterface> Interfaces { get; set; }
+        OicResourceInterface Interfaces { get; set; }
 
         string Name { get; set; }
 

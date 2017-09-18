@@ -86,25 +86,25 @@ namespace OICNet.Tests
                     {
                         RelativeUri = "/oid/d",
                         ResourceTypes = {"oic.d.light", "oic.wk.d"},
-                        Interfaces = {OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.ReadOnly | OicResourceInterface.Baseline,
                     },
                     new CoreResources.OicPlatformResource
                     {
                         RelativeUri = "/oid/p",
                         ResourceTypes = {"oic.wk.p"},
-                        Interfaces = {OicResourceInterface.ReadOnly, OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.ReadOnly | OicResourceInterface.Baseline,
                     },
                     new ResourceTypes.SwitchBinary
                     {
                         RelativeUri = "/switch",
                         ResourceTypes = {"oic.r.switch.binary"},
-                        Interfaces = {OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Actuator | OicResourceInterface.Baseline,
                     },
                     new ResourceTypes.LightBrightness
                     {
                         RelativeUri = "/brightness",
                         ResourceTypes = {"oic.r.light.brightness"},
-                        Interfaces = {OicResourceInterface.Actuator, OicResourceInterface.Baseline},
+                        Interfaces = OicResourceInterface.Actuator | OicResourceInterface.Baseline,
                     }
                 }
             };

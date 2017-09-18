@@ -79,7 +79,7 @@ namespace OICNet.CoreResources
         /// The interface set supported by this resource
         /// </summary>
         [JsonProperty("if", ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter)), JsonRequired()]
-        public IList<OicResourceInterface> Interfaces { get; set; } = new List<OicResourceInterface>();
+        public OicResourceInterface Interfaces { get; set; }
 
         /// <summary>
         /// The Device ID on which the Relative Reference in href is to be resolved on. Base URI should be used in preference where possible
@@ -148,7 +148,7 @@ namespace OICNet.CoreResources
                 return false;
             if (!ResourceTypes.NullRespectingSequenceEqual(other.ResourceTypes))
                 return false;
-            if (!Interfaces.NullRespectingSequenceEqual(other.Interfaces))
+            if (Interfaces != other.Interfaces)
                 return false;
             if (DeviceId != other.DeviceId)
                 return false;
@@ -183,8 +183,8 @@ namespace OICNet.CoreResources
             resource.RelativeUri = Href.OriginalString; // Todo: Figure out how to get the relative path from a Resource Link and not assume OriginalString will always work
             foreach(var resourceType in ResourceTypes)
                 resource.ResourceTypes.Add(resourceType);
-            foreach(var @interface in Interfaces)
-                resource.Interfaces.Add(@interface);
+
+            resource.Interfaces |= Interfaces;
 
             return resource;
         }
