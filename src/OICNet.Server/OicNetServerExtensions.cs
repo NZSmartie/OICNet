@@ -15,7 +15,6 @@ namespace OICNet.Server.Builder
 
             return app.UseResourceRepository(options =>
             {
-                options.RequestPath = "/oic";
                 options.UseResourceRepository<OicHostDevice>();
             });
         }
@@ -29,7 +28,6 @@ namespace OICNet.Server.Builder
 
             return app.UseResourceRepository(options =>
             {
-                options.RequestPath = "/oic";
                 options.UseResourceRepository<OicHostDevice>(device);
             });
         }
@@ -41,7 +39,6 @@ namespace OICNet.Server.Builder
 
             return app.UseResourceRepository(options =>
             {
-                options.RequestPath = "/oic";
                 options.UseResourceRepository<OicHostDevice>(device);
             });
         }

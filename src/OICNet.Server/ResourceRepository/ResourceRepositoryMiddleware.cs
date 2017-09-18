@@ -74,6 +74,12 @@ namespace OICNet.Server.ResourceRepository
                 result = OicResponseUtility.CreateMessage(OicResponseCode.BadRequest, "Bad request");
             }
 
+            if(result.ResposeCode == OicResponseCode.NotFound)
+            {
+                await _next(context);
+                return;
+            }
+
             context.Response = result;
 
         }
