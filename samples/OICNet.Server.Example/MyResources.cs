@@ -28,12 +28,13 @@ namespace OICNet.Server.Example
             
         }
 
-        private IOicResource GetResource(string path)
+        private IOicResource GetResource(Uri path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (path == null)
                 throw new ArgumentNullException(nameof(path));
 
-            if (_helloResource.RelativeUri.Equals(path, StringComparison.Ordinal))
+            var helloPath = new Uri(path, _helloResource.RelativeUri);
+            if (Uri.Compare(path, helloPath, UriComponents.Path, UriFormat.UriEscaped, StringComparison.Ordinal) == 0)
                 return _helloResource;
 
             return null;
@@ -42,31 +43,31 @@ namespace OICNet.Server.Example
 
         // Async to synchronous proxies
 
-        public Task<OicResponse> CreateAsync(string path, IOicResource resource)
-            => Task.FromResult(Create(path, resource));
+        public Task<OicResponse> CreateAsync(OicRequest request, IOicResource resource)
+            => Task.FromResult(Create(request, resource));
 
-        public Task<OicResponse> CreateOrUpdateAsync(string path, IOicResource resource)
-            => Task.FromResult(CreateOrUpdate(path, resource));
+        public Task<OicResponse> CreateOrUpdateAsync(OicRequest request, IOicResource resource)
+            => Task.FromResult(CreateOrUpdate(request, resource));
 
-        public Task<OicResponse> DeleteAsync(string path)
-            => Task.FromResult(Delete(path));
+        public Task<OicResponse> DeleteAsync(OicRequest request)
+            => Task.FromResult(Delete(request));
 
-        public Task<OicResponse> RetrieveAsync(string path)
-            => Task.FromResult(Retrieve(path));
+        public Task<OicResponse> RetrieveAsync(OicRequest request)
+            => Task.FromResult(Retrieve(request));
 
 
-        public OicResponse Create(string path, IOicResource resource)
+        public OicResponse Create(OicRequest request, IOicResource resource)
         {
-            var myResource = GetResource(path);
+            var myResource = GetResource(request.ToUri);
             if (myResource == null)
                 return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
             throw new NotImplementedException();
         }
 
-        public OicResponse CreateOrUpdate(string path, IOicResource resource)
+        public OicResponse CreateOrUpdate(OicRequest request, IOicResource resource)
         {
-            var myResource = GetResource(path);
+            var myResource = GetResource(request.ToUri);
             if (myResource == null)
                 return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
@@ -85,18 +86,18 @@ namespace OICNet.Server.Example
 
         }
 
-        public OicResponse Delete(string path)
+        public OicResponse Delete(OicRequest request)
         {
-            var myResource = GetResource(path);
+            var myResource = GetResource(request.ToUri);
             if (myResource == null)
                 return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
             throw new NotImplementedException();
         }
 
-        public OicResponse Retrieve(string path)
+        public OicResponse Retrieve(OicRequest request)
         {
-            var myResource = GetResource(path);
+            var myResource = GetResource(request.ToUri);
             if (myResource == null)
                 return OicResponseUtility.CreateMessage(OicResponseCode.NotFound, "Resource not found");
 
