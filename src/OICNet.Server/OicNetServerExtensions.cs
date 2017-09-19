@@ -8,14 +8,22 @@ namespace OICNet.Server.Builder
 {
     public static class OicNetServerExtensions
     {
+        public static IServiceCollection AddOicResources(this IServiceCollection services)
+        {
+            return services.AddSingleton<OicHostDevice>()
+                           .AddSingleton<IDiscoverableResources>(s => s.GetService<OicHostDevice>());
+        }
+
         public static IApplicationBuilder UseOicResources(this IApplicationBuilder app)
         {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
+            var host = app.ApplicationServices.GetService<OicHostDevice>();
+
             return app.UseResourceRepository(options =>
             {
-                options.UseResourceRepository<OicHostDevice>();
+                options.ResourceRepository = host;
             });
         }
 
@@ -24,11 +32,12 @@ namespace OICNet.Server.Builder
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
-            var device = ActivatorUtilities.CreateInstance<TOicDevice>(app.ApplicationServices);
+            var host = app.ApplicationServices.GetService<OicHostDevice>();
+            host.AddDevice(ActivatorUtilities.CreateInstance<TOicDevice>(app.ApplicationServices));
 
             return app.UseResourceRepository(options =>
             {
-                options.UseResourceRepository<OicHostDevice>(device);
+                options.ResourceRepository = host;
             });
         }
 
@@ -37,9 +46,12 @@ namespace OICNet.Server.Builder
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
+            var host = app.ApplicationServices.GetService<OicHostDevice>();
+            host.AddDevice(device);
+
             return app.UseResourceRepository(options =>
             {
-                options.UseResourceRepository<OicHostDevice>(device);
+                options.ResourceRepository = host;
             });
         }
     }

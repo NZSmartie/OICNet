@@ -70,7 +70,9 @@ namespace OICNet.CoreResources
 
         public OicDeviceResource()
             : base(OicResourceInterface.Baseline | OicResourceInterface.ReadOnly, "oic.wk.d")
-        { }
+        {
+            RelativeUri = "/oic/d";
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

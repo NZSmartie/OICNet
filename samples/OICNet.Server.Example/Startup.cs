@@ -11,7 +11,8 @@ namespace OICNet.Server.Example
             services
                 // Optional: Provide our OIC configuration here, or use the detault. if omitted, the default will be used.
                 .AddSingleton(new OicConfiguration(new MyResourceResolver()))
-                .AddSingleton<IOicResourceRepository, MyResources>();
+                .AddSingleton<IOicResourceRepository, MyResources>()
+                .AddOicResources();
         }
 
         public void Configure(IApplicationBuilder app)

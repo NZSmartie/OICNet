@@ -12,49 +12,62 @@ using System.Reflection;
 namespace OICNet.Server.Internal
 {
     // this needs to be something that represents /oic/ on a platform/device. 
-    public class OicHostDevice : IOicResourceRepository
+    public class OicHostDevice : IOicResourceRepository, IDiscoverableResources
     {
         private readonly OicResourceList _resourceDirectory = new OicResourceList();
         private readonly OicConfiguration _configuration;
         private readonly IServiceProvider _services;
-        private readonly OicDevice _device;
 
         private readonly Dictionary<string, IOicSerialisableResource> _resources = new Dictionary<string, IOicSerialisableResource>(StringComparer.Ordinal);
 
         private readonly OicDeviceResource _deviceResource = new OicDeviceResource();
 
-        public OicHostDevice(OicConfiguration configuration, IServiceProvider services, OicDevice device)
+        public IReadOnlyList<OicResourceLink> DiscoverableResources { get {
+                return _resourceDirectory
+                    .Aggregate(Enumerable.Empty<OicResourceLink>(), (a, b) => a.Concat(((OicResourceDirectory)b).Links))
+                    .Concat(new[]
+                    {
+                        OicResourceLink.FromResource(((OicResourceList)_resources["/oic/res"]).First()),
+                        OicResourceLink.FromResource((IOicResource)_resources["/oic/d"])
+                    })
+                    .ToList();
+            }
+        }
+
+        public OicHostDevice(OicConfiguration configuration, IServiceProvider services)
         {
             _configuration = configuration;
             _services = services;
 
-            _device = device;
-
             _resources.Add("/oic/res", _resourceDirectory);
+        }
 
-            _resources.Add("/oic/d", new OicDeviceResource
-            {
-                SpecVersions = "core.1.1.1", // TODO: Reference this from somewhere (make it a fixed default value?)
-                PlatformId = Guid.NewGuid(),
-                DeviceId = _device.DeviceId,
-                ResourceTypes = _device.DeviceTypes.ToList(),
-                ServerVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion
-            });
+        public void AddDevice(OicDevice oicDevice)
+        {
+            if(!_resources.ContainsKey("/oic/d"))
+                _resources.Add("/oic/d", new OicDeviceResource
+                {
+                    SpecVersions = "core.1.1.1", // TODO: Reference this from somewhere (make it a fixed default value?)
+                    PlatformId = Guid.NewGuid(),
+                    DeviceId = oicDevice.DeviceId,
+                    ResourceTypes = oicDevice.DeviceTypes.ToList(),
+                    ServerVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion
+                });
 
-            var discoveredResources = _device.GetType()
+            var discoveredResources = oicDevice.GetType()
                 .GetProperties()
                 .Where(p => p.GetCustomAttribute<OicResourceAttribute>() != null)
-                .Select(p => Tuple.Create((IOicResource)p.GetMethod.Invoke(_device, null), p.GetCustomAttribute<OicResourceAttribute>(false)));
+                .Select(p => Tuple.Create((IOicResource)p.GetMethod.Invoke(oicDevice, null), p.GetCustomAttribute<OicResourceAttribute>(false)));
 
-            foreach(var resource in discoveredResources)
+            foreach (var resource in discoveredResources)
             {
                 _resources.Add(resource.Item1.RelativeUri, resource.Item1);
 
-                if(resource.Item2.Policies.HasFlag(OicResourcePolicies.Discoverable))
+                if (resource.Item2.Policies.HasFlag(OicResourcePolicies.Discoverable))
                     _resourceDirectory.Add(new OicResourceDirectory
                     {
-                        DeviceId = _device.DeviceId,
-                        Name = _device.Name,
+                        DeviceId = oicDevice.DeviceId,
+                        Name = oicDevice.Name,
                         Links = discoveredResources
                             .Select(r => new OicResourceLink
                             {

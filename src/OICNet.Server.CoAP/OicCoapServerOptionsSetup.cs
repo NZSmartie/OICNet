@@ -14,7 +14,7 @@ namespace OICNet.Server.CoAP
 
         public void Configure(OicCoapServerOptions options)
         {
-            options.ApplicationServices = _services;
+            options.HostingServices = _services;
         }
     }
 }

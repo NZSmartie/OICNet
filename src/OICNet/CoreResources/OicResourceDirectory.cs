@@ -33,7 +33,9 @@ namespace OICNet.CoreResources
 
         public OicResourceDirectory()
             : base(OicResourceInterface.Baseline | OicResourceInterface.LinkLists, "oic.wk.res")
-        { }
+        {
+            RelativeUri = "/oic/res";
+        }
 
         public override bool Equals(object obj)
         {

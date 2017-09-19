@@ -28,6 +28,9 @@ namespace OICNet.Server.Example
                 {
                     // TODO: Allow providing listening options from IOptions<OicCoapServer>
                     options.Listen(new CoapUdpEndPoint(Coap.Port));
+
+                    // enable /.well-know/core
+                    options.UseCoreLink = true;
                 })
                 .UseCoapUdp()
                 .UseStartup<Startup>()

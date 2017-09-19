@@ -188,5 +188,19 @@ namespace OICNet.CoreResources
 
             return resource;
         }
+
+        public static OicResourceLink FromResource(IOicResource r, LinkPolicies policies = null)
+        {
+            return new OicResourceLink
+            {
+                Href = new Uri(r.RelativeUri, UriKind.Relative),
+                ResourceTypes = r.ResourceTypes,
+                Interfaces = r.Interfaces,
+
+                // Inlucde policies if a resource requires secure channel.
+                // TODO: Add observable policy
+                Policies = policies
+            };
+        }
     }
 }

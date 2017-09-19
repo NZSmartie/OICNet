@@ -27,7 +27,7 @@ namespace OICNet.Server.CoAP
             foreach (var listener in _options.Listeners)
                 BindTo(listener).Wait();
 
-            StartAsync(new OicCoapHandler(application, _loggerFactory?.CreateLogger<OicCoapHandler>()), CancellationToken.None).Wait();
+            StartAsync(new OicCoapHandler(application, _loggerFactory?.CreateLogger<OicCoapHandler>(), _options), CancellationToken.None).Wait();
         }
 
         public void Dispose()
