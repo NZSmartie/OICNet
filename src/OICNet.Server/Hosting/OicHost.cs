@@ -36,6 +36,7 @@ namespace OICNet.Server.Hosting
 
             _applicationLifetime = new ApplicationLifetime();
             _applicationServiceCollection.AddSingleton<IApplicationLifetime>(_applicationLifetime);
+            _applicationServiceCollection.AddSingleton(this);
         }
 
         public virtual void Start()
@@ -45,7 +46,7 @@ namespace OICNet.Server.Hosting
 
             _server = _hostingServiceProvider.GetRequiredService<IOicServer>();
 
-            var hostApplication = ActivatorUtilities.CreateInstance<OicHostApplication>(_hostingServiceProvider, _application);
+            var hostApplication = ActivatorUtilities.CreateInstance<OicHostApplication>(_applicationServices, _application, this);
 
             _server.Start(hostApplication);
             _applicationLifetime.NotifyStarted();

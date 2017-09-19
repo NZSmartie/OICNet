@@ -17,11 +17,15 @@ namespace OICNet.Server.Hosting
         private readonly string _debugEndRequestTag = $"{typeof(OicHostApplication).Namespace}.EndRequest";
         private readonly string _debugUnhandledExceptionTag = $"{typeof(OicHostApplication).Namespace}.UnhandledException";
         private readonly RequestDelegate _application;
+        private readonly OicHost _host;
 
-        public OicHostApplication(RequestDelegate application, IEnumerable<IOicContextFactory> contextFactories, ILogger<OicHostApplication> logger)
+        public IServiceProvider Services => _host.Services;
+
+        public OicHostApplication(RequestDelegate application, OicHost host, IEnumerable<IOicContextFactory> contextFactories, ILogger<OicHostApplication> logger)
         {
             _logger = logger;
             _application = application ?? throw new ArgumentNullException(nameof(application));
+            _host = host;
 
             foreach (var contextFactory in contextFactories)
             {
