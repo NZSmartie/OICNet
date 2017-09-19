@@ -33,13 +33,10 @@ namespace OICNet.Server.Example.Devices
         private void OnResourceChanged(object sender, PropertyChangedEventArgs e)
         {
             if(sender == Switch && e.PropertyName == nameof(Switch.Value))
-            {
                 _logger.LogInformation($"Switch changed to {Switch.Value}");
-            }
-            else if (sender == Brightness && e.PropertyName == nameof(Brightness.Brightness))
-            {
+
+            if (sender == Brightness && e.PropertyName == nameof(Brightness.Brightness))
                 _logger.LogInformation($"Brightness changed to {Brightness.Brightness}");
-            }
         }
     }
 }
