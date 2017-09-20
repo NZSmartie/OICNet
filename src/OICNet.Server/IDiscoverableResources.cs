@@ -5,6 +5,6 @@ namespace OICNet.Server
 {
     public interface IDiscoverableResources
     {
-        IReadOnlyList<OicResourceLink> DiscoverableResources { get ; }
+        IEnumerable<OicResourceLink> DiscoverableResources { get ; }
     }
 }
