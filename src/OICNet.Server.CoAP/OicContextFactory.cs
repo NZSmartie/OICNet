@@ -1,6 +1,6 @@
 ﻿using System;
 using CoAPNet;
-using OICNet.Server.CoAP.Utils;
+using OICNet.CoAP;
 using OICNet.Server.Hosting;
 
 namespace OICNet.Server.CoAP
@@ -22,8 +22,8 @@ namespace OICNet.Server.CoAP
             return new OicContext(message.Message.ToOicRequest(),
                 new ConnectionInfo
                 {
-                    RemoteEndpoint = new OicEndpoint(message.ConnectionInformation.RemoteEndpoint),
-                    LocalEndpoint = new OicEndpoint(message.ConnectionInformation.LocalEndpoint)
+                    RemoteEndpoint = new OicCoapEndpoint(message.ConnectionInformation.RemoteEndpoint),
+                    LocalEndpoint = new OicCoapEndpoint(message.ConnectionInformation.LocalEndpoint)
                 });
         }
 

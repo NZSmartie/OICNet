@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using CoAPNet;
 
-namespace OICNet.Server.CoAP
+namespace OICNet.CoAP
 {
-    public class OicEndpoint : ICoapEndpoint, IOicEndpoint
+    public class OicCoapEndpoint : ICoapEndpoint, IOicEndpoint
     {
         private readonly ICoapEndpoint _coapEndpoint;
 
@@ -25,18 +25,15 @@ namespace OICNet.Server.CoAP
             _coapEndpoint.Dispose();
         }
 
-        public Task SendAsync(CoapPacket packet)
-        {
-            throw new NotImplementedException();
-        }
+        public Task SendAsync(CoapPacket packet) 
+            => _coapEndpoint.SendAsync(packet);
+        
 
         public Task<CoapPacket> ReceiveAsync()
-        {
-            throw new NotImplementedException();
-        }
+            => _coapEndpoint.ReceiveAsync();
 
 
-        public OicEndpoint(ICoapEndpoint coapEndpoint)
+        public OicCoapEndpoint(ICoapEndpoint coapEndpoint)
         {
             _coapEndpoint = coapEndpoint;
         }

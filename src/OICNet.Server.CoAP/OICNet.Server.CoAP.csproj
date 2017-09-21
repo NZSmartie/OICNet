@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netcoreapp2.0</TargetFrameworks>
     <AssemblyName>OICNet.Server.CoAP</AssemblyName>
     <RootNamespace>OICNet.Server.CoAP</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,10 +20,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NZSmartie.CoAPNet.Server" Version="0.3.6" />
+    <PackageReference Include="NZSmartie.CoAPNet.Server" Version="0.3.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OICNet.CoAP\OICNet.CoAP.csproj" />
     <ProjectReference Include="..\OICNet\OICNet.csproj" />
     <ProjectReference Include="..\OICNet.Server\OICNet.Server.csproj" />
   </ItemGroup>

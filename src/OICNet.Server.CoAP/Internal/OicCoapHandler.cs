@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using CoAPNet;
@@ -7,13 +10,9 @@ using CoAPNet.Server;
 using CoAPNet.Utils;
 using CoapOptions = CoAPNet.Options;
 
-using OICNet.Server.CoAP.Utils;
+using OICNet.CoAP;
 using OICNet.Server.Hosting;
 using OICNet.Utilities;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using System.Text;
 
 namespace OICNet.Server.CoAP.Internal
 {
