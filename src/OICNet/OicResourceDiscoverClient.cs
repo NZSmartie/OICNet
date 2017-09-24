@@ -57,8 +57,8 @@ namespace OICNet
 
             if(response.ResposeCode != OicResponseCode.Content)
             {
-                Console.WriteLine($"Response to discover request resulted in {response.ResposeCode:G}");
-                Console.WriteLine(_configuration.Serialiser.Prettify(response.Content, response.ContentType));
+                Debug.WriteLine($"Response to discover request resulted in {response.ResposeCode:G}");
+                Debug.WriteLine(_configuration.Serialiser.Prettify(response.Content, response.ContentType));
                 return;
             }
 
@@ -71,7 +71,10 @@ namespace OICNet
                 var newDevice = false;
 
                 if (!(resource is OicResourceDirectory directory))
+                {
+                    Debug.WriteLine($"{nameof(resource)} ({resource.GetType()}) is not of type {typeof(OicResourceList)}. Skipping");
                     continue;
+                }
 
                 var device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
                 if (device == null)
@@ -93,7 +96,7 @@ namespace OICNet
             }
         }
 
-        public async Task Discover()
+        public async Task DiscoverAsync()
         {
             // Create a discover request message
             var payload = new OicRequest
