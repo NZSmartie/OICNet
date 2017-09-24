@@ -78,11 +78,12 @@ namespace OICNet.Tests
         [TestCaseSource(typeof(ResourceTestCaseSource), nameof(ResourceTestCaseSource.RetreiveTestCaseData))]
         public async Task<IOicResource> TestRetreive(OicResponse response, IOicResource actual)
         {
+            Assert.Fail("Api changed");
             // Arrange
-            _mockTransport
-                .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
-                    It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
-                .Returns(Task.FromResult(response));
+            //_mockTransport
+            //    .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
+            //        It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
+            //    .Returns(Task.FromResult(response));
 
             var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
 

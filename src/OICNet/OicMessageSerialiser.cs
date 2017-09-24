@@ -27,6 +27,25 @@ namespace OICNet
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         }
 
+        public string Prettify(byte[] message, OicMessageContentType contentType)
+        {
+            var stream = new MemoryStream(message);
+            JToken token;
+            
+            switch (contentType)
+            {
+                case OicMessageContentType.ApplicationJson:
+                    token = JToken.ReadFrom(new JsonTextReader(new StreamReader(stream)));
+                    break;
+                case OicMessageContentType.ApplicationCbor:
+                    token = JToken.ReadFrom(new CborDataReader(stream));
+                    break;
+                default:
+                    throw new NotImplementedException($"Unsupported deserialisation of {contentType}");
+            }
+            return token.ToString(Formatting.Indented);
+        }
+
         /// <summary>
         /// Deserialses a OIC message into a object based on the message's resource-type ("rt") property
         /// </summary>
@@ -82,7 +101,7 @@ namespace OICNet
                     new JsonSerializer().Serialize(new CborDataWriter(writer), resource);
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"Can not serialise unsupported content type ({contentType:G})");
             }
             return writer.ToArray();
         }

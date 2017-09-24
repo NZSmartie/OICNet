@@ -8,8 +8,6 @@ namespace OICNet.CoAP
     {
         private readonly ICoapEndpoint _coapEndpoint;
 
-        public IOicTransport Transport { get; set; }
-
         bool IOicEndpoint.IsSecure => _coapEndpoint.IsSecure;
 
         bool ICoapEndpoint.IsSecure => _coapEndpoint.IsSecure;
@@ -20,22 +18,22 @@ namespace OICNet.CoAP
 
         public Uri BaseUri => _coapEndpoint.BaseUri;
 
-        public void Dispose()
-        {
-            _coapEndpoint.Dispose();
-        }
+        public IOicTransport Transport { get; internal set; }
 
         public Task SendAsync(CoapPacket packet) 
             => _coapEndpoint.SendAsync(packet);
         
-
         public Task<CoapPacket> ReceiveAsync()
             => _coapEndpoint.ReceiveAsync();
-
 
         public OicCoapEndpoint(ICoapEndpoint coapEndpoint)
         {
             _coapEndpoint = coapEndpoint;
+        }
+
+        public void Dispose()
+        {
+            _coapEndpoint.Dispose();
         }
     }
 }

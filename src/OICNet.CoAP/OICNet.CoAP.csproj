@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NZSmartie.CoAPNet" Version="0.3.7" />
+    <PackageReference Include="NZSmartie.CoAPNet" Version="0.3.9" />
   </ItemGroup>
 
   <ItemGroup>

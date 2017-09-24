@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Threading;
 using OICNet.CoreResources;
+using System.Diagnostics;
 
 namespace OICNet
 {
@@ -12,79 +12,83 @@ namespace OICNet
         public OicDevice Device { get; set; }
     }
 
-    public class OicResourceDiscoverClient : IDisposable
+    public class OicResourceDiscoverClient : OicClientHandler
     {
         private readonly List<OicRemoteDevice> _devices = new List<OicRemoteDevice>();
-
-        private readonly List<IOicTransport> _broadcastTransports = new List<IOicTransport>();
-
+        private readonly OicClient _client;
         private readonly OicConfiguration _configuration;
 
         //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
         public event EventHandler<OicNewDeviceEventArgs> NewDevice;
 
-        public OicResourceDiscoverClient()
-            : this(OicConfiguration.Default)
-        {
+        // TODO: make this an exireable cache of request ids
+        private readonly List<int> _discoverRequests = new List<int>();
 
+        public OicResourceDiscoverClient(OicClient client)
+            : this(client, client.Configuration)
+        { }
+
+        public OicResourceDiscoverClient(OicClient client, OicConfiguration configuration)
+        {
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _configuration = configuration ?? OicConfiguration.Default;
+
+            _client.AddHandler(this);
         }
 
-        public OicResourceDiscoverClient(OicConfiguration configuration)
+        public override async Task HandleReceivedMessage(OicReceivedMessage received)
         {
-            _configuration = configuration;
-        }
+            var isDiscoverResponse = false;
 
-        public void AddTransport(IOicTransport provider)
-        {
-            if (provider is null)
-                throw new ArgumentNullException(nameof(provider));
-            provider.ReceivedMessage += OnReceivedMessage;
-            _broadcastTransports.Add(provider);
-        }
+            lock (_discoverRequests)
+                isDiscoverResponse = _discoverRequests.Contains(received.Message.RequestId);
 
-        private void OnReceivedMessage(object sender, OicReceivedMessageEventArgs e)
-        {
-            var message = e.Message as OicResponse ?? throw new InvalidOperationException();
-
-            //Todo: Treat responses from multicast requests as being received from a Resource Directory (OIC Core v1.1.1: Section 11.3.6.1.2 Resource directory)
-            foreach (var resource in _configuration.Serialiser.Deserialise(e.Message.Content, message.ContentType))
+            if (!isDiscoverResponse)
             {
-                OicRemoteDevice device;
-                if (resource is OicResourceDirectory)
-                {
-                    OicResourceDirectory directory = resource as OicResourceDirectory;
-                    device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
-                    if (device == null)
-                    {
-                        device = new OicRemoteDevice(e.Endpoint)
-                        {
-                            DeviceId = directory.DeviceId
-                        };
-                        _devices.Add(device);
-                        NewDevice?.Invoke(this, new OicNewDeviceEventArgs {Device = device});
-                    }
+                if (Handler != null)
+                    await Handler.HandleReceivedMessage(received);
+                return;
+            }
 
-                    device.Name = device.Name ?? directory.Name;
-                    var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
-                    device.Resources.AddRange(newResources);
-                }
-                else
+            var response = received.Message as OicResponse;
+            Debug.Assert(response != null);
+
+            if(response.ResposeCode != OicResponseCode.Content)
+            {
+                Console.WriteLine($"Response to discover request resulted in {response.ResposeCode:G}");
+                Console.WriteLine(_configuration.Serialiser.Prettify(response.Content, response.ContentType));
+                return;
+            }
+
+            //Todo: Review Resource Directory (OIC Core v1.1.1: Section 11.3.6.1.2 Resource directory)
+            foreach (var resource in _configuration.Serialiser.Deserialise(response.Content, response.ContentType))
+            {
+                var newDevice = false;
+
+                if (!(resource is OicResourceDirectory directory))
+                    continue;
+
+                var device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
+                if (device == null)
                 {
-                    //TODO: Verify this will correctly match up devices
-                    device = _devices.FirstOrDefault(d => d.Endpoint.Transport == e.Endpoint.Transport && d.Endpoint.Authority == e.Endpoint.Authority);
-                    if (device == null)
+                    device = new OicRemoteDevice(received.Endpoint)
                     {
-                        device = new OicRemoteDevice(e.Endpoint);
-                        _devices.Add(device);
-                        NewDevice?.Invoke(this, new OicNewDeviceEventArgs {Device = device});
-                    }
-                    device.UpdateResourceInternal(resource);
-                    break;
+                        DeviceId = directory.DeviceId
+                    };
+                    _devices.Add(device);
+                    newDevice = true;
                 }
+
+                device.Name = device.Name ?? directory.Name;
+                var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
+                device.Resources.AddRange(newResources);
+
+                if (newDevice)
+                    NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device });
             }
         }
 
-        public void Discover()
+        public async Task Discover()
         {
             // Create a discover request message
             var payload = new OicRequest
@@ -93,19 +97,14 @@ namespace OICNet
                 ToUri = new Uri("/oic/res", UriKind.Relative),
             };
 
+            var requestId = await _client.BroadcastAsync(payload);
 
-            // Send over transport using multicast/broadcast
-            Task.WaitAll(_broadcastTransports.Select(transport => 
-                Task.Run(async () => await transport.BroadcastMessageAsync(payload))).ToArray());
-            
-            // Listen for responses
+            lock(_discoverRequests)
+                _discoverRequests.Add(requestId);
         }
 
         public void Dispose()
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            _broadcastTransports.ForEach(t => (t as IDisposable)?.Dispose());
-
             //TODO: Dispose OICNet.CoreResourcesDiscoverClient properly
         }
     }

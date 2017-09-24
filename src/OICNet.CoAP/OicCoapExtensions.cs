@@ -12,12 +12,12 @@ namespace OICNet.CoAP
             var request = new OicRequest
             {
                 //FromUri = TODO populate FromUri
-                ToUri = message.GetUri(),
+                ToUri = new UriBuilder(message.GetUri()) { Scheme = "oic" }.Uri,
 
                 Content = message.Payload,
                 ContentType = message.Options.Get<CoAPNet.Options.ContentFormat>()?.MediaType.ToOicMessageContentType() ?? OicMessageContentType.None,
                 Operation = message.Code.ToOicRequestOperation(),
-                RequestId = message.Id,
+                RequestId = (message.Token.Length > 0) ? BitConverter.ToInt32(message.Token, 0) : 0,
             };
 
             foreach (var oicMessageContentType in message.Options.GetAll<CoAPNet.Options.Accept>().Select(a => a.MediaType.ToOicMessageContentType()))
@@ -36,7 +36,7 @@ namespace OICNet.CoAP
                 Content = message.Payload,
                 ContentType = message.Options.Get<CoAPNet.Options.ContentFormat>()?.MediaType.ToOicMessageContentType() ?? OicMessageContentType.None,
                 ResposeCode = message.Code.ToOicResponseCode(),
-                RequestId = message.Id,
+                RequestId = (message.Token.Length > 0) ? BitConverter.ToInt32(message.Token, 0) : 0,
             };
 
             return request;
@@ -47,13 +47,19 @@ namespace OICNet.CoAP
             var coapMessage = new CoapMessage
             {
                 Payload = message.Content,
+                Token = BitConverter.GetBytes(message.RequestId),
             };
 
             if (message.ContentType != OicMessageContentType.None)
                 coapMessage.Options.Add(new CoAPNet.Options.ContentFormat(message.ContentType.ToCoapContentFormat()));
 
             if (message.ToUri != null)
-                coapMessage.FromUri(message.ToUri);
+            {
+                if (message.ToUri.IsAbsoluteUri)
+                    coapMessage.SetUri(new UriBuilder(message.ToUri) { Scheme = "coap" }.Uri);
+                else
+                    coapMessage.SetUri(message.ToUri, UriComponents.PathAndQuery);
+            }
 
             if (message is OicRequest request)
             {
@@ -80,7 +86,7 @@ namespace OICNet.CoAP
                 return OicMessageContentType.ApplicationJson;
             if (formatType == CoAPNet.Options.ContentFormatType.ApplicationXml)
                 return OicMessageContentType.ApplicationXml;
-            throw new OicException("Unsupported content type", OicResponseCode.UnsupportedContentType);
+            throw new OicException($"Unsupported content type ({formatType})", OicResponseCode.UnsupportedContentType);
         }
 
         public static CoAPNet.Options.ContentFormatType ToCoapContentFormat(this OicMessageContentType contentType)
