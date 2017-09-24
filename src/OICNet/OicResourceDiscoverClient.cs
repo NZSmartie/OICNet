@@ -76,14 +76,18 @@ namespace OICNet
                     continue;
                 }
 
-                var device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
+                OicRemoteDevice device = null;
+                lock (_devices)
+                    device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
+
                 if (device == null)
                 {
                     device = new OicRemoteDevice(received.Endpoint)
                     {
                         DeviceId = directory.DeviceId
                     };
-                    _devices.Add(device);
+                    lock (_devices)
+                        _devices.Add(device);
                     newDevice = true;
                 }
 
@@ -96,8 +100,14 @@ namespace OICNet
             }
         }
 
-        public async Task DiscoverAsync()
+        public async Task DiscoverAsync(bool clearCached = false)
         {
+            if (clearCached)
+                lock(_devices)
+                    _devices.Clear();
+
+            // TODO: Cancel previous discovery requests
+
             // Create a discover request message
             var payload = new OicRequest
             {
