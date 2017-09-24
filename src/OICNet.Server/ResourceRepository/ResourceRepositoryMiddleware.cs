@@ -49,8 +49,13 @@ namespace OICNet.Server.ResourceRepository
                     return;
                 }
 
-                // TODO: verify grabbing the first resource is okay and enumeration is not needed.
-                requestResource = _oicConfiguration.Serialiser.Deserialise(request.Content, request.ContentType).First();
+                var r = _oicConfiguration.Serialiser.Deserialise(request.Content, request.ContentType);
+
+                if (r is OicResourceList list)
+                    // TODO: verify grabbing the first resource is okay and enumeration is not needed.
+                    requestResource = list.First();
+                else
+                    requestResource = r as IOicResource;
             }
 
             if (request.Operation == OicRequestOperation.Get)

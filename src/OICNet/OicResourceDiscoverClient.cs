@@ -62,8 +62,11 @@ namespace OICNet
                 return;
             }
 
+            var resources = _configuration.Serialiser.Deserialise(response.Content, response.ContentType) as OicResourceList 
+                ?? throw new OicException($"Incorrect response for /oic/res request");
+
             //Todo: Review Resource Directory (OIC Core v1.1.1: Section 11.3.6.1.2 Resource directory)
-            foreach (var resource in _configuration.Serialiser.Deserialise(response.Content, response.ContentType))
+            foreach (var resource in resources)
             {
                 var newDevice = false;
 

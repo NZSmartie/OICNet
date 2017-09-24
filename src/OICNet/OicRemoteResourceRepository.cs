@@ -45,7 +45,8 @@ namespace OICNet
 
             using (var requestiHandle = await _client.SendAsync(request, Device.Endpoint))
             {
-                return await requestiHandle.GetReponseAsync() as OicResponse;
+                var response = await requestiHandle.GetReponseAsync() as OicResponse;
+                return new OicResourceResponse(_client.Configuration, _client.Configuration.Serialiser.Deserialise(response.Content, response.ContentType));
             }
 
             //using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)

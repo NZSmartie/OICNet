@@ -40,8 +40,7 @@ namespace OICNet.Tests
                 var input = Encoding.UTF8.GetBytes(
                     "{\"if\":[\"oic.if.baseline\"],\"n\":\"Test\",\"id\":\"test\"}");
 
-                //Only worried about the first result
-                serialiser.Deserialise(input, OicMessageContentType.ApplicationJson).ToList();
+                serialiser.Deserialise(input, OicMessageContentType.ApplicationJson);
             });
 
             Assert.Throws<InvalidDataException>(() =>
@@ -52,8 +51,8 @@ namespace OICNet.Tests
                 var input = Encoding.UTF8.GetBytes(
                     "[{\"if\":[\"oic.if.baseline\"],\"n\":\"Test\",\"id\":\"test\"}]");
 
-                //Only worried about the first result
-                serialiser.Deserialise(input, OicMessageContentType.ApplicationJson).ToList();
+                var resources = serialiser.Deserialise(input, OicMessageContentType.ApplicationJson) as OicResourceList;
+                resources.ToList(); // ensure each item is enuemrated
             });
         }
 
@@ -72,7 +71,7 @@ namespace OICNet.Tests
             var serialiser = new OicMessageSerialiser(_resolver);
 
             //Only worried about the first result
-            return serialiser.Deserialise(input, type).First();
+            return serialiser.Deserialise(input, type) as IOicResource;
         }
 
         [Test, TestCaseSource(typeof(SerialiserTestCaseData), nameof(SerialiserTestCaseData.DeserialiseArrayTestCases))]
@@ -80,7 +79,7 @@ namespace OICNet.Tests
         {
             // Arrange
             var serialiser = new OicMessageSerialiser(_resolver);
-            return serialiser.Deserialise(input, type).ToList();
+            return (serialiser.Deserialise(input, type) as OicResourceList).ToList();
         }
     }
 

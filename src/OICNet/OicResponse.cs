@@ -14,5 +14,11 @@
         /// Indicator for an observe response.
         /// </summary>
         public virtual bool Observe { get; set; }
+
+        public virtual OicResourceList Resources => null;
+
+        public virtual IOicResource Resource => null;
+
+        public virtual bool IsCollection => false;
     }
 }
