@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OICNet
 {
-    public class OicReceivedMessageEventArgs : EventArgs
+    public class OicReceivedMessage
     {
         public IOicEndpoint Endpoint;
 
@@ -12,67 +13,19 @@ namespace OICNet
 
     public interface IOicTransport
     {
-        Task BroadcastMessageAsync(OicRequest message);
+        Task BroadcastMessageAsync(OicMessage message);
 
-        Task SendMessageAsync(IOicEndpoint endpoint, OicMessage message);
+        Task<int> SendMessageAsync(OicMessage message, IOicEndpoint endpoint = null);
 
-        Task<OicResponse> SendMessageWithResponseAsync(IOicEndpoint endpoint, OicMessage message);
-
-        event EventHandler<OicReceivedMessageEventArgs> ReceivedMessage;
+        Task<OicReceivedMessage> ReceiveMessageAsync(CancellationToken token);
     }
 
-    public interface IOicEndpoint
+    public interface IOicEndpoint : IDisposable
     {
         IOicTransport Transport { get; }
 
         bool IsSecure { get; }
 
         string Authority { get; }
-
-        // ummm...?
-    }
-
-    public enum OicResponseCode
-    {
-        // 2.xx Success
-        Created = 201,
-        Deleted = 202,
-        Valid = 203,
-        Changed = 204,
-        Content = 205,
-        // 4.xx Client Error
-        BadRequest = 400,
-        Unauthorized = 401,
-        BadOption = 402,
-        Forbidden = 403,
-        NotFound = 404,
-        OperationNotAllowed = 405,
-        NotAcceptable = 406,
-        PreconditionFailed = 412,
-        RequestEntityTooLarge = 413,
-        UnsupportedContentType = 415,
-        // 5.xx Server Error
-        InternalServerError = 500,
-        NotImplemented = 501,
-        BadGateway = 502,
-        ServiceUnavailable = 503,
-        GatewayTimeout = 504,
-        ProxyingNotSupported = 505
-    }
-
-    public enum OicMessageContentType
-    {
-        None,
-        ApplicationJson,
-        ApplicationCbor,
-        ApplicationXml,
-    }
-
-    public enum OicRequestOperation
-    {
-        Get,
-        Post,
-        Put,
-        Delete,
     }
 }
