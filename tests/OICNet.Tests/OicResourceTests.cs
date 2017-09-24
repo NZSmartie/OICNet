@@ -43,11 +43,13 @@ namespace OICNet.Tests
         [Test]
         public void TestRetreiveNullDevice()
         {
-            Assert.ThrowsAsync<NullReferenceException>(async () =>
+            Assert.Throws<ArgumentNullException>(() =>
             {
-                var repository = new OicRemoteResourceRepository();
+                // TODO: Test only OicremoteDevice null
+                new OicRemoteResourceRepository(null, null);
 
-                await repository.RetrieveAsync(OicRequest.Create(""));
+                // TODO: Test only OicClient null
+                new OicRemoteResourceRepository(null, null);
             });
         }
 
@@ -78,24 +80,24 @@ namespace OICNet.Tests
         [TestCaseSource(typeof(ResourceTestCaseSource), nameof(ResourceTestCaseSource.RetreiveTestCaseData))]
         public async Task<IOicResource> TestRetreive(OicResponse response, IOicResource actual)
         {
-            Assert.Fail("Api changed");
+            throw new NotImplementedException("Api changed");
             // Arrange
             //_mockTransport
             //    .Setup(t => t.SendMessageWithResponseAsync(It.IsAny<IOicEndpoint>(),
             //        It.Is((OicRequest r) => r.Operation == OicRequestOperation.Get)))
             //    .Returns(Task.FromResult(response));
 
-            var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
+            //var repository = new OicRemoteResourceRepository(new OicRemoteDevice(_mockEndpoint.Object));
 
-            // Act
-            var result = await repository.RetrieveAsync(OicRequest.Create(actual.RelativeUri));
+            //// Act
+            //var result = await repository.RetrieveAsync(OicRequest.Create(actual.RelativeUri));
 
-            actual = result.GetResource(_configuration);
+            //actual = result.GetResource(_configuration);
 
-            // Assert
-            Mock.VerifyAll(_mockTransport);
+            //// Assert
+            //Mock.VerifyAll(_mockTransport);
 
-            return actual;
+            //return actual;
         }
     }
 

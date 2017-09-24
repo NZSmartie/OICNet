@@ -1,20 +1,24 @@
 ﻿using CoAPNet.Udp;
 using OICNet.CoAP;
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace OICNet.ClientExample
 {
     class Program
     {
+        private static OicClient _client;
+
         static void Main(string[] args)
         {
-            using (var client = new OicClient())
+            using (_client = new OicClient())
             {
                 // Add a CoapTransport with a system assigned UDP Endpoint
-                client.AddTransport(new OicCoapTransport(new CoapUdpEndPoint()));
+                _client.AddTransport(new OicCoapTransport(new CoapUdpEndPoint()));
 
                 // Create a discover client
-                var discoverClient = new OicResourceDiscoverClient(client);
+                var discoverClient = new OicResourceDiscoverClient(_client);
                 discoverClient.NewDevice += OnNewDevice;
 
                 // Broadcast a discover request (GET /oic/res)
@@ -27,10 +31,26 @@ namespace OICNet.ClientExample
 
         private static void OnNewDevice(object sender, OicNewDeviceEventArgs e)
         {
-            Console.WriteLine($"New device found \"{e.Device.Name}\" ({e.Device.DeviceId})");
-            foreach(var resource in e.Device.Resources)
+            try
             {
-                Console.WriteLine($" - {resource.RelativeUri}\n\tName: {resource.Name}\n\tResource Types: {string.Join(", ", resource.ResourceTypes)}");
+
+                Console.WriteLine($"New device found \"{e.Device.Name}\" ({e.Device.DeviceId})");
+
+                var resourceRepository = new OicRemoteResourceRepository(e.Device as OicRemoteDevice, _client);
+
+                foreach (var resource in e.Device.Resources)
+                {
+                    Console.WriteLine($" - {resource.RelativeUri}\n\tName: {resource.Name}\n\tResource Types: {string.Join(", ", resource.ResourceTypes)}");
+
+                    var response = resourceRepository.RetrieveAsync(OicRequest.Create(resource.RelativeUri)).Result;
+                    var value = OicConfiguration.Default.Serialiser.Deserialise(response.Content, response.ContentType).First();
+                    resource.UpdateFields(value);
+                    Console.WriteLine($"\tValue: {resource}");
+                }
+            }
+            catch (AggregateException aex)
+            {
+                Debugger.Break();
             }
         }
     }

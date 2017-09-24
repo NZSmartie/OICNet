@@ -13,9 +13,12 @@ namespace OICNet
 
         public OicRemoteDevice Device { get; }
 
-        public OicRemoteResourceRepository(OicRemoteDevice device = null)
+        private readonly OicClient _client;
+
+        public OicRemoteResourceRepository(OicRemoteDevice device, OicClient client)
         {
-            Device = device;
+            Device = device ?? throw new ArgumentNullException(nameof(device));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         public virtual Task<OicResponse> CreateAsync(OicRequest request, IOicResource resource)
@@ -40,7 +43,10 @@ namespace OICNet
 
             var endoint = Device.Endpoint;
 
-            return await endoint.Transport.SendMessageWithResponseAsync(endoint, request);
+            using (var requestiHandle = await _client.SendAsync(request, Device.Endpoint))
+            {
+                return await requestiHandle.GetReponseAsync() as OicResponse;
+            }
 
             //using (var results = Device.Configuration.Serialiser.Deserialise(response.Content, response.ContentType)
             //    .GetEnumerator())

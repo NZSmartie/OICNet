@@ -39,7 +39,7 @@ namespace OICNet.CoAP
 
             return new OicReceivedMessage
             {
-                Endpoint = new OicCoapEndpoint(message.Endpoint),
+                Endpoint = new OicCoapEndpoint(message.Endpoint, this),
                 Message = message.Message.Code.IsRequest()
                     ? (OicMessage)message.Message.ToOicRequest()
                     : (OicMessage)message.Message.ToOicResponse()
@@ -53,7 +53,8 @@ namespace OICNet.CoAP
             if (coapEndpoint == null && endpoint != null)
                 throw new InvalidOperationException();
 
-            return await _client.SendAsync(message, coapEndpoint);
+            // TODO: What happens when  coapEndpoint._coapEndpoint is null?
+            return await _client.SendAsync(message, coapEndpoint._coapEndpoint);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace OICNet.CoAP
 {
     public class OicCoapEndpoint : ICoapEndpoint, IOicEndpoint
     {
-        private readonly ICoapEndpoint _coapEndpoint;
+        internal readonly ICoapEndpoint _coapEndpoint;
 
         bool IOicEndpoint.IsSecure => _coapEndpoint.IsSecure;
 
@@ -29,6 +29,12 @@ namespace OICNet.CoAP
         public OicCoapEndpoint(ICoapEndpoint coapEndpoint)
         {
             _coapEndpoint = coapEndpoint;
+        }
+
+        internal OicCoapEndpoint(ICoapEndpoint coapEndpoint, OicCoapTransport transport)
+        {
+            _coapEndpoint = coapEndpoint;
+            Transport = transport;
         }
 
         public void Dispose()

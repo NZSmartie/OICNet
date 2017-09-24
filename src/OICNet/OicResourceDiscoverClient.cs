@@ -10,6 +10,8 @@ namespace OICNet
     public class OicNewDeviceEventArgs : EventArgs
     {
         public OicDevice Device { get; set; }
+
+        public IOicEndpoint Endpoint { get; set; }
     }
 
     public class OicResourceDiscoverClient : OicClientHandler
@@ -84,7 +86,7 @@ namespace OICNet
                 device.Resources.AddRange(newResources);
 
                 if (newDevice)
-                    NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device });
+                    NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device, Endpoint = received.Endpoint });
             }
         }
 
@@ -97,10 +99,11 @@ namespace OICNet
                 ToUri = new Uri("/oic/res", UriKind.Relative),
             };
 
-            var requestId = await _client.BroadcastAsync(payload);
-
-            lock(_discoverRequests)
-                _discoverRequests.Add(requestId);
+            using (var handle = await _client.BroadcastAsync(payload))
+            {
+                lock (_discoverRequests)
+                    _discoverRequests.Add(handle.RequestId);
+            }
         }
 
         public void Dispose()

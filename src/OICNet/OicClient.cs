@@ -18,12 +18,20 @@ namespace OICNet
         private OicClientHandler _handler = null;
         private OicClientHandler _prevHandler = null;
 
+        private readonly Dictionary<int, OicRequestHandle> _requestHandlers = new Dictionary<int, OicRequestHandle>();
+
         private int _requestId;
 
         //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
         public OicClient()
             : this(OicConfiguration.Default)
         { }
+
+        internal void RemoveHandle(OicRequestHandle handle)
+        {
+            lock (_requestHandlers)
+                _requestHandlers.Remove(handle.RequestId);
+        }
 
         public OicClient(OicConfiguration configuration)
         {
@@ -33,18 +41,31 @@ namespace OICNet
         }
 
         private int GetNextRequestId()
-            => Interlocked.Increment(ref _requestId);
+            => Interlocked.Increment(ref _requestId) & int.MaxValue;
 
-        public async Task<int> SendAsync(OicMessage message, IOicEndpoint endpoint = null)
+        private OicRequestHandle CreateHandle(OicMessage message)
         {
             if (message.RequestId == 0)
                 message.RequestId = GetNextRequestId();
 
-            if (endpoint != null)
-                return await endpoint.Transport.SendMessageAsync(message, endpoint);
+            var handle = new OicRequestHandle(this, message.RequestId);
 
-            var tasks = await Task.WhenAny(_transports.Select(t => t.SendMessageAsync(message)));
-            return tasks.Result;
+            lock (_requestHandlers)
+                _requestHandlers.Add(handle.RequestId, handle);
+
+            return handle;
+        }
+
+        public async Task<OicRequestHandle> SendAsync(OicMessage message, IOicEndpoint endpoint = null)
+        {
+            var handle = CreateHandle(message);
+
+            if (endpoint != null)
+                await endpoint.Transport.SendMessageAsync(message, endpoint);
+            else
+                await Task.WhenAny(_transports.Select(t => t.SendMessageAsync(message)));
+
+            return handle;
         }
 
         public void AddHandler(OicClientHandler handler)
@@ -59,14 +80,13 @@ namespace OICNet
             _prevHandler = handler;
         }
 
-        public async Task<int> BroadcastAsync(OicMessage message)
+        public async Task<OicRequestHandle> BroadcastAsync(OicMessage message)
         {
-            if (message.RequestId == 0)
-                message.RequestId = GetNextRequestId();
+            var handle = CreateHandle(message);
 
             await Task.WhenAll(_transports.Select(t => t.BroadcastMessageAsync(message)));
 
-            return message.RequestId;
+            return handle;
         }
 
         public void AddTransport(IOicTransport provider)
@@ -100,6 +120,12 @@ namespace OICNet
                     // Middle ware sort of callback?
 
                     Debug.WriteLine($"received a message from {received.Endpoint}");
+
+                    OicRequestHandle requestHandler = null;
+                    lock (_requestHandlers)
+                        _requestHandlers.TryGetValue(received.Message.RequestId, out requestHandler);
+
+                    _ = requestHandler?.SetReponseAsync(received.Message);
 
                     _ = Task.Factory.StartNew(
                         async r => await _handler.HandleReceivedMessage((OicReceivedMessage)r), 
