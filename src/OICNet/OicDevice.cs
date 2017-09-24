@@ -47,12 +47,17 @@ namespace OICNet
             : this(Guid.NewGuid(), deviceTypes)
         { }
 
+        // TODO: Does this need to be internal? would public access be benificial?
         internal void UpdateResourceInternal(IOicResource resource)
         {
-            switch (resource)
-            {
-                    
-            }
+            var device = resource as CoreResources.OicDeviceResource;
+            if (device == null)
+                return;
+
+            Name = device.Name;
+            DeviceId = device.DeviceId;
+
+            // TODO: auto map OicDeviceResource to OicDevice? or make it a field/property?
         }
     }
 

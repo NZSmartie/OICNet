@@ -34,6 +34,9 @@ namespace OICNet
         {
             _configuration = configuration;
             _resource = resource;
+
+            // Set default content type
+            ContentType = OicMessageContentType.ApplicationCbor;
         }
     }
 }

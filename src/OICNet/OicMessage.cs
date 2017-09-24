@@ -24,6 +24,8 @@ namespace OICNet
         /// </summary>
         public virtual byte[] Content { get; set; }
 
-        public virtual OicMessageContentType ContentType { get; set; } = OicMessageContentType.ApplicationCbor;
+        public virtual OicMessageContentType ContentType { get; set; } = OicMessageContentType.None;
+
+        // TODO: expose CoAP header options here
     }
 }

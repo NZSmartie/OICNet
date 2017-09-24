@@ -46,13 +46,15 @@ namespace OICNet.Server.Internal
         {
             if (!_resources.ContainsKey("/oic/d"))
             {
+                // TODO: Decouple OicDevice to OicDeviceResource mapping
                 var deviceResource = new OicDeviceResource
                 {
+                    Name = oicDevice.Name,
                     SpecVersions = "core.1.1.1", // TODO: Reference this from somewhere (make it a fixed default value?)
                     PlatformId = Guid.NewGuid(),
                     DeviceId = oicDevice.DeviceId,
                     ResourceTypes = oicDevice.DeviceTypes.ToList(),
-                    ServerVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion
+                    ServerVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion,
                 };
                 _resources.Add("/oic/d", deviceResource);
                 _discoverableOicResources.Add(OicResourceLink.FromResource(deviceResource));

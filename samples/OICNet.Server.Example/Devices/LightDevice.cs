@@ -7,15 +7,17 @@ namespace OICNet.Server.Example.Devices
 {
     public class LightDevice : OicDevice
     {
+        // Private members
         private readonly ILogger<LightDevice> _logger;
 
-        [OicResource(OicResourcePolicies.Discoverable | OicResourcePolicies.Secure)]
+        // Public discoverable resources
+        [OicResource(OicResourcePolicies.Discoverable)]
         public LightBrightness Brightness { get; } = new LightBrightness
         {
             RelativeUri = "/light/brightness",
         };
 
-        [OicResource(OicResourcePolicies.Discoverable | OicResourcePolicies.Secure)]
+        [OicResource(OicResourcePolicies.Discoverable)]
         public SwitchBinary Switch { get; } = new SwitchBinary
         {
             RelativeUri = "/light/switch",
@@ -25,6 +27,8 @@ namespace OICNet.Server.Example.Devices
             : base("oic.d.light")
         {
             _logger = logger;
+
+            Name = "My Test Light";
 
             Brightness.PropertyChanged += OnResourceChanged;
             Switch.PropertyChanged += OnResourceChanged;
