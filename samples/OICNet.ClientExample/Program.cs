@@ -43,8 +43,7 @@ namespace OICNet.ClientExample
                     Console.WriteLine($" - {resource.RelativeUri}\n\tName: {resource.Name}\n\tResource Types: {string.Join(", ", resource.ResourceTypes)}");
 
                     var response = resourceRepository.RetrieveAsync(OicRequest.Create(resource.RelativeUri)).Result;
-                    var value = OicConfiguration.Default.Serialiser.Deserialise(response.Content, response.ContentType) as IOicResource;
-                    resource.UpdateFields(value);
+                    resource.UpdateFields(response.Resource);
                     Console.WriteLine($"\tValue: {resource}");
                 }
             }
