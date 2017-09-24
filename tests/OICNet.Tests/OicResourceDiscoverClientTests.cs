@@ -30,7 +30,7 @@ namespace OICNet.Tests
             client.AddTransport(mockInterface2.Object);
 
             // Act
-            await new OicResourceDiscoverClient(client).Discover();
+            await new OicResourceDiscoverClient(client).DiscoverAsync();
 
             // Assert
             Mock.VerifyAll(mockInterface1, mockInterface2);

@@ -22,7 +22,7 @@ namespace OICNet.ClientExample
                 discoverClient.NewDevice += OnNewDevice;
 
                 // Broadcast a discover request (GET /oic/res)
-                discoverClient.Discover().Wait();
+                discoverClient.DiscoverAsync().Wait();
 
                 Console.WriteLine("Press <Enter> to exit");
                 Console.ReadLine();
