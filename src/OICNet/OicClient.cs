@@ -43,22 +43,27 @@ namespace OICNet
         private int GetNextRequestId()
             => Interlocked.Increment(ref _requestId) & int.MaxValue;
 
-        private OicRequestHandle CreateHandle(OicMessage message)
+        public OicRequestHandle GetHandle(OicMessage message)
         {
             if (message.RequestId == 0)
                 message.RequestId = GetNextRequestId();
 
-            var handle = new OicRequestHandle(this, message.RequestId);
-
             lock (_requestHandlers)
+            {
+                if (_requestHandlers.TryGetValue(message.RequestId, out var existingHandle))
+                    return existingHandle;
+
+                var handle = new OicRequestHandle(this, message.RequestId);
+
                 _requestHandlers.Add(handle.RequestId, handle);
 
-            return handle;
+                return handle;
+            }
         }
 
         public async Task<OicRequestHandle> SendAsync(OicMessage message, IOicEndpoint endpoint = null)
         {
-            var handle = CreateHandle(message);
+            var handle = GetHandle(message);
 
             if (endpoint != null)
                 await endpoint.Transport.SendMessageAsync(message, endpoint);
@@ -82,7 +87,7 @@ namespace OICNet
 
         public async Task<OicRequestHandle> BroadcastAsync(OicMessage message)
         {
-            var handle = CreateHandle(message);
+            var handle = GetHandle(message);
 
             await Task.WhenAll(_transports.Select(t => t.BroadcastMessageAsync(message)));
 

@@ -117,10 +117,13 @@ namespace OICNet
                 ToUri = new Uri("/oic/res", UriKind.Relative),
             };
 
-            using (var handle = await _client.BroadcastAsync(payload))
+            using (var handle = _client.GetHandle(payload))
             {
                 lock (_discoverRequests)
                     _discoverRequests.Add(handle.RequestId);
+
+                // Get the handle first and store it before broadcasting request. Reponses may be lost if we don't know our requesting Id.
+                await _client.BroadcastAsync(payload);
             }
         }
 
