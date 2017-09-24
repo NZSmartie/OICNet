@@ -30,7 +30,7 @@ namespace OICNet.Utilities
             }
 
             Enum e = (Enum)value;
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_4
             var options = value.GetType().GetCustomAttribute<StringFlagEnumConverterOptionsAttribute>();
 #else
             var options = value.GetType().GetTypeInfo().GetCustomAttribute<StringFlagEnumConverterOptionsAttribute>();
@@ -51,7 +51,7 @@ namespace OICNet.Utilities
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_4
             bool isGenericType = objectType.IsGenericType;
 #else
             bool isGenericType = objectType.GetTypeInfo().IsGenericType;
@@ -91,7 +91,7 @@ namespace OICNet.Utilities
             if (!base.CanConvert(objectType))
                 return false;
 
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_4
             return objectType.GetCustomAttribute<FlagsAttribute>() != null;
 #else
             return objectType.GetTypeInfo().GetCustomAttribute<FlagsAttribute>() != null;
