@@ -2,6 +2,22 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.4;netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <AssemblyName>OICNet.CoAP</AssemblyName>
+    <RootNamespace>OICNet.CoAP</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.3.1-alpha5</Version>
+    <PackageVersion>0.3.1-alpha5</PackageVersion>
+    <PackageId>NZSmartie.OICNet.CoAP</PackageId>
+    <Authors>Roman Vaughan</Authors>
+    <Company>NZSmartie</Company>
+    <Description>A bridge between OICNet and my CoAPNet library</Description>
+    <PackageProjectUrl>https://github.com/NZSmartie/OICNet</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/NZSmartie/OICNet/master/OCF.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NZSmartie/OICNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>OIC IoT OCF sensors hardware devices HomeAutomation mvc server</PackageTags>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
