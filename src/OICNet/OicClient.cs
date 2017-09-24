@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
 
 namespace OICNet
 {
     public class OicClient : IDisposable
     {
+        private readonly ILogger<OicClient> _logger;
         private readonly List<IOicTransport> _transports = new List<IOicTransport>();
-        public readonly OicConfiguration Configuration;
-
         private readonly List<Task> _receiveTasks = new List<Task>();
         private readonly CancellationTokenSource _receiveCTS = new CancellationTokenSource();
+        private readonly Dictionary<int, OicRequestHandle> _requestHandlers = new Dictionary<int, OicRequestHandle>();
 
         private OicClientHandler _handler = null;
         private OicClientHandler _prevHandler = null;
-
-        private readonly Dictionary<int, OicRequestHandle> _requestHandlers = new Dictionary<int, OicRequestHandle>();
-
         private int _requestId;
 
+        public OicConfiguration Configuration { get; }
+
         //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
-        public OicClient()
-            : this(OicConfiguration.Default)
+        public OicClient(ILogger<OicClient> logger = null)
+            : this(OicConfiguration.Default, logger)
         { }
 
         internal void RemoveHandle(OicRequestHandle handle)
@@ -33,11 +33,13 @@ namespace OICNet
                 _requestHandlers.Remove(handle.RequestId);
         }
 
-        public OicClient(OicConfiguration configuration)
+        public OicClient(OicConfiguration configuration, ILogger<OicClient> logger = null)
         {
             Configuration = configuration;
 
             _requestId = new Random().Next();
+            _logger = logger;
+            
         }
 
         private int GetNextRequestId()
@@ -124,7 +126,7 @@ namespace OICNet
                     var received = await transport.ReceiveMessageAsync(ct);
                     // Middle ware sort of callback?
 
-                    Debug.WriteLine($"received a message from {received.Endpoint}");
+                    _logger?.LogDebug($"received a message from {received.Endpoint}");
 
                     OicRequestHandle requestHandler = null;
                     lock (_requestHandlers)
@@ -144,8 +146,8 @@ namespace OICNet
             {
                 if (ct.IsCancellationRequested)
                     return;
-                Debug.WriteLine($"Exception occured in {nameof(ReceiveInternalAsync)}");
-                Debug.Write(ex);
+
+                _logger?.LogError(0, ex, $"Exception occured in {nameof(ReceiveInternalAsync)}");
             }
         }
 

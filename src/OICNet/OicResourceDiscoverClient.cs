@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
 using OICNet.CoreResources;
-using System.Diagnostics;
 
 namespace OICNet
 {
@@ -19,6 +20,7 @@ namespace OICNet
         private readonly List<OicRemoteDevice> _devices = new List<OicRemoteDevice>();
         private readonly OicClient _client;
         private readonly OicConfiguration _configuration;
+        private readonly ILogger<OicResourceDiscoverClient> _logger;
 
         //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
         public event EventHandler<OicNewDeviceEventArgs> NewDevice;
@@ -26,14 +28,15 @@ namespace OICNet
         // TODO: make this an exireable cache of request ids
         private readonly List<int> _discoverRequests = new List<int>();
 
-        public OicResourceDiscoverClient(OicClient client)
-            : this(client, client.Configuration)
+        public OicResourceDiscoverClient(OicClient client, ILogger<OicResourceDiscoverClient> logger = null)
+            : this(client, client.Configuration, logger)
         { }
 
-        public OicResourceDiscoverClient(OicClient client, OicConfiguration configuration)
+        public OicResourceDiscoverClient(OicClient client, OicConfiguration configuration, ILogger<OicResourceDiscoverClient> logger = null)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _configuration = configuration ?? OicConfiguration.Default;
+            _logger = logger;
 
             _client.AddHandler(this);
         }
@@ -47,7 +50,7 @@ namespace OICNet
 
             if (!isDiscoverResponse)
             {
-                Debug.WriteLine($"Request ({received.Message.RequestId}) was not intended for {nameof(OicResourceDiscoverClient)}");
+                _logger?.LogTrace($"Request ({received.Message.RequestId}) was not intended for {nameof(OicResourceDiscoverClient)}");
 
                 if (Handler != null)
                     await Handler.HandleReceivedMessage(received);
@@ -55,12 +58,11 @@ namespace OICNet
             }
 
             var response = received.Message as OicResponse;
-            Debug.Assert(response != null);
 
             if(response.ResposeCode != OicResponseCode.Content)
             {
-                Debug.WriteLine($"Response to discover request resulted in {response.ResposeCode:G}");
-                Debug.WriteLine(_configuration.Serialiser.Prettify(response.Content, response.ContentType));
+                _logger?.LogInformation($"Response to discover request resulted in {response.ResposeCode:G}");
+                _logger?.LogInformation(_configuration.Serialiser.Prettify(response.Content, response.ContentType));
                 return;
             }
 
@@ -74,7 +76,7 @@ namespace OICNet
 
                 if (!(resource is OicResourceDirectory directory))
                 {
-                    Debug.WriteLine($"{nameof(resource)} ({resource.GetType()}) is not of type {typeof(OicResourceList)}. Skipping");
+                    _logger?.LogError($"{nameof(resource)} ({resource.GetType()}) is not of type {typeof(OicResourceList)}. Skipping");
                     continue;
                 }
 
