@@ -4,13 +4,65 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Language;
 using NUnit.Framework;
-
+using System.Threading;
+using OICNet.Tests.Mocks;
 
 namespace OICNet.Tests
 {
     [TestFixture]
     public class OicResourceDiscoverClientTests
     {
+        private Mock<MockOicTransport> _mockTransport;
+
+        [SetUp]
+        public void SetupMockTransport()
+        {
+            _mockTransport = new Mock<MockOicTransport>() { CallBase = true };
+            _mockTransport
+                .Setup(i => i.BroadcastMessageAsync(It.IsAny<OicMessage>()))
+                .Callback<OicMessage>(request => _mockTransport.Object.EnqueueReceivePacket(
+                    new OicReceivedMessage
+                    {
+                        Endpoint = null,
+                        Message = new OicResourceResponse(OicConfiguration.Default, new OicResourceList
+                        {
+                            new CoreResources.OicResourceDirectory
+                            {
+                                DeviceId = Guid.Parse("0685B960-736F-46F7-BEC0-9E6CBD61ADC1"),
+                                Links =
+                                {
+                                    new CoreResources.OicResourceLink
+                                    {
+                                        Href = new Uri("/oid/d", UriKind.Relative),
+                                        ResourceTypes = {"oic.d.light", "oic.wk.d"},
+                                        Interfaces = OicResourceInterface.ReadOnly | OicResourceInterface.Baseline,
+                                    },
+                                    new CoreResources.OicResourceLink
+                                    {
+                                        Href = new Uri("/oid/p", UriKind.Relative),
+                                        ResourceTypes = {"oic.wk.p"},
+                                        Interfaces = OicResourceInterface.ReadOnly | OicResourceInterface.Baseline,
+                                    },
+                                    new CoreResources.OicResourceLink
+                                    {
+                                        Href = new Uri("/switch", UriKind.Relative),
+                                        ResourceTypes = {"oic.r.switch.binary"},
+                                        Interfaces = OicResourceInterface.Actuator | OicResourceInterface.Baseline,
+                                    },
+                                    new CoreResources.OicResourceLink
+                                    {
+                                        Href = new Uri("/brightness", UriKind.Relative),
+                                        ResourceTypes = {"oic.r.light.brightness"},
+                                        Interfaces = OicResourceInterface.Actuator | OicResourceInterface.Baseline,
+                                    }
+                                }
+                           }
+                        })
+                        { RequestId = request.RequestId, ResposeCode = OicResponseCode.Content }
+                    }))
+                .CallBase();
+        }
+
         [Test]
         public async Task TestDiscoverOnAllInterfaces()
         {
@@ -48,37 +100,32 @@ namespace OICNet.Tests
         }
 
         [Test]
-        public void TestDiscoverDevice()
+        public async Task TestDiscoverDevice()
         {
-            var mockInterface = new Mock<IOicTransport>();
-
+            //Arange 
             bool newDeviceCallbackInvoked = false;
-            var client = new OicClient();
-            var service = new OicResourceDiscoverClient(client);
             OicDevice actualDevice = null;
 
-            client.AddTransport(mockInterface.Object);
-            service.NewDevice += (s, e) =>
-            {
-                newDeviceCallbackInvoked = true;
-                actualDevice = e.Device;
-            };
-
-            Assert.Fail("Api has changed... fix this!");
             // Act
-            //mockInterface.Raise(i => i.ReceivedMessage += null, new OicReceivedMessageEventArgs
-            //{
-            //    Endpoint = null,
-            //    Message = new OicResponse
-            //    {
-            //        ToUri = new Uri("/oic/res", UriKind.Relative),
-            //        ContentType = OicMessageContentType.ApplicationCbor,
-            //        Content = new byte[] { 0x81, 0xA3, 0x62, 0x64, 0x69, 0x78, 0x24, 0x30, 0x36, 0x38, 0x35, 0x42, 0x39, 0x36, 0x30, 0x2D, 0x37, 0x33, 0x36, 0x46, 0x2D, 0x34, 0x36, 0x46, 0x37, 0x2D, 0x42, 0x45, 0x43, 0x30, 0x2D, 0x39, 0x45, 0x36, 0x43, 0x42, 0x44, 0x36, 0x31, 0x41, 0x44, 0x43, 0x31, 0x62, 0x72, 0x74, 0x81, 0x6A, 0x6F, 0x69, 0x63, 0x2E, 0x77, 0x6B, 0x2E, 0x72, 0x65, 0x73, 0x65, 0x6C, 0x69, 0x6E, 0x6B, 0x73, 0x84, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x66, 0x2F, 0x6F, 0x69, 0x63, 0x2F, 0x64, 0x62, 0x72, 0x74, 0x82, 0x6B, 0x6F, 0x69, 0x63, 0x2E, 0x64, 0x2E, 0x6C, 0x69, 0x67, 0x68, 0x74, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x77, 0x6B, 0x2E, 0x64, 0x62, 0x69, 0x66, 0x82, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x72, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C, 0x69, 0x6E, 0x65, 0x61, 0x70, 0xA3, 0x62, 0x62, 0x6D, 0x01, 0x63, 0x73, 0x65, 0x63, 0xF5, 0x64, 0x70, 0x6F, 0x72, 0x74, 0x19, 0x7E, 0x16, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x66, 0x2F, 0x6F, 0x69, 0x63, 0x2F, 0x70, 0x62, 0x72, 0x74, 0x81, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x77, 0x6B, 0x2E, 0x70, 0x62, 0x69, 0x66, 0x82, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x72, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C, 0x69, 0x6E, 0x65, 0x61, 0x70, 0xA3, 0x62, 0x62, 0x6D, 0x01, 0x63, 0x73, 0x65, 0x63, 0xF5, 0x64, 0x70, 0x6F, 0x72, 0x74, 0x19, 0x7E, 0x16, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x67, 0x2F, 0x73, 0x77, 0x69, 0x74, 0x63, 0x68, 0x62, 0x72, 0x74, 0x81, 0x73, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x73, 0x77, 0x69, 0x74, 0x63, 0x68, 0x2E, 0x62, 0x69, 0x6E, 0x61, 0x72, 0x79, 0x62, 0x69, 0x66, 0x82, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x61, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C, 0x69, 0x6E, 0x65, 0x61, 0x70, 0xA3, 0x62, 0x62, 0x6D, 0x02, 0x63, 0x73, 0x65, 0x63, 0xF5, 0x64, 0x70, 0x6F, 0x72, 0x74, 0x19, 0x7E, 0x16, 0xA4, 0x64, 0x68, 0x72, 0x65, 0x66, 0x6B, 0x2F, 0x62, 0x72, 0x69, 0x67, 0x68, 0x74, 0x6E, 0x65, 0x73, 0x73, 0x62, 0x72, 0x74, 0x81, 0x76, 0x6F, 0x69, 0x63, 0x2E, 0x72, 0x2E, 0x6C, 0x69, 0x67, 0x68, 0x74, 0x2E, 0x62, 0x72, 0x69, 0x67, 0x68, 0x74, 0x6E, 0x65, 0x73, 0x73, 0x62, 0x69, 0x66, 0x82, 0x68, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x61, 0x6F, 0x6F, 0x69, 0x63, 0x2E, 0x69, 0x66, 0x2E, 0x62, 0x61, 0x73, 0x65, 0x6C, 0x69, 0x6E, 0x65, 0x61, 0x70, 0xA3, 0x62, 0x62, 0x6D, 0x03, 0x63, 0x73, 0x65, 0x63, 0xF5, 0x64, 0x70, 0x6F, 0x72, 0x74, 0x19, 0x7E, 0x16 }
-            //    }
-            //});
+            using (var client = new OicClient())
+            {
+                var service = new OicResourceDiscoverClient(client);
+
+                client.AddTransport(_mockTransport.Object);
+
+                service.NewDevice += (s, e) =>
+                {
+                    newDeviceCallbackInvoked = true;
+                    actualDevice = e.Device;
+                };
+
+                await service.DiscoverAsync();
+
+                await Task.Delay(100);
+            }
 
             // Assert
-            Assert.IsTrue(newDeviceCallbackInvoked, $"{typeof(OicResourceDiscoverClient)}.{nameof(service.NewDevice)} was not invoked");
+            Assert.IsTrue(newDeviceCallbackInvoked, $"{typeof(OicResourceDiscoverClient)}.{nameof(OicResourceDiscoverClient.NewDevice)} was not invoked");
 
             var expectedDevice = new OicDevice()
             {
@@ -112,6 +159,68 @@ namespace OICNet.Tests
             };
             Assert.AreEqual(expectedDevice.DeviceId, actualDevice.DeviceId);
             Assert.AreEqual(expectedDevice.Resources, actualDevice.Resources);
+        }
+
+        [Test]
+        public async Task Discover_InvokedTwice_TriggersNewDeviceOnce()
+        {
+            //Arange 
+            int newDeviceCallbackInvokations = 0;
+
+            // Act
+            using (var client = new OicClient())
+            {
+                var service = new OicResourceDiscoverClient(client);
+
+                client.AddTransport(_mockTransport.Object);
+
+                service.NewDevice += (s, e) =>
+                {
+                    newDeviceCallbackInvokations++;
+                };
+
+                await service.DiscoverAsync();
+
+                await Task.Delay(100);
+
+                await service.DiscoverAsync();
+
+                await Task.Delay(100);
+            }
+
+            // Assert
+            Assert.That(newDeviceCallbackInvokations, Is.EqualTo(1), $"{typeof(OicResourceDiscoverClient)}.{nameof(OicResourceDiscoverClient.NewDevice)} was not invoked once");
+        }
+
+        [Test]
+        public async Task Discover_InvokedTwiceAndCleared_TriggersNewDeviceTwice()
+        {
+            //Arange 
+            int newDeviceCallbackInvokations = 0;
+
+            // Act
+            using (var client = new OicClient())
+            {
+                var service = new OicResourceDiscoverClient(client);
+
+                client.AddTransport(_mockTransport.Object);
+
+                service.NewDevice += (s, e) =>
+                {
+                    newDeviceCallbackInvokations++;
+                };
+
+                await service.DiscoverAsync();
+
+                await Task.Delay(100);
+
+                await service.DiscoverAsync(true);
+
+                await Task.Delay(100);
+            }
+
+            // Assert
+            Assert.That(newDeviceCallbackInvokations, Is.EqualTo(2), $"{typeof(OicResourceDiscoverClient)}.{nameof(OicResourceDiscoverClient.NewDevice)} was not invoked twice");
         }
     }
 }
