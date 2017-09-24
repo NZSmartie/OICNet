@@ -47,6 +47,8 @@ namespace OICNet
 
             if (!isDiscoverResponse)
             {
+                Debug.WriteLine($"Request ({received.Message.RequestId}) was not intended for {nameof(OicResourceDiscoverClient)}");
+
                 if (Handler != null)
                     await Handler.HandleReceivedMessage(received);
                 return;
