@@ -82,7 +82,7 @@ namespace OICNet.Server.CoAP.Internal
         private CoapMessage GenerateCoreLinkResource(CoapMessage message)
         {
             if (message.Code != CoapMessageCode.Get)
-                return CoapMessageUtility.FromException(new CoapException("Method not allowed", CoapMessageCode.MethodNotAllowed));
+                return CoapMessage.FromException(new CoapException("Method not allowed", CoapMessageCode.MethodNotAllowed));
 
             var links = _discoverableResources.DiscoverableResources
                 .Select(r => new CoapResourceMetadata(r.Href)
