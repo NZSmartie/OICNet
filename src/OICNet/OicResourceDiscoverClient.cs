@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 using OICNet.CoreResources;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace OICNet
 {
@@ -15,15 +17,24 @@ namespace OICNet
         public IOicEndpoint Endpoint { get; set; }
     }
 
-    public class OicResourceDiscoverClient : OicClientHandler
+    public class OicResourceDiscoverClient : OicClientHandler, INotifyPropertyChanged
     {
-        private readonly List<OicRemoteDevice> _devices = new List<OicRemoteDevice>();
+        private readonly ObservableCollection<OicRemoteDevice> _devices = new ObservableCollection<OicRemoteDevice>();
         private readonly OicClient _client;
         private readonly OicConfiguration _configuration;
         private readonly ILogger<OicResourceDiscoverClient> _logger;
 
         //Todo: Use INotifyPropertyChanged or IObservableCollection instead of new device event?
         public event EventHandler<OicNewDeviceEventArgs> NewDevice;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public IReadOnlyCollection<OicRemoteDevice> Devices => _devices;
 
         // TODO: make this an exireable cache of request ids
         private readonly List<int> _discoverRequests = new List<int>();
