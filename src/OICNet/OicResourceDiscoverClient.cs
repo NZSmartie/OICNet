@@ -107,8 +107,9 @@ namespace OICNet
                 }
 
                 device.Name = device.Name ?? directory.Name;
-                var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
-                device.Resources.AddRange(newResources);
+
+                foreach(var newResource in directory.Links.Select(l => l.CreateResource(_configuration.Resolver)))
+                    device.Resources.Add(newResource);
 
                 if (newDevice)
                     NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device, Endpoint = received.Endpoint });
