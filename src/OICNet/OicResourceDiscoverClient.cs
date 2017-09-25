@@ -19,7 +19,6 @@ namespace OICNet
 
     public class OicResourceDiscoverClient : OicClientHandler, INotifyPropertyChanged
     {
-        private readonly ObservableCollection<OicRemoteDevice> _devices = new ObservableCollection<OicRemoteDevice>();
         private readonly OicClient _client;
         private readonly OicConfiguration _configuration;
         private readonly ILogger<OicResourceDiscoverClient> _logger;
@@ -34,7 +33,7 @@ namespace OICNet
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public IReadOnlyCollection<OicRemoteDevice> Devices => _devices;
+        public ObservableCollection<OicRemoteDevice> Devices { get; } = new ObservableCollection<OicRemoteDevice>();
 
         // TODO: make this an exireable cache of request ids
         private readonly List<int> _discoverRequests = new List<int>();
@@ -92,8 +91,8 @@ namespace OICNet
                 }
 
                 OicRemoteDevice device = null;
-                lock (_devices)
-                    device = _devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
+                lock (Devices)
+                    device = Devices.FirstOrDefault(d => d.DeviceId == directory.DeviceId);
 
                 if (device == null)
                 {
@@ -101,8 +100,8 @@ namespace OICNet
                     {
                         DeviceId = directory.DeviceId
                     };
-                    lock (_devices)
-                        _devices.Add(device);
+                    lock (Devices)
+                        Devices.Add(device);
                     newDevice = true;
                 }
 
@@ -119,8 +118,8 @@ namespace OICNet
         public async Task DiscoverAsync(bool clearCached = false)
         {
             if (clearCached)
-                lock(_devices)
-                    _devices.Clear();
+                lock(Devices)
+                    Devices.Clear();
 
             // TODO: Cancel previous discovery requests
 
