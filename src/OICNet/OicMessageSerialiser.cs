@@ -29,21 +29,42 @@ namespace OICNet
 
         public string Prettify(byte[] message, OicMessageContentType contentType)
         {
-            var stream = new MemoryStream(message);
-            JToken token;
-            
+            using (var stream = new MemoryStream(message))
+                return GetJToken(stream, contentType).ToString(Formatting.Indented);
+        }
+
+        public string Prettify(Stream stream, OicMessageContentType contentType)
+        {
+            return GetJToken(stream, contentType).ToString(Formatting.Indented);
+        }
+
+        private JToken GetJToken(Stream stream, OicMessageContentType contentType)
+        {
             switch (contentType)
             {
                 case OicMessageContentType.ApplicationJson:
-                    token = JToken.ReadFrom(new JsonTextReader(new StreamReader(stream)));
-                    break;
+                    return JToken.ReadFrom(new JsonTextReader(new StreamReader(stream)));
                 case OicMessageContentType.ApplicationCbor:
-                    token = JToken.ReadFrom(new CborDataReader(stream));
-                    break;
+                    return JToken.ReadFrom(new CborDataReader(stream));
                 default:
                     throw new NotImplementedException($"Unsupported deserialisation of {contentType}");
             }
-            return token.ToString(Formatting.Indented);
+        }
+
+        /// <summary>
+        /// Deserialses a OIC message into a object based on the message's resource-type ("rt") property
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        public IOicSerialisableResource Deserialise(Stream stream, OicMessageContentType contentType)
+        {
+            var token = GetJToken(stream, contentType);
+
+            if (token.Type == JTokenType.Array)
+                return new OicResourceList(DeserialiseListInternal(token.First));
+
+            return DeserialiseInternal(token);
         }
 
         /// <summary>
@@ -54,29 +75,12 @@ namespace OICNet
         /// <returns></returns>
         public IOicSerialisableResource Deserialise(byte[] message, OicMessageContentType contentType)
         {
-            var stream = new MemoryStream(message);
-            JToken token;
-
-            switch (contentType)
-            {
-                case OicMessageContentType.ApplicationJson:
-                    token = JToken.ReadFrom(new JsonTextReader(new StreamReader(stream)));
-                    break;
-                case OicMessageContentType.ApplicationCbor:
-                    token = JToken.ReadFrom(new CborDataReader(stream));
-                    break;
-                default:
-                    throw new NotImplementedException($"Unsupported deserialisation of {contentType}");
-            }
-            if (token.Type == JTokenType.Array)
-                return new OicResourceList(DeserialiseListInternal(token.First));
-
-            return DeserialiseInternal(token);
+            using (var stream = new MemoryStream(message))
+                return Deserialise(stream, contentType);
         }
 
         private IOicResource DeserialiseInternal(JToken token)
         {
-
             if (token["rt"] == null)
                 throw new InvalidDataException("Key \"rt\" was not present in the message to deserialise");
             var rt = token["rt"].Select(t => (string)t);
@@ -97,21 +101,30 @@ namespace OICNet
         //Todo: Enumerate all base calsses, extracting out their ResourceType to generate a "fall-back" array for the "rt" property
         public byte[] Serialise(IOicSerialisableResource resource, OicMessageContentType contentType)
         {
-            var writer = new MemoryStream();
+            using (var writer = new MemoryStream())
+            {
+                Serialise(writer, resource, contentType);
+                return writer.ToArray();
+            }
+        }
+
+        //Todo: Enumerate all base calsses, extracting out their ResourceType to generate a "fall-back" array for the "rt" property
+        public void Serialise(Stream stream, IOicSerialisableResource resource, OicMessageContentType contentType)
+        {
             switch (contentType)
             {
                 case OicMessageContentType.ApplicationJson:
-                    StreamWriter sw = new StreamWriter(writer);
+                    StreamWriter sw = new StreamWriter(stream);
                     JsonSerializer.CreateDefault().Serialize(sw, resource);
                     sw.Flush();
                     break;
                 case OicMessageContentType.ApplicationCbor:
-                    new JsonSerializer().Serialize(new CborDataWriter(writer), resource);
+                    new JsonSerializer().Serialize(new CborDataWriter(stream), resource);
                     break;
                 default:
                     throw new NotImplementedException($"Can not serialise unsupported content type ({contentType:G})");
             }
-            return writer.ToArray();
+            stream.Flush();
         }
     }
 }
