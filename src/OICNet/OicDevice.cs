@@ -57,7 +57,7 @@ namespace OICNet
         }
 
         // TODO: Do we want to remove this in favour of finding resources in subclasses? or make this a lambda?
-        public virtual IList<IOicResource> Resources { get; } = new ObservableCollection<IOicResource>();
+        public virtual ObservableCollection<IOicResource> Resources { get; } = new ObservableCollection<IOicResource>();
 
         public OicDevice(Guid deviceId, params string[] deviceTypes)
         {
@@ -101,7 +101,7 @@ namespace OICNet
 
         public override Guid DeviceId { get => base.DeviceId; set => base.DeviceId = value; }
 
-        public override IList<IOicResource> Resources => base.Resources;
+        public override ObservableCollection<IOicResource> Resources => base.Resources;
 
         public OicRemoteDevice(IOicEndpoint endpoint)
             : this(endpoint, new OicDevice())
