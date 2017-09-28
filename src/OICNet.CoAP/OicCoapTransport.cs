@@ -56,5 +56,10 @@ namespace OICNet.CoAP
             // TODO: What happens when  coapEndpoint._coapEndpoint is null?
             return await _client.SendAsync(message, coapEndpoint._coapEndpoint);
         }
+
+        public override string ToString()
+        {
+            return $"<{GetType().Name}: {_client.Endpoint}>";
+        }
     }
 }

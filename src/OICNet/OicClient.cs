@@ -70,7 +70,11 @@ namespace OICNet
             if (endpoint != null)
                 await endpoint.Transport.SendMessageAsync(message, endpoint);
             else
-                await Task.WhenAny(_transports.Select(t => t.SendMessageAsync(message)));
+                await Task.WhenAny(_transports.Select(t =>
+                {
+                    _logger?.LogDebug($"Sending message (requestId: {handle.RequestId}) to {t}");
+                    return t.SendMessageAsync(message);
+                }));
 
             return handle;
         }
@@ -91,7 +95,11 @@ namespace OICNet
         {
             var handle = GetHandle(message);
 
-            await Task.WhenAll(_transports.Select(t => t.BroadcastMessageAsync(message)));
+            await Task.WhenAll(_transports.Select(t =>
+            {
+                _logger?.LogDebug($"Broadcasting to {t}");
+                return t.BroadcastMessageAsync(message);
+            }));
 
             return handle;
         }
@@ -121,6 +129,7 @@ namespace OICNet
             var ct = _receiveCTS.Token;
             try
             {
+                _logger?.LogDebug($"Receive task started for {transport}");
                 while (!ct.IsCancellationRequested)
                 {
                     var received = await transport.ReceiveMessageAsync(ct);
@@ -132,7 +141,11 @@ namespace OICNet
                     lock (_requestHandlers)
                         _requestHandlers.TryGetValue(received.Message.RequestId, out requestHandler);
 
-                    _ = requestHandler?.SetReponseAsync(received.Message);
+                    if (requestHandler != null)
+                    {
+                        _logger?.LogDebug($"Setting response to message reqeust ({requestHandler.RequestId})");
+                        _ = requestHandler?.SetReponseAsync(received.Message);
+                    }
 
                     _ = Task.Factory.StartNew(
                         async r => await _handler.HandleReceivedMessage((OicReceivedMessage)r), 
@@ -149,6 +162,7 @@ namespace OICNet
 
                 _logger?.LogError(0, ex, $"Exception occured in {nameof(ReceiveInternalAsync)}");
             }
+            _logger?.LogDebug($"Receive task for {transport} has finished");
         }
 
         public void Dispose()
@@ -156,6 +170,7 @@ namespace OICNet
             // ReSharper disable once SuspiciousTypeConversion.Global
             _transports.ForEach(t => (t as IDisposable)?.Dispose());
 
+            _logger?.LogDebug($"Waiting for all receive tasks to finish");
             _receiveCTS.Cancel();
             Task.WaitAll(_receiveTasks.ToArray());
 

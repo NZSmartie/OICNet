@@ -96,6 +96,7 @@ namespace OICNet
 
                 if (device == null)
                 {
+                    _logger?.LogDebug($"Discovered new device ({directory.DeviceId})");
                     device = new OicRemoteDevice(received.Endpoint)
                     {
                         DeviceId = directory.DeviceId
@@ -104,9 +105,16 @@ namespace OICNet
                         Devices.Add(device);
                     newDevice = true;
                 }
+                else
+                {
+                    _logger?.LogDebug($"Updating existing device ({directory.DeviceId})");
+                }
 
+                // Update device name
                 device.Name = device.Name ?? directory.Name;
 
+                // Update device resources
+                // TODO: clear out old resources?
                 foreach(var newResource in directory.Links.Select(l => l.CreateResource(_configuration.Resolver)))
                     device.Resources.Add(newResource);
 
@@ -118,8 +126,11 @@ namespace OICNet
         public async Task DiscoverAsync(bool clearCached = false)
         {
             if (clearCached)
-                lock(Devices)
+            {
+                _logger?.LogDebug($"Clearing device cache");
+                lock (Devices)
                     Devices.Clear();
+            }
 
             // TODO: Cancel previous discovery requests
 
@@ -136,6 +147,7 @@ namespace OICNet
                     _discoverRequests.Add(handle.RequestId);
 
                 // Get the handle first and store it before broadcasting request. Reponses may be lost if we don't know our requesting Id.
+                _logger?.LogDebug($"Creating discovery request with RequestId {handle.RequestId}");
                 await _client.BroadcastAsync(payload);
             }
         }

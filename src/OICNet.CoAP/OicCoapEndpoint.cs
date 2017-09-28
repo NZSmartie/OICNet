@@ -41,5 +41,10 @@ namespace OICNet.CoAP
         {
             _coapEndpoint.Dispose();
         }
+
+        public override string ToString()
+        {
+            return $"<{nameof(OicCoapEndpoint)}: {_coapEndpoint}>";
+        }
     }
 }
