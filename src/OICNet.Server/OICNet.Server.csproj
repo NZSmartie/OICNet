@@ -5,7 +5,8 @@
     <AssemblyName>OICNet.Server</AssemblyName>
     <RootNamespace>OICNet.Server</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.1-alpha5</Version>
+    <Version>0.0.1</Version>
+    <PackageVersion>0.0.1</PackageVersion>
     <PackageId>NZSmartie.OICNet.Server</PackageId>
     <Authors>Roman Vaughan</Authors>
     <Company>NZSmartie</Company>

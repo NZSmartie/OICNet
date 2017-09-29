@@ -1,8 +1,7 @@
 # Set our package version
 environment:
-  package_version: '0.3.1'
-
-version: '{branch}-{build}'
+  package_version: '1.0.0'
+  package_suffix: '-alpha1'
 
 image: Visual Studio 2017
 
@@ -28,11 +27,13 @@ for:
       only: 
         - master
 
+    version: '$(package_version)-pre{build}-{branch}'
+
     # Patch package version to all match
     dotnet_csproj:
       patch: true
       file: '**\*.csproj'
-      version: '$(package_version)-pre{build}'
+      version: '$(package_version).{build}'
       package_version: '$(package_version)-pre{build}'
 
     build:
@@ -52,14 +53,15 @@ for:
       only: 
         - releases
     
+    version: '$(package_version).{build}$(package_suffix)-{branch}'
     configuration: Release
 
     # Patch package version to all match
     dotnet_csproj:
       patch: true
       file: '**\*.csproj'
-      version: '{package_version}'
-      package_version: '{package_version}'
+      version: '{package_version}.{build}$(package_suffix)'
+      package_version: '{package_version}$(package_suffix)'
 
     build:
       publish_nuget: true
