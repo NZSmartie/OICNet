@@ -113,10 +113,17 @@ namespace OICNet
                 // Update device name
                 device.Name = device.Name ?? directory.Name;
 
-                // Update device resources
-                // TODO: clear out old resources?
-                foreach(var newResource in directory.Links.Select(l => l.CreateResource(_configuration.Resolver)))
-                    device.Resources.Add(newResource);
+                // Add or update device resources
+                // TODO: Do we want to clear out old resources?
+                var newResources = directory.Links.Select(l => l.CreateResource(_configuration.Resolver));
+                foreach (var newResource in newResources)
+                {
+                    var oldResource = device.Resources.SingleOrDefault(r => r.RelativeUri == newResource.RelativeUri);
+                    if(oldResource == null)
+                        device.Resources.Add(newResource);
+                    else
+                        oldResource.UpdateFields(newResource);
+                }
 
                 if (newDevice)
                     NewDevice?.Invoke(this, new OicNewDeviceEventArgs { Device = device, Endpoint = received.Endpoint });
