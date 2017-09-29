@@ -21,6 +21,11 @@ test: off
 
 configuration: Debug
 
+skip_commits:
+  files:
+   - /*.md
+   - /*.yml
+
 for:
   # Development
   - branches:
@@ -34,7 +39,7 @@ for:
       patch: true
       file: '**\*.csproj'
       version: '$(package_version).{build}'
-      package_version: '$(package_version)-pre{build}'
+      package_version: '$(package_version)$(package_suffix)-pre{build}'
 
     build:
       publish_nuget: true
@@ -60,8 +65,8 @@ for:
     dotnet_csproj:
       patch: true
       file: '**\*.csproj'
-      version: '{package_version}.{build}$(package_suffix)'
-      package_version: '{package_version}$(package_suffix)'
+      version: '$(package_version).{build}'
+      package_version: '$(package_version)$(package_suffix)'
 
     build:
       publish_nuget: true
