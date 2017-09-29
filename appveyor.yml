@@ -21,16 +21,16 @@ test: off
 
 configuration: Debug
 
-skip_commits:
-  files:
-   - /*.md
-   - /*.yml
-
 for:
   # Development
   - branches:
       only: 
         - master
+
+    skip_commits:
+      files:
+       - /*.md
+       - /*.yml
 
     version: '$(package_version)-pre{build}-{branch}'
 
