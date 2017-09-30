@@ -1,7 +1,7 @@
 # Set our package version
 environment:
   package_version: '1.0.0'
-  package_suffix: '-alpha1'
+  package_suffix: '-alpha2'
 
 image: Visual Studio 2017
 
