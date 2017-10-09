@@ -45,11 +45,6 @@ v0.2.0-alpha
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="IoTDataModels\.git" />
-    <None Remove="IoTDataModels\README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Newtonsoft.Json.Cbor" Version="0.3.3-alpha" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.2" />
