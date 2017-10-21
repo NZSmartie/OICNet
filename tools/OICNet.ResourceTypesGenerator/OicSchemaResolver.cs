@@ -81,9 +81,14 @@ namespace OICNet.ResourceTypesGenerator
                 Debug.WriteLine($"Failed to find matching baseuri for {reducedUri}");
                 return null;
             }
+    
+            if(!_schemaCache.TryGetValue(contextFilename, out var schemaData))
+            {
+                Debug.WriteLine($"Failed to find schema for {contextFilename}");
+                return null;
+            }
 
-            Debug.WriteLine($"Found schema for {contextFilename}");
-            return new MemoryStream(Encoding.UTF8.GetBytes(_schemaCache[contextFilename]), false);
+            return new MemoryStream(Encoding.UTF8.GetBytes(schemaData), false);
         }
     }
 }

@@ -80,24 +80,19 @@ namespace OICNet
             Id = coreResource.Id ?? Id;
         }
 
-        [JsonIgnore]
         public string RelativeUri { get; set; }
 
 
-        [JsonProperty("rt"), JsonRequired()]
-        [MinLength(1), StringLength(64)]
         public virtual IList<string> ResourceTypes { get; set; } = new ObservableCollection<string>();
 
         public virtual bool ShouldSerializeInterfaces() { return true; }
 
-        [JsonProperty("if")]
         public virtual OicResourceInterface Interfaces { get; set; }
 
         public virtual bool ShouldSerializeName() { return true; }
 
         private string _name;
 
-        [JsonProperty("n", NullValueHandling = NullValueHandling.Ignore)]
         public virtual string Name
         {
             get => _name;
@@ -114,7 +109,6 @@ namespace OICNet
 
         private string _id;
 
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public virtual string Id
         {
             get => _id;
