@@ -15,5 +15,21 @@ namespace OICNet.ResourceTypesGenerator.Tests
 
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        [TestCase("oic.r.audio", "oicRAudio")]
+        public void ToCamelCase(string input, string expected)
+        {
+            var actual = input.ToCamelCase();
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [TestCase("OicRAudio", "_oicRAudio")]
+        public void ToPrivateName(string input, string expected)
+        {
+            var actual = input.ToPrivateName();
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
     }
 }

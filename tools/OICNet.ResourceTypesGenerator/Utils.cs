@@ -17,8 +17,22 @@ namespace OICNet.ResourceTypesGenerator
 
         public static string ToCapitalCase(this string input)
         {
+            return Capitalise(input, true);
+        }
+
+        public static string ToCamelCase(this string input)
+        {
+            return Capitalise(input, false);
+        }
+
+        public static string ToPrivateName(this string input)
+        {
+            return $"_{Char.ToLowerInvariant(input[0])}{input.Substring(1)}";
+        }
+
+        private static string Capitalise(string input, bool wordBreak)
+        {
             var result = new List<char>();
-            var wordBreak = true;
 
             foreach (var c in input)
             {

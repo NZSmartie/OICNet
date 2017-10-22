@@ -157,7 +157,7 @@ namespace OICNet.ResourceTypesGenerator
                     codeClass.BaseTypes.Add(st);
 
                 // Add custom attribute (e.g. [OicResourceType("oic.r.audio")] )
-                codeClass.CustomAttributes.Add(new CodeAttributeDeclaration(nameof(OicResourceTypeAttribute).WithoutAttributeSuffix(),
+                codeClass.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(OicResourceTypeAttribute)),
                     new CodeAttributeArgument(new CodePrimitiveExpression(id))));
 
 
@@ -172,21 +172,24 @@ namespace OICNet.ResourceTypesGenerator
                         }
 
                         var property = new CodeMemberProperty();
+                        var field = new CodeMemberField();
                         if (PropertyAliases.TryGetValue(schemaProperty.Key, out var n))
-                            property.Name = n;
+                            field.Name = (property.Name = n).ToPrivateName();
                         else
-                            property.Name = schemaProperty.Key.ToCapitalCase();
+                            field.Name = (property.Name = schemaProperty.Key.ToCapitalCase()).ToPrivateName();
 
                         property.Attributes = MemberAttributes.Public | MemberAttributes.VTableMask;
+                        field.Attributes = MemberAttributes.Private;
 
-                        var jsonProperty = new CodeAttributeDeclaration(nameof(JsonPropertyAttribute).WithoutAttributeSuffix());
+                        var jsonProperty = new CodeAttributeDeclaration(new CodeTypeReference(typeof(JsonPropertyAttribute)));
                         jsonProperty.Arguments.Add(new CodeAttributeArgument(new CodePrimitiveExpression(schemaProperty.Key)));
 
                         if (_schema.Required.Contains(schemaProperty.Key) || schema.Required.Contains(schemaProperty.Key))
                         {
                             jsonProperty.Arguments.Add(new CodeAttributeArgument(
+                                
                                 nameof(JsonPropertyAttribute.Required),
-                                new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(nameof(Required)), nameof(Required.Always))
+                                new CodeFieldReferenceExpression(new CodeTypeReferenceExpression(new CodeTypeReference(typeof(Required))), nameof(Required.Always))
                             ));
                         }
 
@@ -194,13 +197,34 @@ namespace OICNet.ResourceTypesGenerator
 
                         if (schemaProperty.Value.MinimumItems.HasValue)
                             property.CustomAttributes.Add(new CodeAttributeDeclaration(
-                                nameof(MinLengthAttribute).WithoutAttributeSuffix(),
+                                new CodeTypeReference(typeof(MinLengthAttribute)),
                                 new CodeAttributeArgument(new CodePrimitiveExpression(schemaProperty.Value.MinimumItems.Value))));
 
                         if (schemaProperty.Value.MaximumItems.HasValue)
                             property.CustomAttributes.Add(new CodeAttributeDeclaration(
-                                nameof(MaxLengthAttribute).WithoutAttributeSuffix(),
+                                 new CodeTypeReference(typeof(MaxLengthAttribute)),
                                 new CodeAttributeArgument(new CodePrimitiveExpression(schemaProperty.Value.MaximumItems.Value))));
+
+                        if (schemaProperty.Value.MaximumLength.HasValue)
+                            property.CustomAttributes.Add(new CodeAttributeDeclaration(
+                                new CodeTypeReference(typeof(StringLengthAttribute)),
+                                new CodeAttributeArgument(new CodePrimitiveExpression(schemaProperty.Value.MaximumLength.Value))));
+
+                        if (schemaProperty.Value.Minimum.HasValue || schemaProperty.Value.Maximum.HasValue)
+                        {
+                            var minimum = schemaProperty.Value.Minimum.HasValue
+                                    ? schemaProperty.Value.Minimum.Value : double.NegativeInfinity;
+
+                            var maximum = schemaProperty.Value.Maximum.HasValue
+                                    ? schemaProperty.Value.Maximum.Value : double.PositiveInfinity;
+
+                            var rangeRattribute = new CodeAttributeDeclaration(
+                                new CodeTypeReference(typeof(RangeAttribute)),
+                                new CodeAttributeArgument(new CodePrimitiveExpression(minimum)),
+                                new CodeAttributeArgument(new CodePrimitiveExpression(maximum)));
+
+                            property.CustomAttributes.Add(rangeRattribute);
+                        }
 
 
 
@@ -217,11 +241,15 @@ namespace OICNet.ResourceTypesGenerator
                             $"<summary>\n {schemaProperty.Value.Description}\n </summary>", true));
 
                         // TODO: Get the correct type for the property. should be a subset of what's available in oic.core.json?
-                        property.Type = GetTypeForProperty(schemaProperty.Value, property);
+                        field.Type = property.Type = GetTypeForProperty(schemaProperty.Value, property);
 
-                        property.Comments.Add(new CodeCommentStatement(
-                            $"<remarks>\n Source: {schemaProperty}\n </remarks>", true));
+                        //property.Comments.Add(new CodeCommentStatement(
+                        //    $"<remarks>\n Source: {schemaProperty}\n </remarks>", true));
 
+                        property.GetStatements.Add(new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), field.Name)));
+                        property.SetStatements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), field.Name), new CodePropertySetValueReferenceExpression()));
+
+                        codeClass.Members.Add(field);
                         codeClass.Members.Add(property);
                     }
                 }
@@ -232,8 +260,10 @@ namespace OICNet.ResourceTypesGenerator
 
                 // TODO: Add XMLDoc based on descriptions provided
 
+
                 using (var tw = new IndentedTextWriter(output, "    "))
                 {
+                    CodeGenerator.ValidateIdentifiers(codeUnit);
                     new CSharpCodeProvider().GenerateCodeFromCompileUnit(codeUnit, tw, new CodeGeneratorOptions());
                 }
                 output.Flush();
@@ -245,25 +275,28 @@ namespace OICNet.ResourceTypesGenerator
                 switch (propertyType)
                 {
                     case JSchemaType.Boolean:
-                        return new CodeTypeReference(typeof(bool).FullName);
+                        return new CodeTypeReference(typeof(bool));
                     case JSchemaType.Integer:
-                        return new CodeTypeReference(typeof(int).FullName);
+                        return new CodeTypeReference(typeof(int));
                     case JSchemaType.Number:
-                        return new CodeTypeReference(typeof(decimal).FullName);
+                        return new CodeTypeReference(typeof(decimal));
                     case JSchemaType.String:
-                        return new CodeTypeReference(typeof(string).FullName);
+                        return new CodeTypeReference(typeof(string));
                     case JSchemaType.Array:
                         if (propertySchema.Items.Count != 1)
                             throw new NotImplementedException("Not sure what to do with arrrrrrray of items for a schema property");
 
-                        return new CodeTypeReference(nameof(IList), GetTypeForProperty(propertySchema.Items.First(), property));
+                        return new CodeTypeReference(typeof(IList))
+                        {
+                            TypeArguments = { GetTypeForProperty(propertySchema.Items.First(), property) }
+                        };
                     case JSchemaType.None:
                         property.Comments.Add(new CodeCommentStatement(
                             $"<remarks>\n WARNING: Possibly unsupported types. Specifically 'anyOf'.\n </remarks>", true));
 
                         // Revert to JValue as it leaves it up to the JSON library to fill in the blank for us and allows the consuming application to still get what they want
                         // TODO: Ensure values are one of the "anyOf" types defined in the schema
-                        return  new CodeTypeReference(nameof(JValue));
+                        return  new CodeTypeReference(typeof(JValue));
                     default:
                         throw new NotImplementedException($"Code's borken y'all: {propertyType}");
                 }
