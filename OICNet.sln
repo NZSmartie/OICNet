@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet", "src\OICNet\OICNet.csproj", "{4667B478-CCD5-4BD4-85E9-BD0018134C35}"
 EndProject
@@ -31,16 +31,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.ClientExample", "sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.CoAP", "src\OICNet.CoAP\OICNet.CoAP.csproj", "{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypes", "src\OICNet.ResourceTypes\OICNet.ResourceTypes.csproj", "{78304BDB-645A-4E4E-B707-317059037370}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E} = {E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.ResourceTypes", "src\OICNet.ResourceTypes\OICNet.ResourceTypes.csproj", "{78304BDB-645A-4E4E-B707-317059037370}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A3D0FE75-3C5C-48D0-A334-B9FEF5F4A751}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypesGenerator", "tools\OICNet.ResourceTypesGenerator\OICNet.ResourceTypesGenerator.csproj", "{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.ResourceTypesGenerator", "tools\OICNet.ResourceTypesGenerator\OICNet.ResourceTypesGenerator.csproj", "{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypesGenerator.Tests", "tests\OICNet.ResourceTypesGenerator.Tests\OICNet.ResourceTypesGenerator.Tests.csproj", "{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.ResourceTypesGenerator.Tests", "tests\OICNet.ResourceTypesGenerator.Tests\OICNet.ResourceTypesGenerator.Tests.csproj", "{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,6 +5,10 @@ environment:
 
 image: Visual Studio 2017
 
+# Installed nuget latest to support .Net Standard 2.0 and .Net Core 2.0
+install:
+ - cmd: appveyor downloadfile https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+
 # Restore NuGet packages
 before_build:
   - cmd: nuget restore
