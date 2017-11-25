@@ -17,12 +17,14 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Array of the possible adf states.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("adfStates", Required = Required.Always, Order = 10)]
         public List<string> AdfStates { get; set; }
 
         /// <summary>
         /// Current adf state.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("currentAdfState", Required = Required.Always, Order = 11)]
         public string CurrentAdfState { get; set; }
 

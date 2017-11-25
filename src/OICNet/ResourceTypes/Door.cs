@@ -26,12 +26,14 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// The state of the door (open or closed).
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("openState", Required = Required.Always, Order = 10, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public DoorOpenState OpenState { get; set; }
 
         /// <summary>
         /// The time duration the door has been open.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("openDuration", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 11)]
         public string OpenDuration { get; set; }
 

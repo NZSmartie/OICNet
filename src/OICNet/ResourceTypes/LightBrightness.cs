@@ -21,7 +21,8 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Quantized representation in the range 0-100 of the current sensed or set value for Brightness
         /// </summary>
-        [JsonProperty("brightness", Required = Required.Always, Order = 10), Range(0, 100)]
+        [Range(0, 100)]
+        [JsonProperty("brightness", Required = Required.Always, Order = 10)]
         public int Brightness
         {
             get => _brightness;

@@ -5,6 +5,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace OICNet.ResourceTypes
 {
@@ -19,6 +20,7 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Array of the possible operational states.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("machineStates", Required = Required.Always, Order = 10)]
         public List<string> MachineStates { get; set; }
 
@@ -31,6 +33,7 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Array of the possible job states.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("jobStates", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 12)]
         public List<string> JobStates { get; set; }
 
@@ -43,18 +46,22 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Elapsed time in the current operational state.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("runningTime", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 14)]
         public string RunningTime { get; set; }
 
         /// <summary>
         /// Time till completion of the current operational state.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("remainingTime", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 15)]
         public string RemainingTime { get; set; }
 
         /// <summary>
         /// Percentage completeness of the current jobState.
         /// </summary>
+        [OicJsonReadOnly]
+        [Range(0,100)]
         [JsonProperty("progressPercentage", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 16)]
         public int ProgressPercentage { get; set; }
 

@@ -25,6 +25,7 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// The step between possible values.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("increment", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 11)]
         public int Increment { get; set; }
 

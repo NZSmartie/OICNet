@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -17,11 +18,9 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Volume setting of an audio rendering device.
         /// </summary>
+        [Range(0, 100)]
         [JsonProperty("volume", Required = Required.Always, Order = 10)]
         public int Volume { get; set; }
-
-        //"minimum": 0,
-        //"maximum": 100
 
         /// <summary>
         /// Mute setting of an audio rendering device.

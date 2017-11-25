@@ -19,6 +19,7 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Array of possible modes the device supports.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("supportedModes", Required = Required.Always, Order = 10)]
         public List<string> SupportedModes { get; set; }
 

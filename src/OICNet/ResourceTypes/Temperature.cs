@@ -35,6 +35,7 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Units for the temperature value.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("units", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter), Order = 11)]
         public TemperatureUnit Units { get; set; }
 

@@ -35,12 +35,14 @@ namespace OICNet.ResourceTypes
         /// <summary>
         /// Numeric identifier to specify the instance.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("sourceNumber", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 11)]
         public int SourceNumber { get; set; }
 
         /// <summary>
         /// Specifies the type of the source.
         /// </summary>
+        [OicJsonReadOnly]
         [JsonProperty("sourceType", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, Order = 12, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public MediaSourceType SourceType { get; set; }
 
