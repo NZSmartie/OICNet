@@ -22,6 +22,7 @@ namespace OICNet.ResourceTypesGenerator
         private readonly List<Uri> _baseUris = new List<Uri>(DefaultBaseUris);
 
         private readonly Dictionary<string, string> _schemaCache = new Dictionary<string, string>();
+        private readonly List<string> _schemaSearchDir = new List<string>();
 
         public IReadOnlyList<Uri> BaseUris => _baseUris;
 
@@ -67,6 +68,15 @@ namespace OICNet.ResourceTypesGenerator
             _schemaCache.Add(filename, token.ToString(Formatting.None));
         }
 
+        public void SearchIn(string path)
+        {
+            var directory = new DirectoryInfo(path);
+            if (!directory.Exists)
+                throw new DirectoryNotFoundException();
+
+            _schemaSearchDir.Add(directory.FullName);
+        }
+
         public override Stream GetSchemaResource(ResolveSchemaContext context, SchemaReference reference)
         {
             var contextFilename = Path.GetFileName(context.ResolvedSchemaId.LocalPath);
@@ -79,16 +89,22 @@ namespace OICNet.ResourceTypesGenerator
             if (!_baseUris.Any(b => Uri.Compare(b, reducedUri, UriComponents.Scheme | UriComponents.HostAndPort | UriComponents.Path, UriFormat.UriEscaped, StringComparison.OrdinalIgnoreCase) == 0))
             {
                 Debug.WriteLine($"Failed to find matching baseuri for {reducedUri}");
-                return null;
-            }
-    
-            if(!_schemaCache.TryGetValue(contextFilename, out var schemaData))
+            }else if(_schemaCache.TryGetValue(contextFilename, out var schemaData))
             {
-                Debug.WriteLine($"Failed to find schema for {contextFilename}");
-                return null;
+                return new MemoryStream(Encoding.UTF8.GetBytes(schemaData), false);
             }
 
-            return new MemoryStream(Encoding.UTF8.GetBytes(schemaData), false);
+            foreach (var searchPath in _schemaSearchDir)
+            {
+                var file = new FileInfo(Path.Combine(searchPath, contextFilename));
+                if (!file.Exists)
+                    continue;
+
+                return file.Open(FileMode.Open);
+            }
+
+            Debug.WriteLine($"Failed to find schema for {contextFilename}");
+            return null;
         }
     }
 }

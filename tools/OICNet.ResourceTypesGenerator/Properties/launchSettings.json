@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "OICNet.ResourceTypesGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "--namespace OICNet.ResourceTypes --input IoTDataModels\\oic.r.*.json --schema-dir IoTCoreModels\\schemas IoTDataModels",
+      "workingDirectory": "..\\..\\src\\OICNet.ResourceTypes"
+    }
+  }
+}

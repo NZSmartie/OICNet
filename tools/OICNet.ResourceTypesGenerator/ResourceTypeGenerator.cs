@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace OICNet.ResourceTypesGenerator
@@ -49,6 +50,7 @@ namespace OICNet.ResourceTypesGenerator
     {
         IResourceTypeGenerator SubType(Type baseType);
         void Generate(StreamWriter output);
+        Assembly Generate();
         IResourceTypeGenerator UseNamespace(string @namespace);
         IResourceTypeGenerator UseAlias(string key, string alias);
     }
@@ -106,8 +108,9 @@ namespace OICNet.ResourceTypesGenerator
             private readonly ResourceTypeGenerator _parent;
             private readonly JSchema _schema;
 
-            private readonly List<Type> _subTypes = new List<Type>();
+            private readonly Dictionary<string, Type> _subTypes = new Dictionary<string, Type>();
             private readonly HashSet<string> _propertiesToSkip = new HashSet<string>();
+            private CodeCompileUnit _codeUnit;
 
             public ResourceTypeGeneratorInternal(ResourceTypeGenerator parent, JSchema schema)
             {
@@ -124,9 +127,35 @@ namespace OICNet.ResourceTypesGenerator
             /// <param name="output"></param>
             public void Generate(StreamWriter output)
             {
-                var codeUnit = new CodeCompileUnit();
+                GenerateInternal();
 
-                codeUnit.Namespaces.Add(new CodeNamespace()
+                using (var tw = new IndentedTextWriter(output, "    "))
+                {
+                    new CSharpCodeProvider().GenerateCodeFromCompileUnit(_codeUnit, tw, new CodeGeneratorOptions());
+                }
+                output.Flush();
+            }
+
+            public Assembly Generate()
+            {
+                GenerateInternal();
+
+                var compilerParameters = new CompilerParameters(Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(a => a.Name).ToArray())
+                {
+                    GenerateInMemory = true,
+                    GenerateExecutable = false
+                };
+
+                var result = new CSharpCodeProvider().CompileAssemblyFromDom(compilerParameters, _codeUnit);
+
+                return result.CompiledAssembly;
+            }
+
+            protected void GenerateInternal()
+            {
+                this._codeUnit = new CodeCompileUnit();
+
+                _codeUnit.Namespaces.Add(new CodeNamespace()
                 {
                     Imports = {
                         new CodeNamespaceImport("Newtonsoft.Json"),
@@ -137,7 +166,7 @@ namespace OICNet.ResourceTypesGenerator
                 });
 
                 var codeNamespace = new CodeNamespace(Namespace);
-                codeUnit.Namespaces.Add(codeNamespace);
+                _codeUnit.Namespaces.Add(codeNamespace);
 
                 // TODO: Get /All/ resource types (rt)
                 var id = Path.GetFileNameWithoutExtension(_schema.Id.LocalPath);
@@ -147,14 +176,10 @@ namespace OICNet.ResourceTypesGenerator
 
                 codeClass.Comments.Add(new CodeCommentStatement(
                     $"<summary>\n " +
-                    $"Auto-generated class to match the supplied schema ({_schema.Id})\n\n " +
-                    $"<para>{_schema.Description}<para>\n " +
-                    $"</summary>", true)
+                    $"Auto-generated class to match the supplied schema ({_schema.Id})\n " + 
+                    $"<para>\n {_schema.Description}\n <para>\n " + 
+                     "</summary>", true)
                 );
-
-                // Add in requests sub-types
-                foreach(var st in _subTypes)
-                    codeClass.BaseTypes.Add(st);
 
                 // Add custom attribute (e.g. [OicResourceType("oic.r.audio")] )
                 codeClass.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(OicResourceTypeAttribute)),
@@ -163,7 +188,13 @@ namespace OICNet.ResourceTypesGenerator
 
                 foreach (var schema in _schema.AllOf)
                 {
-                    foreach(var schemaProperty in schema.Properties)
+                    var sfpjggdfjgn = schema.Id;
+
+                    //// Add in requests sub-types
+                    //foreach (var st in _subTypes)
+                    //    codeClass.BaseTypes.Add(st);
+
+                    foreach (var schemaProperty in schema.Properties)
                     {
                         if (_propertiesToSkip.Contains(schemaProperty.Key))
                         {
@@ -260,13 +291,7 @@ namespace OICNet.ResourceTypesGenerator
 
                 // TODO: Add XMLDoc based on descriptions provided
 
-
-                using (var tw = new IndentedTextWriter(output, "    "))
-                {
-                    CodeGenerator.ValidateIdentifiers(codeUnit);
-                    new CSharpCodeProvider().GenerateCodeFromCompileUnit(codeUnit, tw, new CodeGeneratorOptions());
-                }
-                output.Flush();
+                CodeGenerator.ValidateIdentifiers(_codeUnit);
             }
 
             protected CodeTypeReference GetTypeForProperty(JSchema propertySchema, CodeMemberProperty property)
@@ -304,15 +329,10 @@ namespace OICNet.ResourceTypesGenerator
 
             public IResourceTypeGenerator SubType(Type baseType)
             {
-                if (!baseType.IsInterface && _subTypes.Any(st => !st.IsInterface))
-                    throw new InvalidOperationException("Can not supply more than one abstract class or concrete base type");
+                var coreTypeAttribute = baseType.GetCustomAttribute<OicCoreTypeAttribute>()
+                    ?? throw new ArgumentException($"{baseType} is not decorated with a custom [OicCoreType] attribute");
 
-                // TODO: Ummm... something somethings validate subtype usefulness or correctness?
-                _propertiesToSkip.UnionWith(baseType.GetProperties()
-                                                    .SelectMany(p => ((JsonPropertyAttribute[])p.GetCustomAttributes(typeof(JsonPropertyAttribute), false)))
-                                                    .Select(k => k.PropertyName));
-
-                _subTypes.Add(baseType);
+                _subTypes.Add(coreTypeAttribute.Id, baseType);
                 return this;
             }
 

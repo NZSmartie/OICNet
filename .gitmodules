@@ -2,3 +2,9 @@
 	path = OICNet/IoTDataModels
 	url = https://github.com/OpenInterConnect/IoTDataModels
 	branch = OIC-v1.1.0
+[submodule "src/OICNet.ResourceTypes/IoTDataModels"]
+	path = src/OICNet.ResourceTypes/IoTDataModels
+	url = https://github.com/OpenInterConnect/IoTDataModels
+[submodule "src/OICNet.ResourceTypes/IoTCoreModels"]
+	path = src/OICNet.ResourceTypes/IoTCoreModels
+	url = https://github.com/openconnectivityfoundation/core

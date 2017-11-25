@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet", "src\OICNet\OICNet.csproj", "{4667B478-CCD5-4BD4-85E9-BD0018134C35}"
 EndProject
@@ -29,7 +29,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{33CB3B3A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.ClientExample", "samples\OICNet.ClientExample\OICNet.ClientExample.csproj", "{7B0F54CB-94FA-406F-A2BE-BB9919A9DA1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.CoAP", "src\OICNet.CoAP\OICNet.CoAP.csproj", "{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OICNet.CoAP", "src\OICNet.CoAP\OICNet.CoAP.csproj", "{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypes", "src\OICNet.ResourceTypes\OICNet.ResourceTypes.csproj", "{78304BDB-645A-4E4E-B707-317059037370}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E} = {E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A3D0FE75-3C5C-48D0-A334-B9FEF5F4A751}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypesGenerator", "tools\OICNet.ResourceTypesGenerator\OICNet.ResourceTypesGenerator.csproj", "{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OICNet.ResourceTypesGenerator.Tests", "tests\OICNet.ResourceTypesGenerator.Tests\OICNet.ResourceTypesGenerator.Tests.csproj", "{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +76,18 @@ Global
 		{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78304BDB-645A-4E4E-B707-317059037370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78304BDB-645A-4E4E-B707-317059037370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78304BDB-645A-4E4E-B707-317059037370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78304BDB-645A-4E4E-B707-317059037370}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +100,9 @@ Global
 		{278CDEF6-B009-4079-8F6A-769CC0DA16F5} = {D87BEC07-6B74-4C19-A885-2CC3D0DAE466}
 		{7B0F54CB-94FA-406F-A2BE-BB9919A9DA1A} = {27650582-F55E-48E4-A8BA-ECE467558234}
 		{9FB18789-2FBF-4C78-87B6-F4DBB52CE35A} = {D87BEC07-6B74-4C19-A885-2CC3D0DAE466}
+		{78304BDB-645A-4E4E-B707-317059037370} = {D87BEC07-6B74-4C19-A885-2CC3D0DAE466}
+		{E43B1E85-95CE-4FEA-9229-03CFEFFEEA0E} = {A3D0FE75-3C5C-48D0-A334-B9FEF5F4A751}
+		{04B4EC10-4E05-4D72-B9C9-642DBB10AF6F} = {33CB3B3A-D6CF-40F2-8908-B303DCF34FC2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BFE29590-7C0F-4B53-9F4A-1A0EA63089B0}

@@ -15,6 +15,7 @@ namespace OICNet.ResourceTypesGenerator.Tests
         private JSchemaReaderSettings _jSchemaSettings;
 
         public const string OicCoreSchemaPath = @"Schemas\oic.core-schema.json";
+        public const string OicCorePath = @"Schemas\oic.core.json";
         public const string OicBaseResourceSchemaPath = @"Schemas\oic.baseResource.json";
 
         [SetUp]
@@ -35,6 +36,36 @@ namespace OICNet.ResourceTypesGenerator.Tests
 
             // Act - Test oic core schema by loading base-resource schema
             TestDelegate action = () => JSchema.Load(new JsonTextReader(new StreamReader(OicBaseResourceSchemaPath)), _jSchemaSettings);
+
+            // Assert
+            Assert.DoesNotThrow(action);
+        }
+
+        [Test]
+        public void SearchFor_OicCoreSchema()
+        {
+            // Arrange
+            _jSchemaResolver.SearchIn("Schemas");
+
+            // Act - Test oic core schema by loading base-resource schema
+            TestDelegate action = () => JSchema.Load(new JsonTextReader(new StreamReader(OicBaseResourceSchemaPath)), _jSchemaSettings);
+
+            // Assert
+            Assert.DoesNotThrow(action);
+        }
+
+        [Test]
+        public void Conflicting_OicCoreSchemas()
+        {
+            // Arrange
+            _jSchemaResolver.Add(OicCoreSchemaPath);
+
+            // Act - Test oic core schema by loading base-resource schema
+            TestDelegate action = () =>
+            {
+                _jSchemaResolver.Add(OicCorePath);
+                JSchema.Load(new JsonTextReader(new StreamReader(OicBaseResourceSchemaPath)), _jSchemaSettings);
+            };
 
             // Assert
             Assert.DoesNotThrow(action);
