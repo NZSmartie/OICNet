@@ -35,17 +35,6 @@ namespace OICNet
         Sensor = 0x40,
     }
 
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public sealed class OicResourceTypeAttribute : Attribute
-    {
-        public readonly string Id;
-        
-        public OicResourceTypeAttribute(string id)
-        {
-            Id = id;
-        }
-    }
-
     public static class OicResourceExtensions
     {
         public static string GetResourceTypeId(this IOicResource resource)
@@ -69,6 +58,7 @@ namespace OICNet
         }
     }
 
+    [OicCoreType("oic.core")]
     public class OicCoreResource : IOicResource, INotifyPropertyChanged
     {
         public virtual void UpdateFields(IOicResource source)
