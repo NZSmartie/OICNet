@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NZSmartie.CoAPNet.Server" Version="0.3.8" />
+    <PackageReference Include="NZSmartie.CoAPNet.Server" Version="0.3.10" />
   </ItemGroup>
 
   <ItemGroup>
