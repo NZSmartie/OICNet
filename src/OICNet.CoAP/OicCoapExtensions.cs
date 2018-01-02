@@ -7,6 +7,9 @@ namespace OICNet.CoAP
 {
     public static class OicCoapExtensions
     {
+        public static int GetOicRequestId(this CoapMessage message)
+            => message.Token.Length > 0 ? BitConverter.ToInt32(message.Token, 0) : 0;
+
         public static OicRequest ToOicRequest(this CoapMessage message)
         {
             var request = new OicRequest
@@ -106,19 +109,17 @@ namespace OICNet.CoAP
 
         public static OicRequestOperation ToOicRequestOperation(this CoapMessageCode code)
         {
-            switch (code)
-            {
-                case CoapMessageCode.Get:
-                    return OicRequestOperation.Get;
-                case CoapMessageCode.Post:
-                    return OicRequestOperation.Post;
-                case CoapMessageCode.Put:
-                    return OicRequestOperation.Put;
-                case CoapMessageCode.Delete:
-                    return OicRequestOperation.Delete;
-                default:
-                    throw new OicException("Unsupported operation", new ArgumentOutOfRangeException(nameof(code), code, null), OicResponseCode.BadRequest);
-            }
+            if (code == CoapMessageCode.Get)
+                return OicRequestOperation.Get;
+            if (code == CoapMessageCode.Post)
+                return OicRequestOperation.Post;
+            if (code == CoapMessageCode.Put)
+                return OicRequestOperation.Put;
+            if (code == CoapMessageCode.Delete)
+                return OicRequestOperation.Delete;
+
+            throw new OicException("Unsupported operation", new ArgumentOutOfRangeException(nameof(code), code, null), OicResponseCode.BadRequest);
+
         }
 
         public static CoapMessageCode ToCoapMessageCode(this OicRequestOperation code)
@@ -191,53 +192,51 @@ namespace OICNet.CoAP
 
         public static OicResponseCode ToOicResponseCode(this CoapMessageCode code)
         {
-            switch (code)
-            {
-                case CoapMessageCode.Created:
-                    return OicResponseCode.Created;
-                case CoapMessageCode.Delete:
-                    return OicResponseCode.Deleted;
-                case CoapMessageCode.Valid:
-                    return OicResponseCode.Valid;
-                case CoapMessageCode.Changed:
-                    return OicResponseCode.Changed;
-                case CoapMessageCode.Content:
-                    return OicResponseCode.Content;
-                case CoapMessageCode.BadRequest:
-                    return OicResponseCode.BadRequest;
-                case CoapMessageCode.Unauthorized:
-                    return OicResponseCode.Unauthorized;
-                case CoapMessageCode.BadOption:
-                    return OicResponseCode.BadOption;
-                case CoapMessageCode.Forbidden:
-                    return OicResponseCode.Forbidden;
-                case CoapMessageCode.NotFound:
-                    return OicResponseCode.NotFound;
-                case CoapMessageCode.MethodNotAllowed:
-                    return OicResponseCode.OperationNotAllowed;
-                case CoapMessageCode.NotAcceptable:
-                    return OicResponseCode.NotAcceptable;
-                case CoapMessageCode.PreconditionFailed:
-                    return OicResponseCode.PreconditionFailed;
-                case CoapMessageCode.RequestEntityTooLarge:
-                    return OicResponseCode.RequestEntityTooLarge;
-                case CoapMessageCode.UnsupportedContentFormat:
-                    return OicResponseCode.UnsupportedContentType;
-                case CoapMessageCode.InternalServerError:
-                    return OicResponseCode.InternalServerError;
-                case CoapMessageCode.NotImplemented:
-                    return OicResponseCode.NotImplemented;
-                case CoapMessageCode.BadGateway:
-                    return OicResponseCode.BadGateway;
-                case CoapMessageCode.ServiceUnavailable:
-                    return OicResponseCode.ServiceUnavailable;
-                case CoapMessageCode.GatewayTimeout:
-                    return OicResponseCode.GatewayTimeout;
-                case CoapMessageCode.ProxyingNotSupported:
-                    return OicResponseCode.ProxyingNotSupported;
-                default:
-                    throw new OicException("Unsupported response code", new ArgumentOutOfRangeException(nameof(code), code, null));
-            }
+            if (code == CoapMessageCode.Created)
+                return OicResponseCode.Created;
+            if (code == CoapMessageCode.Delete)
+                return OicResponseCode.Deleted;
+            if (code == CoapMessageCode.Valid)
+                return OicResponseCode.Valid;
+            if (code == CoapMessageCode.Changed)
+                return OicResponseCode.Changed;
+            if (code == CoapMessageCode.Content)
+                return OicResponseCode.Content;
+            if (code == CoapMessageCode.BadRequest)
+                return OicResponseCode.BadRequest;
+            if (code == CoapMessageCode.Unauthorized)
+                return OicResponseCode.Unauthorized;
+            if (code == CoapMessageCode.BadOption)
+                return OicResponseCode.BadOption;
+            if (code == CoapMessageCode.Forbidden)
+                return OicResponseCode.Forbidden;
+            if (code == CoapMessageCode.NotFound)
+                return OicResponseCode.NotFound;
+            if (code == CoapMessageCode.MethodNotAllowed)
+                return OicResponseCode.OperationNotAllowed;
+            if (code == CoapMessageCode.NotAcceptable)
+                return OicResponseCode.NotAcceptable;
+            if (code == CoapMessageCode.PreconditionFailed)
+                return OicResponseCode.PreconditionFailed;
+            if (code == CoapMessageCode.RequestEntityTooLarge)
+                return OicResponseCode.RequestEntityTooLarge;
+            if (code == CoapMessageCode.UnsupportedContentFormat)
+                return OicResponseCode.UnsupportedContentType;
+            if (code == CoapMessageCode.InternalServerError)
+                return OicResponseCode.InternalServerError;
+            if (code == CoapMessageCode.NotImplemented)
+                return OicResponseCode.NotImplemented;
+            if (code == CoapMessageCode.BadGateway)
+                return OicResponseCode.BadGateway;
+            if (code == CoapMessageCode.ServiceUnavailable)
+                return OicResponseCode.ServiceUnavailable;
+            if (code == CoapMessageCode.GatewayTimeout)
+                return OicResponseCode.GatewayTimeout;
+            if (code == CoapMessageCode.ProxyingNotSupported)
+                return OicResponseCode.ProxyingNotSupported;
+
+            throw new OicException("Unsupported response code", new ArgumentOutOfRangeException(nameof(code), code, null));
+
         }
 
         #endregion
