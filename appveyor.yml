@@ -1,7 +1,7 @@
 # Set our package version
 environment:
   package_version: '1.0.0'
-  package_suffix: '-alpha2'
+  package_suffix: '-alpha3'
 
 image: Visual Studio 2017
 
@@ -59,7 +59,7 @@ for:
         - releases
     
     version: '$(package_version).{build}$(package_suffix)-{branch}'
-    configuration: Release
+        configuration: Release
 
     # Patch package version to all match
     dotnet_csproj:
@@ -74,6 +74,8 @@ for:
 
     # Deploy to NuGet
     deploy:
-      - provider: NuGet
+      - on:
+          appveyor_repo_tag: true
+        provider: NuGet
         api_key:
           secure: UCjrAYYDUxNW2lKDcDQ5ySo4YnD1TmgiQwiyHDsFkKMlqopx82C40xUWst9Ai18G
